@@ -105,6 +105,15 @@ export const assets = {
       current: ui('svg/gate-glow-current.svg', 118.4, 118.4, 'Path/Gate · Current fx/glow'),
       final: ui('svg/gate-glow-final.svg', 118.4, 118.4, 'Path/Gate · Final fx/glow'),
     },
+    results: {
+      bannerGlowVictory: ui('svg/banner-glow-victory.svg', 880, 220, 'Popup/Result · Victory fx/glow'),
+      bannerGlowDefeat: ui('svg/banner-glow-defeat.svg', 800, 220, 'Popup/Result · Defeat fx/glow'),
+      popupGlowGold: ui('svg/popup-glow-gold.svg', 1080, 700, 'Popup/Round end · Cashed out fx/glow'),
+      popupGlowDefeat: ui('svg/popup-glow-defeat.svg', 940, 600, 'Popup/Round end · Defeat fx/glow'),
+      coin: ui('svg/coin.svg', 38, 38, 'Popup/Round end · fx/coins'),
+      iconCover: ui('svg/icon-cover.svg', 58, 58, 'Popup/Actions · icon/cover'),
+      iconMenu: ui('svg/icon-menu.svg', 33.8, 33.8, 'Popup/Actions · icon/menu'),
+    },
     badgePips: {
       easy: ui('svg/badge-pips-easy.svg', 33, 9, 'Badge/Mode · risk Easy'),
       medium: ui('svg/badge-pips-medium.svg', 33, 9, 'Badge/Mode · risk Medium'),

@@ -36,6 +36,15 @@
   --color-shade-30: rgb(0 0 0 / 0.3); /* chip / segment tile darkening */
   --color-shade-60: rgb(0 0 0 / 0.6); /* Progress/Path fx/shade */
 
+  /* Results / popups (raw in Figma 337:3924, 475:2904, 475:2895) */
+  --color-scrim: rgb(13 12 11 / 0.5); /* Overlay/Modal scrim */
+  --color-popup-body: rgb(13 12 11 / 0.92);
+  --color-popup-border-gold: rgb(242 179 61 / 0.7);
+  --color-popup-border-blood: rgb(138 31 31 / 0.9);
+  --color-defeat-title: #d94a4f;
+  --color-defeat-amount: #cfc3aa;
+  --color-ray: rgb(255 210 122 / 0.13); /* Cashed out fx/rays */
+
   --color-transparent: transparent;
   --color-black: #000;
   --color-white: #fff;
@@ -219,7 +228,7 @@
   --fx-glow-teal-soft: 0 0 10px rgb(63 224 208 / 0.45);
   --fx-glow-amber: 0 0 12px rgb(242 179 61 / 0.45);
   --fx-glow-amber-strong: 0 0 10px rgb(242 179 61 / 0.55);
-  --fx-backdrop-blur: blur(8px);
+  --fx-backdrop-blur: blur(4px); /* Figma background blur radius 8 ≈ CSS blur 4px */
 
   /* Component effects (raw in Figma) */
   --fx-text-shadow-soft: 0 2px 4px rgb(0 0 0 / 0.85); /* chips, segments, badge, plate */
@@ -242,6 +251,12 @@
   --fx-gate-text: 0 1px 2px rgb(0 0 0 / 0.8); /* Path/Gate multiplier */
   --fx-ellipsis-text: 0 2px 4px rgb(0 0 0 / 0.8); /* Progress/Path 7+ "…" */
   --fx-logo-glow: 0 0 24px rgb(242 178 61 / 0.35); /* setup logo 587:5179 */
+
+  /* Results effects (raw in Figma) */
+  --fx-banner-title-glow: 0 0 12px rgb(242 179 61 / 0.5); /* Popup/Result VICTORY */
+  --fx-banner-amount-glow: 0 0 12px rgb(63 224 208 / 0.7); /* Popup/Result amount */
+  --fx-popup-shadow: 0 12px 40px rgb(0 0 0 / 0.7); /* Popup/Round end body */
+  --fx-popup-text: 0 2px 6px rgb(0 0 0 / 0.85); /* Popup/Round end texts */
 }
 
 @utility fx-text-shadow {
