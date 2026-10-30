@@ -17,7 +17,7 @@ export default function Stage({ children }) {
 
   return (
     <StageContext.Provider value={{ scale }}>
-      <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-[#050506]">
+      <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-stage-letterbox">
         <div
           style={{ width: STAGE_WIDTH * scale, height: STAGE_HEIGHT * scale }}
           className="relative shrink-0"
@@ -29,7 +29,7 @@ export default function Stage({ children }) {
               transform: `scale(${scale})`,
               transformOrigin: '0 0',
             }}
-            className="absolute top-0 left-0 overflow-hidden bg-[#121216]"
+            className="absolute top-0 left-0 overflow-hidden bg-neutral-ink"
           >
             {children}
           </div>
