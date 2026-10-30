@@ -219,5 +219,21 @@ export function selectDerived(state) {
     canSkip: [STATES.ENTERING, STATES.FIGHTING, STATES.RESOLVING, STATES.WIN_BANNER].includes(phase),
     winChance: config.difficulties[state.difficulty].winChance,
     maxBet: maxAllowedBet(state),
+    ...betControls(state),
   }
+}
+
+// Bet chips and stepper targets for the setup dock (Figma note 536:1900:
+// down disabled at the minimum bet, up disabled above the balance / max bet).
+function betControls(state) {
+  const limit = Math.min(config.maxBet, state.balance)
+  const chips = config.betOptions.map((option) => {
+    const value = option === 'max' ? maxAllowedBet(state) : option
+    return { label: option === 'max' ? 'MAX' : String(option), value, disabled: value > state.balance }
+  })
+  // Steps are the chip values plus the current limit, so ↑ can always reach MAX.
+  const steps = [...new Set([...config.betOptions.filter((o) => o !== 'max'), limit])].sort((a, b) => a - b)
+  const betUp = steps.find((s) => s > state.bet && s <= limit) ?? null
+  const betDown = [...steps].reverse().find((s) => s < state.bet && s >= config.minBet) ?? null
+  return { chips, betUp, betDown }
 }

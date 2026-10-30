@@ -7,6 +7,8 @@ import { assets } from './assets.js'
 import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
+import Dock from './ui/dock/Dock.jsx'
+import { useBeatTimer } from './scene/useBeatTimer.js'
 
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash)
@@ -28,6 +30,8 @@ export default function App() {
 
 function Game() {
   const [state, actions, derived] = useGame()
+  const [autoBeats, setAutoBeats] = useState(true)
+  useBeatTimer(state, actions, autoBeats)
 
   return (
     <>
@@ -40,9 +44,10 @@ function Game() {
           onRules={() => console.log('openRules')}
           onMenu={() => console.log('openMenu')}
         />
+        <Dock state={state} actions={actions} derived={derived} className="top-[888px] left-[210px]" />
         <GuidesOverlay />
       </Stage>
-      <DebugPanel state={state} actions={actions} derived={derived} />
+      <DebugPanel state={state} actions={actions} derived={derived} autoBeats={autoBeats} onAutoBeats={setAutoBeats} />
     </>
   )
 }

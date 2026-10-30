@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { config, DIFFICULTY_KEYS } from '../game/config.js'
 import { formatMoney, formatMultiplier } from '../game/money.js'
 
 function Row({ label, value }) {
@@ -29,7 +28,7 @@ function Btn({ onClick, children, active }) {
 
 // Debug panel for the game state machine, toggled with the "D" key.
 // Lives outside the scaled stage so it stays readable at any window size.
-export default function DebugPanel({ state, actions, derived }) {
+export default function DebugPanel({ state, actions, derived, autoBeats, onAutoBeats }) {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
@@ -68,27 +67,10 @@ export default function DebugPanel({ state, actions, derived }) {
         {state.insufficientBalance && <Row label="!" value="insufficient balance" />}
       </div>
 
+      {/* Bet, difficulty, PLAY, FIGHT, TAKE and SKIP live in the dock now (Level 7). */}
       <div className="flex flex-wrap gap-1">
-        {config.betOptions.map((b) => (
-          <Btn key={b} onClick={() => actions.setBet(b)} active={state.bet === (b === 'max' ? derived.maxBet : b)}>
-            {b === 'max' ? 'MAX' : b}
-          </Btn>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {DIFFICULTY_KEYS.map((d) => (
-          <Btn key={d} onClick={() => actions.setDifficulty(d)} active={state.difficulty === d}>
-            {d}
-          </Btn>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-1">
-        <Btn onClick={actions.play}>PLAY</Btn>
         <Btn onClick={actions.enterDone}>ENTER_DONE</Btn>
-        <Btn onClick={actions.fight}>FIGHT</Btn>
         <Btn onClick={actions.animDone}>ANIM_DONE</Btn>
-        <Btn onClick={actions.take}>TAKE</Btn>
-        <Btn onClick={actions.skip}>SKIP</Btn>
         <Btn onClick={actions.newRound}>NEW_ROUND</Btn>
         <Btn onClick={actions.menu}>MENU</Btn>
       </div>
@@ -101,6 +83,10 @@ export default function DebugPanel({ state, actions, derived }) {
         </Btn>
         <Btn onClick={() => actions.forceNext(null)}>clear</Btn>
       </div>
+      <label className="flex items-center gap-2 text-text-muted">
+        <input type="checkbox" checked={autoBeats} onChange={(e) => onAutoBeats(e.target.checked)} />
+        auto beats (temporary timer until L8/L9)
+      </label>
     </div>
   )
 }

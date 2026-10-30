@@ -241,6 +241,7 @@
   --fx-gate-shadow: 0 4px 12px rgb(0 0 0 / 0.5); /* Path/Gate skin */
   --fx-gate-text: 0 1px 2px rgb(0 0 0 / 0.8); /* Path/Gate multiplier */
   --fx-ellipsis-text: 0 2px 4px rgb(0 0 0 / 0.8); /* Progress/Path 7+ "…" */
+  --fx-logo-glow: 0 0 24px rgb(242 178 61 / 0.35); /* setup logo 587:5179 */
 }
 
 @utility fx-text-shadow {
