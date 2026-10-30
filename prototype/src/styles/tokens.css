@@ -34,6 +34,7 @@
   --color-label-border: #3b3733; /* CTA / Skip label plate stroke */
   --color-shade-20: rgb(0 0 0 / 0.2); /* CTA Pressed plate -20% */
   --color-shade-30: rgb(0 0 0 / 0.3); /* chip / segment tile darkening */
+  --color-shade-60: rgb(0 0 0 / 0.6); /* Progress/Path fx/shade */
 
   --color-transparent: transparent;
   --color-black: #000;
@@ -232,6 +233,14 @@
   --fx-plate-shadow: 0 4px 5px rgb(0 0 0 / 0.6); /* Plate/Multiplier */
   --fx-medallion-shadow: 0 3.9px 7.8px rgb(0 0 0 / 0.55); /* Skip medallion */
   --fx-focus-ring: 0 0 0 2px var(--color-accent-teal);
+
+  /* HUD effects (raw in Figma) */
+  --fx-balance-shadow: 0 4px 5px rgb(0 0 0 / 0.55); /* HUD/Balance */
+  --fx-balance-text: 0 2px 2px rgb(0 0 0 / 0.8); /* HUD/Balance amount */
+  --fx-hud-medallion: 0 3px 6px rgb(0 0 0 / 0.55); /* HUD/Medallion skin */
+  --fx-gate-shadow: 0 4px 12px rgb(0 0 0 / 0.5); /* Path/Gate skin */
+  --fx-gate-text: 0 1px 2px rgb(0 0 0 / 0.8); /* Path/Gate multiplier */
+  --fx-ellipsis-text: 0 2px 4px rgb(0 0 0 / 0.8); /* Progress/Path 7+ "…" */
 }
 
 @utility fx-text-shadow {

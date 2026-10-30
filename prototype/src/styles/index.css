@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './tokens.css';
-@import './components.css';
+/* In the components layer so Tailwind utilities (absolute, left-*, ...) can override it. */
+@import './components.css' layer(components);
 
 html,
 body,

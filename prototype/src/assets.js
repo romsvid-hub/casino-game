@@ -92,6 +92,19 @@ export const assets = {
       high: ui('svg/pips-high.svg', 32, 8, 'Segment/Difficulty · risk High'),
       disabled: ui('svg/pips-disabled.svg', 32, 8, 'Segment/Difficulty · risk Disabled'),
     },
+    medal: {
+      rules: ui('svg/medal-rules.svg', 26, 26, 'HUD/Medallion · Rules icon'),
+      rulesHover: ui('svg/medal-rules-hover.svg', 26, 36.88, 'HUD/Medallion · Rules icon hover'),
+      menu: ui('svg/medal-menu.svg', 26, 26, 'HUD/Medallion · Menu icon'),
+      menuHover: ui('svg/medal-menu-hover.svg', 35.5, 31.44, 'HUD/Medallion · Menu icon hover'),
+      glow: ui('svg/medal-glow.svg', 86, 86, 'HUD/Medallion · fx/glow'),
+      rim: ui('svg/medal-rim.svg', 60, 60, 'HUD/Medallion · fx/rim'),
+    },
+    gateGlow: {
+      passed: ui('svg/gate-glow-passed.svg', 118.4, 118.4, 'Path/Gate · Passed fx/glow'),
+      current: ui('svg/gate-glow-current.svg', 118.4, 118.4, 'Path/Gate · Current fx/glow'),
+      final: ui('svg/gate-glow-final.svg', 118.4, 118.4, 'Path/Gate · Final fx/glow'),
+    },
     badgePips: {
       easy: ui('svg/badge-pips-easy.svg', 33, 9, 'Badge/Mode · risk Easy'),
       medium: ui('svg/badge-pips-medium.svg', 33, 9, 'Badge/Mode · risk Medium'),

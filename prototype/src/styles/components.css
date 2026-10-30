@@ -85,6 +85,7 @@
 
 /* Hover (real or forced): Fight swaps to the hover skin; Take has one skin. */
 .cta:not([data-forced]):hover:not(:disabled),
+.cta[data-highlight]:not(:disabled),
 .cta[data-state='hover'],
 .cta[data-state='highlight'] {
   --cta-skin: var(--cta-skin-hover);
@@ -334,4 +335,47 @@
 }
 .skip:not([data-forced]):active .skip__medallion {
   transform: translateY(1px);
+}
+
+/* ── HUD/Medallion 302:3800 (70x76) ─────────────────────────────────────── */
+.medallion {
+  position: relative;
+  width: 70px;
+  height: 76px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.medallion__glow,
+.medallion__icon--hover {
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+.medallion:not([data-forced]):hover .medallion__glow,
+.medallion:not([data-forced]):hover .medallion__icon--hover,
+.medallion[data-state='hover'] .medallion__glow,
+.medallion[data-state='hover'] .medallion__icon--hover,
+.medallion:focus-visible .medallion__glow {
+  opacity: 1;
+}
+.medallion:not([data-forced]):hover .medallion__icon,
+.medallion[data-state='hover'] .medallion__icon {
+  opacity: 0;
+}
+.medallion:not([data-forced]):active {
+  transform: translateY(1px);
+}
+
+/* ── Path/Gate 335:3892: glow fades in when a gate becomes current ──────── */
+.gate-glow-in {
+  animation: gate-glow-in 200ms ease-out both;
+}
+@keyframes gate-glow-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

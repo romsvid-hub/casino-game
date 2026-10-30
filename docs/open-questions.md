@@ -10,3 +10,4 @@
 - [ ] Number font: the CTA / Fight and Counter/Win component descriptions say "Spectral SemiBold, tabular figures", but every number in the design is set in Kurale (which has no tabular figures). Which one is final?
 - [ ] Gates per round: Figma level frames show 7 multipliers (boss = ×19.00), but the boss-final frame 660:5112 labels them "Gate 4…9". Is it 7 gates or 9?
 - [ ] Max bet: what value should the "MAX" chip use (prototype assumes 20, capped by balance)?
+- [ ] Rules / Menu during a round: Figma shows the medallions only on the setup screen. Should players be able to open Rules or the menu mid-round?
