@@ -68,6 +68,37 @@ export const assets = {
     bag: ui('icon-bag.png', 88, 89, 'asset/icon_bag'),
   },
 
+  // Vector parts of UI Kit components (exported as SVG from Figma).
+  vectors: {
+    arrowUp: {
+      default: ui('svg/arrow-up-default.svg', 32, 24, 'Stepper/Arrow Up · Default'),
+      hover: ui('svg/arrow-up-hover.svg', 32, 24.75, 'Stepper/Arrow Up · Hover'),
+      pressed: ui('svg/arrow-up-pressed.svg', 32, 24, 'Stepper/Arrow Up · Pressed'),
+      disabled: ui('svg/arrow-up-disabled.svg', 32, 24, 'Stepper/Arrow Up · Disabled'),
+    },
+    arrowDown: {
+      default: ui('svg/arrow-down-default.svg', 32, 24, 'Stepper/Arrow Down · Default'),
+      hover: ui('svg/arrow-down-hover.svg', 32, 24.75, 'Stepper/Arrow Down · Hover'),
+      pressed: ui('svg/arrow-down-pressed.svg', 32, 24, 'Stepper/Arrow Down · Pressed'),
+      disabled: ui('svg/arrow-down-disabled.svg', 32, 24, 'Stepper/Arrow Down · Disabled'),
+    },
+    skipIcon: ui('svg/skip-icon.svg', 34.26, 25.95, 'CTA / Skip · icon'),
+    skipIconHover: ui('svg/skip-icon-hover.svg', 52.46, 44.15, 'CTA / Skip · icon hover'),
+    skipGlow: ui('svg/skip-glow.svg', 111.8, 129.75, 'CTA / Skip · fx/glow'),
+    skipRim: ui('svg/skip-rim.svg', 78, 78, 'CTA / Skip · fx/rim'),
+    pips: {
+      easy: ui('svg/pips-easy.svg', 32, 8, 'Segment/Difficulty · risk Easy'),
+      medium: ui('svg/pips-medium.svg', 32, 8, 'Segment/Difficulty · risk Medium'),
+      high: ui('svg/pips-high.svg', 32, 8, 'Segment/Difficulty · risk High'),
+      disabled: ui('svg/pips-disabled.svg', 32, 8, 'Segment/Difficulty · risk Disabled'),
+    },
+    badgePips: {
+      easy: ui('svg/badge-pips-easy.svg', 33, 9, 'Badge/Mode · risk Easy'),
+      medium: ui('svg/badge-pips-medium.svg', 33, 9, 'Badge/Mode · risk Medium'),
+      high: ui('svg/badge-pips-high.svg', 33, 9, 'Badge/Mode · risk High'),
+    },
+  },
+
   // 1920x1080, transparent, 30 fps. Durations and modes from docs/lottie.md.
   lottie: {
     bgScene: lottie('bg_scene', 12, 'loop'),
