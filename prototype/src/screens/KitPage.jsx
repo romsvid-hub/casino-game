@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { assets } from '../assets.js'
 
 // Token names only: values are read from tokens.css at runtime so hex never lives outside it.
 const COLOR_GROUPS = [
@@ -53,6 +54,41 @@ function Swatch({ token }) {
       <code className="font-mono text-[13px] text-text-parchment">--color-{token}</code>
       <code className="font-mono text-[13px] text-text-muted">{value}</code>
     </div>
+  )
+}
+
+const IMAGE_GROUPS = Object.entries(assets).filter(([group]) => group !== 'lottie')
+
+// Checkerboard behind each image so transparent edges are visible.
+const CHECKER = {
+  backgroundColor: 'var(--color-neutral-char)',
+  backgroundImage:
+    'conic-gradient(var(--color-neutral-iron) 25%, transparent 0 50%, var(--color-neutral-iron) 0 75%, transparent 0)',
+  backgroundSize: '16px 16px',
+}
+
+function AssetTile({ name, asset }) {
+  return (
+    <figure className="m-0 flex flex-col gap-2">
+      <div
+        className="flex items-center justify-center rounded-md border border-neutral-iron p-2"
+        style={{ ...CHECKER, minWidth: 120, minHeight: 120 }}
+      >
+        <img
+          src={asset.src}
+          alt={name}
+          width={asset.w}
+          height={asset.h}
+          className="h-auto max-h-[240px] w-auto max-w-[480px]"
+        />
+      </div>
+      <figcaption className="flex flex-col font-mono text-[12px]">
+        <span className="text-text-parchment">{asset.src.replace('/assets/ui/', '')}</span>
+        <span className="text-text-muted">
+          {asset.w}×{asset.h} · {asset.figma}
+        </span>
+      </figcaption>
+    </figure>
   )
 }
 
@@ -112,6 +148,32 @@ export default function KitPage() {
                 <code className="font-mono text-[13px] text-text-muted">{e.name}</code>
               </div>
             ))}
+          </div>
+        </Section>
+
+        <Section title="Assets">
+          {IMAGE_GROUPS.map(([group, items]) => (
+            <div key={group} className="flex flex-col gap-3">
+              <h3 className="type-label-xs text-text-muted">{group}</h3>
+              <div className="flex flex-wrap items-end gap-6">
+                {Object.entries(items).map(([name, asset]) => (
+                  <AssetTile key={name} name={name} asset={asset} />
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="flex flex-col gap-3">
+            <h3 className="type-label-xs text-text-muted">lottie (public/lottie)</h3>
+            <ul className="m-0 grid grid-cols-3 gap-x-6 gap-y-1 p-0 font-mono text-[12px]">
+              {Object.values(assets.lottie).map((l) => (
+                <li key={l.src} className="list-none text-text-parchment">
+                  {l.src.replace('/lottie/', '')}{' '}
+                  <span className="text-text-muted">
+                    {l.duration}s · {l.mode}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </Section>
       </div>
