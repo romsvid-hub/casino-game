@@ -40,11 +40,14 @@ export default function LottieLayer({
   segment,
   marker,
   onComplete,
+  onReady,
   className = 'absolute inset-0',
 }) {
   const containerRef = useRef(null)
   const onCompleteRef = useRef(onComplete)
+  const onReadyRef = useRef(onReady)
   onCompleteRef.current = onComplete
+  onReadyRef.current = onReady
 
   const segmentKey = segment ? segment.join(':') : ''
 
@@ -66,6 +69,10 @@ export default function LottieLayer({
           rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
         })
         anim.addEventListener('complete', () => onCompleteRef.current?.())
+        // First frame is in the DOM: safe to fade this layer in.
+        anim.addEventListener('DOMLoaded', () => onReadyRef.current?.())
+        // With inline animationData lottie may finish loading synchronously.
+        if (anim.isLoaded) onReadyRef.current?.()
         if (frames && autoplay) anim.playSegments(frames, true)
       })
       .catch((err) => console.error(err))

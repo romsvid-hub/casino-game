@@ -1,27 +1,21 @@
 import { useEffect } from 'react'
-import { config } from '../game/config.js'
 import { STATES } from '../game/machine.js'
 
-// TEMPORARY (Level 7): stands in for the animation director (Level 8) and the
-// round-end popups (Level 9) so a round can be played from the dock alone.
-// Each beat ends on a timer; SKIP still jumps ahead through the reducer.
-const BEATS = {
-  [STATES.ENTERING]: { ms: 700, action: 'enterDone' },
-  [STATES.FIGHTING]: { ms: 900, action: 'animDone' },
-  [STATES.RESOLVING]: { ms: 400, action: 'animDone' },
-  [STATES.WIN_BANNER]: { ms: config.timings.resultBanner, action: 'animDone' },
-  // Round end → back to setup until the result popups with NEW ROUND exist.
-  [STATES.DEFEAT]: { ms: 2500, action: 'newRound' },
-  [STATES.CASHED_OUT]: { ms: 2500, action: 'newRound' },
-  [STATES.MAX_WIN]: { ms: 3000, action: 'newRound' },
+// TEMPORARY (Levels 7–8): returns to SETUP after a round ends, standing in for
+// the round-end popups with NEW ROUND (Level 9). Animation beats are driven by
+// the director (scene/director.js) since Level 8.
+const ROUND_END = {
+  [STATES.DEFEAT]: 2500,
+  [STATES.CASHED_OUT]: 2500,
+  [STATES.MAX_WIN]: 3000,
 }
 
 export function useBeatTimer(state, actions, enabled = true) {
-  const { phase, passed } = state
+  const { phase } = state
   useEffect(() => {
-    const beat = BEATS[phase]
-    if (!enabled || !beat) return
-    const id = setTimeout(() => actions[beat.action](), beat.ms)
+    const delay = ROUND_END[phase]
+    if (!enabled || !delay) return
+    const id = setTimeout(() => actions.newRound(), delay)
     return () => clearTimeout(id)
-  }, [phase, passed, actions, enabled])
+  }, [phase, actions, enabled])
 }
