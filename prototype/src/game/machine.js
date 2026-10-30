@@ -207,6 +207,9 @@ export function selectDerived(state) {
     }),
     // Round-end frames in Figma (474:2089, 474:2175, 660:5112) show AT RISK 0.00 and NEXT / IF WON "—".
     atRisk: inRound ? atRisk(bet, gates, passed) : 0,
+    // Counter/Win value: during the win banner it keeps the previous AT RISK, so the
+    // counter counts up to the new value when it comes back (Figma note 337:3925).
+    counterWin: !inRound ? 0 : atRisk(bet, gates, phase === STATES.WIN_BANNER ? passed - 1 : passed),
     ifWon: ended ? null : ifWon(bet, gates, passed),
     nextMultiplier: !ended && passed < gates.length ? gates[passed] : null,
     isBoss: passed === last,
