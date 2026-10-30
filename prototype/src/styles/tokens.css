@@ -1,0 +1,246 @@
+/*
+ * Design tokens — single source of truth, taken from Figma file LXMHPQWUYxLjZiYVTfbx5X.
+ * Names mirror Figma variable paths (color/accent/teal -> --color-accent-teal).
+ * Only tokens used by the current UI Kit and screens are kept; see docs/decisions.md.
+ * This is the only file in the app that may contain raw color values.
+ */
+
+/* ── Colors: collection "UI Kit" ─────────────────────────────────────────
+ * Declared inside @theme so each one is both a CSS variable and a Tailwind
+ * color utility (bg-accent-teal, text-text-muted, border-neutral-iron ...).
+ * "static" keeps every token in the output even when no utility uses it yet. */
+@theme static {
+  --color-*: initial;
+
+  --color-accent-teal: #3fe0d0;
+  --color-accent-amber: #f2b33d;
+  --color-accent-blood: #c4202a;
+
+  --color-neutral-ink: #0d0c0b;
+  --color-neutral-char: #1c1916;
+  --color-neutral-iron: #3a3734;
+
+  --color-text-parchment: #e9dcc0;
+  --color-text-muted: #a89c86;
+  --color-text-disabled: #6b655d;
+
+  /* App-level (not in Figma): letterbox around the 1920x1080 stage. */
+  --color-stage-letterbox: #050506;
+
+  --color-transparent: transparent;
+  --color-black: #000;
+  --color-white: #fff;
+}
+
+/* ── Typography: collection "Typography" ────────────────────────────────── */
+:root {
+  --font-family-display: 'Ruslan Display', serif;
+  --font-family-number: 'Kurale', serif;
+
+  --font-size-label-xs: 12px;
+  --font-line-height-label-xs: 18px;
+  --font-size-label-s: 14px;
+  --font-line-height-label-s: 18px;
+  --font-size-title-s: 18px;
+  --font-line-height-title-s: 22px;
+  --font-size-button-m: 24px;
+  --font-line-height-button-m: 28px;
+  --font-size-title-m: 26px;
+  --font-line-height-title-m: 30px;
+  --font-size-button-l: 34px;
+  --font-line-height-button-l: 38px;
+  --font-size-title-l: 40px;
+  --font-line-height-title-l: 44px;
+  --font-size-display-xl: 72px;
+  --font-line-height-display-xl: 76px;
+
+  --font-size-number-xs: 14px;
+  --font-line-height-number-xs: 18px;
+  --font-size-number-s: 18px;
+  --font-line-height-number-s: 22px;
+  --font-size-number-m: 24px;
+  --font-line-height-number-m: 28px;
+  --font-size-number-l: 30px;
+  --font-line-height-number-l: 34px;
+  --font-size-number-xl: 46px;
+  --font-line-height-number-xl: 50px;
+  --font-size-number-hero: 96px;
+  --font-line-height-number-hero: 100px;
+
+  /* Letter spacing from the UI/* text styles (Figma % of font size -> em). */
+  --font-tracking-label-xs: 0.12em;
+  --font-tracking-label-s: 0.08em;
+  --font-tracking-display: 0.04em;
+  --font-tracking-display-xl: 0.03em;
+}
+
+/* Tailwind mapping: font-display / font-number, text-<size> with line height. */
+@theme inline {
+  --font-*: initial;
+  --font-display: var(--font-family-display);
+  --font-number: var(--font-family-number);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-label-xs: var(--font-size-label-xs);
+  --text-label-xs--line-height: var(--font-line-height-label-xs);
+  --text-label-s: var(--font-size-label-s);
+  --text-label-s--line-height: var(--font-line-height-label-s);
+  --text-title-s: var(--font-size-title-s);
+  --text-title-s--line-height: var(--font-line-height-title-s);
+  --text-button-m: var(--font-size-button-m);
+  --text-button-m--line-height: var(--font-line-height-button-m);
+  --text-title-m: var(--font-size-title-m);
+  --text-title-m--line-height: var(--font-line-height-title-m);
+  --text-button-l: var(--font-size-button-l);
+  --text-button-l--line-height: var(--font-line-height-button-l);
+  --text-title-l: var(--font-size-title-l);
+  --text-title-l--line-height: var(--font-line-height-title-l);
+  --text-display-xl: var(--font-size-display-xl);
+  --text-display-xl--line-height: var(--font-line-height-display-xl);
+  --text-number-xs: var(--font-size-number-xs);
+  --text-number-xs--line-height: var(--font-line-height-number-xs);
+  --text-number-s: var(--font-size-number-s);
+  --text-number-s--line-height: var(--font-line-height-number-s);
+  --text-number-m: var(--font-size-number-m);
+  --text-number-m--line-height: var(--font-line-height-number-m);
+  --text-number-l: var(--font-size-number-l);
+  --text-number-l--line-height: var(--font-line-height-number-l);
+  --text-number-xl: var(--font-size-number-xl);
+  --text-number-xl--line-height: var(--font-line-height-number-xl);
+  --text-number-hero: var(--font-size-number-hero);
+  --text-number-hero--line-height: var(--font-line-height-number-hero);
+}
+
+/* ── Text styles: UI/* (one utility per Figma text style) ──────────────────
+ * Kurale has no tabular figures (tnum); tabular-nums is kept for when the
+ * number font changes. Counters must keep digits steady in the component. */
+@utility type-label-xs {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-label-xs);
+  line-height: var(--font-line-height-label-xs);
+  letter-spacing: var(--font-tracking-label-xs);
+}
+@utility type-label-s {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-label-s);
+  line-height: var(--font-line-height-label-s);
+  letter-spacing: var(--font-tracking-label-s);
+}
+@utility type-title-s {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-title-s);
+  line-height: var(--font-line-height-title-s);
+  letter-spacing: var(--font-tracking-display);
+}
+@utility type-button-m {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-button-m);
+  line-height: var(--font-line-height-button-m);
+  letter-spacing: var(--font-tracking-display);
+}
+@utility type-title-m {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-title-m);
+  line-height: var(--font-line-height-title-m);
+  letter-spacing: var(--font-tracking-display);
+}
+@utility type-button-l {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-button-l);
+  line-height: var(--font-line-height-button-l);
+  letter-spacing: var(--font-tracking-display);
+}
+@utility type-title-l {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-title-l);
+  line-height: var(--font-line-height-title-l);
+  letter-spacing: var(--font-tracking-display);
+}
+@utility type-display-xl {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-display-xl);
+  line-height: var(--font-line-height-display-xl);
+  letter-spacing: var(--font-tracking-display-xl);
+}
+@utility type-number-xs {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-xs);
+  line-height: var(--font-line-height-number-xs);
+  font-variant-numeric: tabular-nums;
+}
+@utility type-number-s {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-s);
+  line-height: var(--font-line-height-number-s);
+  font-variant-numeric: tabular-nums;
+}
+@utility type-number-m {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-m);
+  line-height: var(--font-line-height-number-m);
+  font-variant-numeric: tabular-nums;
+}
+@utility type-number-l {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-l);
+  line-height: var(--font-line-height-number-l);
+  font-variant-numeric: tabular-nums;
+}
+@utility type-number-xl {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-xl);
+  line-height: var(--font-line-height-number-xl);
+  font-variant-numeric: tabular-nums;
+}
+@utility type-number-hero {
+  font-family: var(--font-family-number);
+  font-size: var(--font-size-number-hero);
+  line-height: var(--font-line-height-number-hero);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Effects ─────────────────────────────────────────────────────────────
+ * The Fantasy/* effect styles are not used by any current component.
+ * These are the effects actually applied on UI Kit text (CTA, Counter/Win,
+ * Dock) plus the "Overlay/Backdrop blur" style. */
+:root {
+  --fx-text-shadow: 0 2px 3px rgb(0 0 0 / 0.85);
+  --fx-text-shadow-hard: 0 2px 0 rgb(0 0 0 / 0.85);
+  --fx-glow-teal: 0 0 10px rgb(63 224 208 / 0.55);
+  --fx-glow-teal-soft: 0 0 10px rgb(63 224 208 / 0.45);
+  --fx-glow-amber: 0 0 12px rgb(242 179 61 / 0.45);
+  --fx-glow-amber-strong: 0 0 10px rgb(242 179 61 / 0.55);
+  --fx-backdrop-blur: blur(8px);
+}
+
+@utility fx-text-shadow {
+  text-shadow: var(--fx-text-shadow);
+}
+/* CTA label / amount: hard shadow + teal glow (FIGHT) */
+@utility fx-glow-teal {
+  text-shadow: var(--fx-text-shadow-hard), var(--fx-glow-teal);
+}
+/* CTA label / amount: hard shadow + amber glow (TAKE) */
+@utility fx-glow-amber {
+  text-shadow: var(--fx-text-shadow-hard), var(--fx-glow-amber-strong);
+}
+/* Counter/Win value: amber glow + soft shadow */
+@utility fx-glow-win {
+  text-shadow: var(--fx-glow-amber), var(--fx-text-shadow);
+}
+@utility fx-backdrop-blur {
+  backdrop-filter: var(--fx-backdrop-blur);
+}
+
+/* ── Debug-only colors (layout guides overlay, key "G") ────────────────── */
+:root {
+  --debug-safe: #ffffff;
+  --debug-hud: #38bdf8;
+  --debug-counter: #facc15;
+  --debug-battlefield: #4ade80;
+  --debug-multiplier: #f472b6;
+  --debug-dock: #fb923c;
+  --debug-ground: #a3e635;
+  --debug-hero: #22d3ee;
+  --debug-enemy: #f87171;
+}
