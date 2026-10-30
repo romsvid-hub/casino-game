@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { assets } from '../assets.js'
+import KitComponents from './KitComponents.jsx'
 
 // Token names only: values are read from tokens.css at runtime so hex never lives outside it.
 const COLOR_GROUPS = [
@@ -7,6 +8,7 @@ const COLOR_GROUPS = [
   { title: 'color/neutral', tokens: ['neutral-ink', 'neutral-char', 'neutral-iron'] },
   { title: 'color/text', tokens: ['text-parchment', 'text-muted', 'text-disabled'] },
   { title: 'app', tokens: ['stage-letterbox'] },
+  { title: 'component (raw in Figma)', tokens: ['cta-fight-top', 'cta-take-top', 'cta-disabled', 'label-border', 'shade-20', 'shade-30'] },
 ]
 
 // Every UI/* text style from Figma, mapped to its utility class in tokens.css.
@@ -57,7 +59,16 @@ function Swatch({ token }) {
   )
 }
 
-const IMAGE_GROUPS = Object.entries(assets).filter(([group]) => group !== 'lottie')
+// Flattens nested groups (e.g. vectors.arrowUp.hover) into { name: asset }.
+function flatten(obj, prefix = '') {
+  return Object.entries(obj).flatMap(([k, v]) =>
+    v && typeof v === 'object' && !('src' in v) ? flatten(v, `${prefix}${k}.`) : [[`${prefix}${k}`, v]],
+  )
+}
+
+const IMAGE_GROUPS = Object.entries(assets)
+  .filter(([group]) => group !== 'lottie')
+  .map(([group, items]) => [group, Object.fromEntries(flatten(items))])
 
 // Checkerboard behind each image so transparent edges are visible.
 const CHECKER = {
@@ -104,7 +115,7 @@ function Section({ title, children }) {
 export default function KitPage() {
   return (
     <div className="h-full overflow-y-auto bg-neutral-ink">
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-12 px-10 py-12">
+      <div className="mx-auto flex max-w-[1880px] flex-col gap-12 px-10 py-12">
         <header className="flex items-baseline justify-between">
           <h1 className="type-title-l text-text-parchment">UI Kit · tokens</h1>
           <a href="#/" className="type-label-s text-accent-teal hover:underline">
@@ -149,6 +160,10 @@ export default function KitPage() {
               </div>
             ))}
           </div>
+        </Section>
+
+        <Section title="Components">
+          <KitComponents />
         </Section>
 
         <Section title="Assets">

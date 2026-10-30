@@ -1,0 +1,337 @@
+/*
+ * UI Kit component styles (Level 5). Values come from tokens.css; state rules
+ * work for real pointer / keyboard interaction and for forced states on /kit
+ * (data-state="hover|pressed|disabled|highlight" + data-forced).
+ */
+
+/* ── CTA (CTA / Fight 347:4215, CTA / Take 347:4245, Play = Fight Highlight) ── */
+.cta {
+  --cta-color: var(--color-accent-teal);
+  --cta-top: var(--color-cta-fight-top);
+  --cta-glow: var(--fx-cta-glow-teal);
+  --cta-skin: var(--cta-skin-default);
+  position: relative;
+  width: 308px;
+  height: 120px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+.cta--take {
+  --cta-color: var(--color-accent-amber);
+  --cta-top: var(--color-cta-take-top);
+  --cta-glow: var(--fx-cta-glow-amber);
+}
+.cta:disabled {
+  cursor: default;
+}
+
+/* 3-slice plate: one 616x240 image, left 140 / stretch / right 40 (stage px).
+   .cta__halo is a copy of the plate behind it that carries the Highlight glow. */
+.cta__plate,
+.cta__halo {
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 0 40px 0 140px;
+  border-image-source: var(--cta-skin);
+  border-image-slice: 0 80 0 280 fill;
+  border-image-width: 0 40px 0 140px;
+  border-image-repeat: stretch;
+  transition: filter 140ms ease-out;
+}
+/* Pressed: plate -20% + inner shadow, masked to the plate shape. */
+.cta__shade {
+  position: absolute;
+  inset: 0;
+  background: var(--color-shade-20);
+  box-shadow: var(--fx-cta-pressed);
+  mask: var(--cta-skin) center / 100% 100% no-repeat;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  pointer-events: none;
+}
+.cta__content {
+  position: absolute;
+  top: 10px;
+  left: 121px;
+  right: 41px;
+  height: 102px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 120ms ease-out;
+}
+.cta__label {
+  height: 32px;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(to bottom, var(--cta-top) 0%, var(--cta-color) 55%, var(--cta-color) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* text-shadow would paint over clipped text, so the label uses drop-shadow. */
+  filter: drop-shadow(var(--fx-text-shadow-hard)) drop-shadow(0 0 10px color-mix(in srgb, var(--cta-color) 55%, transparent));
+}
+.cta__amount {
+  color: var(--cta-color);
+  white-space: nowrap;
+  text-shadow: var(--fx-text-shadow-hard), 0 0 10px color-mix(in srgb, var(--cta-color) 45%, transparent);
+}
+
+/* Hover (real or forced): Fight swaps to the hover skin; Take has one skin. */
+.cta:not([data-forced]):hover:not(:disabled),
+.cta[data-state='hover'],
+.cta[data-state='highlight'] {
+  --cta-skin: var(--cta-skin-hover);
+}
+.cta--take:not([data-forced]):hover:not(:disabled) .cta__plate,
+.cta--take[data-state='hover'] .cta__plate {
+  filter: brightness(1.08);
+}
+
+/* Pressed */
+.cta:not([data-forced]):active:not(:disabled) .cta__shade,
+.cta[data-state='pressed'] .cta__shade {
+  opacity: 1;
+}
+.cta:not([data-forced]):active:not(:disabled) .cta__content,
+.cta[data-state='pressed'] .cta__content {
+  transform: translateY(2px);
+}
+
+/* Disabled: Fight has its own skin; Take is desaturated (Figma image filter). */
+.cta:disabled,
+.cta[data-state='disabled'] {
+  --cta-skin: var(--cta-skin-disabled);
+}
+.cta--take:disabled .cta__plate,
+.cta--take[data-state='disabled'] .cta__plate {
+  filter: grayscale(1) brightness(0.9) contrast(0.9);
+}
+.cta:disabled .cta__label,
+.cta[data-state='disabled'] .cta__label {
+  background: none;
+  color: var(--color-cta-disabled);
+  filter: none;
+}
+.cta:disabled .cta__amount,
+.cta[data-state='disabled'] .cta__amount {
+  color: var(--color-cta-disabled);
+  text-shadow: none;
+}
+
+/* Highlight: glow pulse 1.2 s loop (Figma note 347:4216). */
+.cta__halo {
+  opacity: 0;
+  filter: drop-shadow(var(--cta-glow));
+}
+.cta[data-state='highlight'] .cta__halo,
+.cta[data-highlight]:not(:disabled) .cta__halo {
+  opacity: 1;
+  animation: cta-pulse 1.2s ease-in-out infinite;
+}
+@keyframes cta-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta[data-state='highlight'] .cta__halo,
+  .cta[data-highlight]:not(:disabled) .cta__halo {
+    animation: none;
+  }
+}
+
+.cta:focus-visible .cta__plate {
+  filter: drop-shadow(0 0 0 var(--cta-color)) drop-shadow(0 0 4px var(--cta-color));
+}
+
+/* ── Focus ring shared by small controls ──────────────────────────────── */
+.ui-focus:focus-visible {
+  outline: 2px solid var(--color-accent-teal);
+  outline-offset: 2px;
+}
+
+/* ── Stepper/Arrow 536:1900 (hit area 32x24, SVG per state) ─────────────── */
+.stepper-arrow {
+  display: block;
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: var(--arrow-default) center / 32px 24px no-repeat;
+  cursor: pointer;
+}
+.stepper-arrow:not([data-forced]):hover:not(:disabled),
+.stepper-arrow[data-state='hover'] {
+  background-image: var(--arrow-hover);
+  background-size: 32px 24.75px;
+}
+.stepper-arrow:not([data-forced]):active:not(:disabled),
+.stepper-arrow[data-state='pressed'] {
+  background-image: var(--arrow-pressed);
+}
+.stepper-arrow:disabled,
+.stepper-arrow[data-state='disabled'] {
+  background-image: var(--arrow-disabled);
+  cursor: default;
+}
+
+/* ── Dock tile background for chips / segments (Figma crop of dock_tile) ── */
+.tile-bg {
+  position: relative;
+  background-image: linear-gradient(var(--color-shade-30), var(--color-shade-30)), var(--tile);
+  background-size:
+    100% 100%,
+    100% 238.1%;
+  background-position:
+    0 0,
+    0 65.5%;
+  background-repeat: no-repeat;
+}
+
+/* ── Chip/Bet · S 585:4702 ──────────────────────────────────────────────── */
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 26px;
+  padding: 0;
+  border: 1.5px solid var(--color-neutral-iron);
+  border-radius: 5px;
+  font-family: var(--font-family-number);
+  font-size: 15px;
+  line-height: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-parchment);
+  text-shadow: var(--fx-text-shadow-soft);
+  cursor: pointer;
+  transition:
+    border-color 120ms,
+    filter 120ms;
+}
+.chip:not([data-forced]):hover:not(:disabled):not([aria-pressed='true']) {
+  border-color: var(--color-text-muted);
+}
+.chip[aria-pressed='true'] {
+  border: 2px solid var(--color-accent-amber);
+  color: var(--color-accent-amber);
+  filter: drop-shadow(var(--fx-select-amber));
+}
+.chip:disabled {
+  color: var(--color-text-disabled);
+  cursor: default;
+}
+
+/* ── Segment/Difficulty 585:4757 ────────────────────────────────────────── */
+.segment {
+  --level-color: var(--color-accent-teal);
+  --level-glow: var(--fx-select-teal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 86px;
+  height: 44px;
+  padding: 0;
+  border: 1.5px solid var(--color-neutral-iron);
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    border-color 120ms,
+    filter 120ms;
+}
+.segment--medium {
+  --level-color: var(--color-accent-amber);
+  --level-glow: var(--fx-select-amber);
+}
+.segment--high {
+  --level-color: var(--color-accent-blood);
+  --level-glow: var(--fx-select-blood);
+}
+.segment__label {
+  font-family: var(--font-family-display);
+  font-size: 11px;
+  line-height: normal;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-shadow: var(--fx-text-shadow-soft);
+}
+.segment:not([data-forced]):hover:not(:disabled):not([aria-pressed='true']) {
+  border-color: var(--color-text-muted);
+}
+.segment[aria-pressed='true'] {
+  border: 2px solid var(--level-color);
+  filter: drop-shadow(var(--level-glow));
+}
+.segment[aria-pressed='true'] .segment__label {
+  color: var(--level-color);
+}
+.segment:disabled {
+  cursor: default;
+}
+.segment:disabled .segment__label {
+  color: var(--color-text-disabled);
+}
+
+/* ── Badge/Mode 585:4776 ────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1.5px solid var(--color-neutral-iron);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-neutral-ink) 90%, transparent);
+  font-family: var(--font-family-display);
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: 0.08em;
+  text-shadow: var(--fx-text-shadow-soft);
+}
+
+/* ── CTA / Skip 466:2071 ────────────────────────────────────────────────── */
+.skip {
+  position: relative;
+  width: 91px;
+  height: 120.8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.skip__glow,
+.skip__rim,
+.skip__icon--hover {
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+.skip:not([data-forced]):hover .skip__glow,
+.skip:not([data-forced]):hover .skip__rim,
+.skip:not([data-forced]):hover .skip__icon--hover,
+.skip[data-state='hover'] .skip__glow,
+.skip[data-state='hover'] .skip__rim,
+.skip[data-state='hover'] .skip__icon--hover,
+.skip:focus-visible .skip__glow,
+.skip:focus-visible .skip__rim {
+  opacity: 1;
+}
+.skip:not([data-forced]):hover .skip__icon--default,
+.skip[data-state='hover'] .skip__icon--default {
+  opacity: 0;
+}
+.skip:not([data-forced]):active .skip__medallion {
+  transform: translateY(1px);
+}

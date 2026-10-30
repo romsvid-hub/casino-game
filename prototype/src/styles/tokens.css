@@ -27,6 +27,14 @@
   /* App-level (not in Figma): letterbox around the 1920x1080 stage. */
   --color-stage-letterbox: #050506;
 
+  /* Component-level colors that are raw values in Figma (no variable). */
+  --color-cta-fight-top: #b6fff7; /* CTA / Fight label gradient start */
+  --color-cta-take-top: #ffdc8f; /* CTA / Take label gradient start */
+  --color-cta-disabled: rgb(154 154 154 / 0.5); /* CTA disabled label + amount */
+  --color-label-border: #3b3733; /* CTA / Skip label plate stroke */
+  --color-shade-20: rgb(0 0 0 / 0.2); /* CTA Pressed plate -20% */
+  --color-shade-30: rgb(0 0 0 / 0.3); /* chip / segment tile darkening */
+
   --color-transparent: transparent;
   --color-black: #000;
   --color-white: #fff;
@@ -211,6 +219,19 @@
   --fx-glow-amber: 0 0 12px rgb(242 179 61 / 0.45);
   --fx-glow-amber-strong: 0 0 10px rgb(242 179 61 / 0.55);
   --fx-backdrop-blur: blur(8px);
+
+  /* Component effects (raw in Figma) */
+  --fx-text-shadow-soft: 0 2px 4px rgb(0 0 0 / 0.85); /* chips, segments, badge, plate */
+  --fx-text-shadow-label: 0 1px 3px rgb(0 0 0 / 0.8); /* Skip label */
+  --fx-cta-glow-teal: 0 0 14px rgb(63 224 208 / 0.7); /* CTA Highlight (Figma r28) */
+  --fx-cta-glow-amber: 0 0 14px rgb(242 179 61 / 0.7);
+  --fx-cta-pressed: inset 0 3px 10px rgb(0 0 0 / 0.55); /* CTA Pressed inner shadow */
+  --fx-select-teal: 0 0 5px rgb(63 224 208 / 0.55); /* selected chip / segment */
+  --fx-select-amber: 0 0 5px rgb(242 179 61 / 0.55);
+  --fx-select-blood: 0 0 5px rgb(196 32 42 / 0.55);
+  --fx-plate-shadow: 0 4px 5px rgb(0 0 0 / 0.6); /* Plate/Multiplier */
+  --fx-medallion-shadow: 0 3.9px 7.8px rgb(0 0 0 / 0.55); /* Skip medallion */
+  --fx-focus-ring: 0 0 0 2px var(--color-accent-teal);
 }
 
 @utility fx-text-shadow {
