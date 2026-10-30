@@ -14,7 +14,7 @@ export default function Skin3Slice({ left, center, right, height, width, classNa
   }
 
   return (
-    <div className={`relative flex items-start ${className}`} style={{ height, width }}>
+    <div className={`relative isolate flex items-start ${className}`} style={{ height, width }}>
       <div className="relative z-[3] shrink-0">{left}</div>
       <div className="relative z-[2] h-full min-w-0 flex-1" style={centerStyle} />
       <div className="relative z-[1] shrink-0">{right}</div>
