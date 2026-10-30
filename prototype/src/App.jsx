@@ -8,7 +8,7 @@ import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
 import Dock from './ui/dock/Dock.jsx'
-import { useBeatTimer } from './scene/useBeatTimer.js'
+import ResultsLayer, { useResultStage } from './ui/results/ResultsLayer.jsx'
 
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash)
@@ -33,7 +33,9 @@ function Game() {
   const [autoBeats, setAutoBeats] = useState(true)
   const scene = useDirector(state, actions, derived, { enabled: autoBeats })
   const shaking = useBossShake(state, scene)
-  useBeatTimer(state, actions, autoBeats)
+  const resultStage = useResultStage(state.phase)
+  // The HUD balance takes the payout only when the payout popup appears.
+  const hudState = resultStage === 'modal' ? state : { ...state, balance: derived.balanceBeforePayout }
 
   return (
     <>
@@ -42,13 +44,14 @@ function Game() {
         <div className={`absolute inset-0 ${shaking ? 'stage-shake' : ''}`}>
           <Scene scene={scene} />
           <Hud
-            state={state}
+            state={hudState}
             derived={derived}
             // Rules and Menu modals arrive in Level 10.
             onRules={() => console.log('openRules')}
             onMenu={() => console.log('openMenu')}
           />
           <Dock state={state} actions={actions} derived={derived} className="top-[888px] left-[210px]" />
+          <ResultsLayer state={state} actions={actions} stage={resultStage} />
         </div>
         <GuidesOverlay />
       </Stage>
