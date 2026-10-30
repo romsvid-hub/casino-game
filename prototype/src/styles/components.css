@@ -379,3 +379,16 @@
     opacity: 1;
   }
 }
+
+/* ── Dock variant crossfade (Setup ↔ round, 150 ms) ─────────────────────── */
+.dock-fade {
+  animation: dock-fade 150ms ease-out both;
+}
+@keyframes dock-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
