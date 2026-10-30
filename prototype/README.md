@@ -18,3 +18,5 @@ npm run build    # production build into dist/
 - `src/game` — game state and all money math.
 - `src/ui`, `src/scene`, `src/screens`, `src/styles` — UI, Lottie scene, screens, tokens.
 - `public/assets`, `public/lottie` — raster skins and Lottie files.
+- `D` — show / hide the debug panel.
+- `Space` / `Enter` — FIGHT (PLAY on the setup screen), `T` — TAKE, `S` — SKIP animation.
