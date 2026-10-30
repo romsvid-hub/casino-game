@@ -3,10 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 const easeOut = (t) => 1 - (1 - t) ** 3
 
 // Animates a displayed number towards `value` (ease-out). The first render
-// shows the value directly; later changes count from the previous value.
-export function useCountUp(value, duration = 400) {
-  const [shown, setShown] = useState(value)
-  const fromRef = useRef(value)
+// shows `from` (default: the value itself, i.e. no animation on mount);
+// later changes count from the previous value.
+export function useCountUp(value, duration = 400, from = value) {
+  const [shown, setShown] = useState(from)
+  const fromRef = useRef(from)
 
   useEffect(() => {
     const from = fromRef.current

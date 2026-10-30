@@ -39,6 +39,11 @@ export default function LottieLayer({
   autoplay = true,
   segment,
   marker,
+  // [introMarker, loopMarker]: play the first marker once, then loop the second
+  // (popup_maxwin: intro 0–18, loop 18–90).
+  markerSequence,
+  // Keep only layers whose name passes this test (e.g. drop a baked panel).
+  keepLayer,
   onComplete,
   onReady,
   className = 'absolute inset-0',
@@ -50,6 +55,9 @@ export default function LottieLayer({
   onReadyRef.current = onReady
 
   const segmentKey = segment ? segment.join(':') : ''
+  const sequenceKey = markerSequence ? markerSequence.join(':') : ''
+  const keepLayerRef = useRef(keepLayer)
+  keepLayerRef.current = keepLayer
 
   useEffect(() => {
     let anim = null
@@ -58,16 +66,27 @@ export default function LottieLayer({
     preloadLottie(src)
       .then((data) => {
         if (cancelled || !containerRef.current) return
-        const frames = resolveSegment(data, segment, marker)
+        const [introMarker, loopMarker] = markerSequence ?? []
+        const frames = resolveSegment(data, segment, introMarker ?? marker)
+        const loopFrames = loopMarker ? resolveSegment(data, null, loopMarker) : null
+        // lottie-web mutates animationData, so each instance gets its own copy.
+        const animationData = structuredClone(data)
+        if (keepLayerRef.current) animationData.layers = animationData.layers.filter((l) => keepLayerRef.current(l.nm ?? ''))
         anim = lottie.loadAnimation({
           container: containerRef.current,
           renderer: 'svg',
-          loop,
+          loop: loopFrames ? false : loop,
           autoplay: autoplay && !frames,
-          // lottie-web mutates animationData, so each instance gets its own copy.
-          animationData: structuredClone(data),
+          animationData,
           rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
         })
+        if (loopFrames) {
+          anim.addEventListener('complete', () => {
+            if (anim.loop) return
+            anim.loop = true
+            anim.playSegments(loopFrames, true)
+          })
+        }
         anim.addEventListener('complete', () => onCompleteRef.current?.())
         // First frame is in the DOM: safe to fade this layer in.
         anim.addEventListener('DOMLoaded', () => onReadyRef.current?.())
@@ -82,7 +101,7 @@ export default function LottieLayer({
       anim?.destroy()
     }
     // segment is compared by value through segmentKey
-  }, [src, loop, autoplay, segmentKey, marker])
+  }, [src, loop, autoplay, segmentKey, marker, sequenceKey])
 
   return <div ref={containerRef} className={`pointer-events-none ${className}`} />
 }

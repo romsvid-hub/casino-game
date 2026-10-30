@@ -90,7 +90,14 @@ function resolveFight(state) {
       passed,
       outcome: null,
       balance: addMoney(state.balance, win),
-      lastResult: { type: 'maxWin', amount: win, from: gates[passed - 1], to: null },
+      // amount = total payout (MAX WIN popup); delta = growth shown on the victory banner.
+      lastResult: {
+        type: 'maxWin',
+        amount: win,
+        delta: subtractMoney(win, before),
+        from: state.passed > 0 ? gates[state.passed - 1] : null,
+        to: gates[passed - 1],
+      },
     }
   }
 
@@ -159,7 +166,7 @@ export function gameReducer(state, event) {
           ...state,
           phase: STATES.CASHED_OUT,
           balance: addMoney(state.balance, amount),
-          lastResult: { type: 'cashedOut', amount, from: gatesOf(state)[state.passed - 1], to: null },
+          lastResult: { type: 'cashedOut', amount, from: null, to: gatesOf(state)[state.passed - 1] },
         }
       }
       return state
@@ -219,6 +226,12 @@ export function selectDerived(state) {
     canSkip: [STATES.ENTERING, STATES.FIGHTING, STATES.RESOLVING, STATES.WIN_BANNER].includes(phase),
     winChance: config.difficulties[state.difficulty].winChance,
     maxBet: maxAllowedBet(state),
+    // Balance before the round's payout was added: the HUD shows it until the
+    // payout popup appears (L9: "balance updates when the payout is shown").
+    balanceBeforePayout:
+      (phase === STATES.CASHED_OUT || phase === STATES.MAX_WIN) && state.lastResult
+        ? subtractMoney(state.balance, state.lastResult.amount)
+        : state.balance,
     ...betControls(state),
   }
 }

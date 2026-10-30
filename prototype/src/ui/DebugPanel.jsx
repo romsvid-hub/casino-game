@@ -85,7 +85,7 @@ export default function DebugPanel({ state, actions, derived, autoBeats, onAutoB
       </div>
       <label className="flex items-center gap-2 text-text-muted">
         <input type="checkbox" checked={autoBeats} onChange={(e) => onAutoBeats(e.target.checked)} />
-        auto beats (director timing + temporary round-end return until L9)
+        auto beats (animation director timing)
       </label>
     </div>
   )
