@@ -21,6 +21,30 @@ export default function Hud({ state, derived, onRules, onMenu }) {
     <div className="pointer-events-none absolute inset-0">
       <HudBalance balance={state.balance} className="pointer-events-auto absolute top-[24px] left-[40px]" />
 
+      {/* Setup screen 587:5125: logo, subtitle and responsible-gaming footer. */}
+      {inSetup && (
+        <>
+          <p
+            className="type-display-xl absolute top-[150px] left-[60px] m-0 w-[840px] text-center text-accent-amber"
+            style={{ textShadow: 'var(--fx-text-shadow-soft), var(--fx-logo-glow)' }}
+          >
+            BATTLE OF MULTIPLIERS
+          </p>
+          <p
+            className="type-number-s absolute top-[310px] left-[60px] m-0 w-[840px] text-center text-text-muted"
+            style={{ textShadow: 'var(--fx-text-shadow-soft)' }}
+          >
+            A cash-out battle in the Slavic forest
+          </p>
+          <p
+            className="type-label-xs absolute top-[1058px] left-[560px] m-0 w-[800px] text-center whitespace-pre text-text-muted"
+            style={{ textShadow: 'var(--fx-text-shadow-soft)' }}
+          >
+            {'18+  ·  Play responsibly  ·  Demo balance'}
+          </p>
+        </>
+      )}
+
       {/* Medallions appear only on the setup screen in Figma; Sound is omitted (no audio). */}
       {inSetup && (
         <>
