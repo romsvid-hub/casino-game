@@ -392,3 +392,32 @@
     opacity: 1;
   }
 }
+
+/* ── Boss landing shake: ±6 px, 0.35 s (docs/lottie.md) ─────────────────── */
+.stage-shake {
+  animation: stage-shake 350ms linear both;
+}
+@keyframes stage-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(-6px, 4px);
+  }
+  30% {
+    transform: translate(6px, -3px);
+  }
+  45% {
+    transform: translate(-5px, -4px);
+  }
+  60% {
+    transform: translate(5px, 3px);
+  }
+  75% {
+    transform: translate(-3px, 2px);
+  }
+  90% {
+    transform: translate(2px, -1px);
+  }
+}
