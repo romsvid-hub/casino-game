@@ -6,6 +6,7 @@ import KitPage from './screens/KitPage.jsx'
 import { assets } from './assets.js'
 import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
+import Hud from './ui/hud/Hud.jsx'
 
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash)
@@ -32,6 +33,13 @@ function Game() {
     <>
       <Stage>
         <LottieLayer src={assets.lottie.bgScene.src} loop />
+        <Hud
+          state={state}
+          derived={derived}
+          // Rules and Menu modals arrive in Level 10.
+          onRules={() => console.log('openRules')}
+          onMenu={() => console.log('openMenu')}
+        />
         <GuidesOverlay />
       </Stage>
       <DebugPanel state={state} actions={actions} derived={derived} />
