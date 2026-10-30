@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Env
+.env*
+!.env.example
+
+# Vercel
+.vercel
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
