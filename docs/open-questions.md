@@ -7,3 +7,4 @@
 - [ ] Ставки: мінімум, максимум, номінали фішок, стартовий демо-баланс.
 - [ ] Текст правил (зараз чернетка зі старого прототипу).
 - [ ] Після v0.1: звуки, мобільний ландшафт, звичайні вовки і другий бос — чи потрібні для наступного показу?
+- [ ] Number font: the CTA / Fight and Counter/Win component descriptions say "Spectral SemiBold, tabular figures", but every number in the design is set in Kurale (which has no tabular figures). Which one is final?
