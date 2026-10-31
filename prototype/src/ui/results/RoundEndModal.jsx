@@ -99,7 +99,7 @@ export default function RoundEndModal({ type, amount, formatAmount, note, betLab
         <p className={`type-title-l absolute top-[111px] left-[500px] m-0 w-[600px] -translate-x-1/2 text-center ${v.titleColor}`} style={{ textShadow: 'var(--fx-popup-text)' }}>
           {v.title}
         </p>
-        <p className={`type-number-hero absolute top-[196px] left-[500px] m-0 w-[600px] -translate-x-1/2 text-center ${v.amountColor}`} style={{ textShadow: 'var(--fx-popup-text)' }}>
+        <p data-qa="popup-amount" className={`type-number-hero absolute top-[196px] left-[500px] m-0 w-[600px] -translate-x-1/2 text-center ${v.amountColor}`} style={{ textShadow: 'var(--fx-popup-text)' }}>
           {/* Fixed digit cells only while counting (MAX WIN); static amounts keep Kurale's natural spacing. */}
           {type === 'maxWin' ? <Digits text={formatAmount(shown)} /> : formatAmount(shown)}
         </p>

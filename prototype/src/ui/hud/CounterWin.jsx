@@ -33,7 +33,7 @@ export default function CounterWin({ win, potentialWin, className = '', style })
         className="type-number-xl absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-accent-amber"
         style={{ top: 69, textShadow: 'var(--fx-glow-amber), var(--fx-text-shadow)' }}
       >
-        <Digits text={formatMoney(shownWin)} />
+        <Digits text={formatMoney(shownWin)} data-qa="counter-win" />
       </span>
       {potentialWin != null && (
         <div

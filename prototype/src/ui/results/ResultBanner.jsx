@@ -67,7 +67,7 @@ export default function ResultBanner({ type = 'victory', amount, formatAmount, n
           textShadow: victory ? 'var(--fx-banner-amount-glow), var(--fx-text-shadow)' : 'var(--fx-text-shadow)',
         }}
       >
-        <Digits text={formatAmount(shown)} />
+        <Digits text={formatAmount(shown)} data-qa="banner-amount" />
       </span>
       <span
         className={`type-number-m absolute right-[101px] text-right whitespace-nowrap ${victory ? 'text-accent-amber' : 'text-text-muted'}`}
