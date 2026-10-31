@@ -27,18 +27,27 @@ export const EVENTS = {
   SKIP: 'SKIP',
   NEW_ROUND: 'NEW_ROUND',
   MENU: 'MENU',
+  RESET_BALANCE: 'RESET_BALANCE', // demo only: back to config.startingBalance (SETUP)
   // Debug only
   FORCE_NEXT: 'FORCE_NEXT',
 }
 
 const ROUND_END = [STATES.DEFEAT, STATES.CASHED_OUT, STATES.MAX_WIN]
 
-export function createInitialState(seed = initialSeed()) {
+// ?difficulty=easy|medium|high preselects the difficulty (used by demo links,
+// docs/demo-seeds.md); anything else falls back to the default.
+function initialDifficulty() {
+  if (typeof window === 'undefined') return config.defaultDifficulty
+  const value = new URLSearchParams(window.location.search).get('difficulty')
+  return config.difficulties[value] ? value : config.defaultDifficulty
+}
+
+export function createInitialState(seed = initialSeed(), difficulty = initialDifficulty()) {
   return {
     phase: STATES.SETUP,
     balance: config.startingBalance,
     bet: config.defaultBet,
-    difficulty: config.defaultDifficulty,
+    difficulty,
     passed: 0, // gates won this round
     outcome: null, // 'win' | 'lose' of the fight in progress
     lastResult: null, // { type, amount, from, to } of the last beat, for result UI
@@ -127,6 +136,9 @@ export function gameReducer(state, event) {
       }
       if (type === EVENTS.SET_DIFFICULTY && config.difficulties[event.value]) {
         return { ...state, difficulty: event.value }
+      }
+      if (type === EVENTS.RESET_BALANCE) {
+        return { ...state, balance: config.startingBalance, insufficientBalance: false }
       }
       if (type === EVENTS.PLAY) {
         if (state.balance < state.bet) return { ...state, insufficientBalance: true }
@@ -223,6 +235,9 @@ export function selectDerived(state) {
     canTake: phase === STATES.DECISION && passed > 0,
     canFight: phase === STATES.DECISION,
     canPlay: phase === STATES.SETUP && state.balance >= bet,
+    // Below the minimum bet no bet is possible: show the low-balance notice (555:5220).
+    belowMinBet: state.balance < config.minBet,
+    minBet: config.minBet,
     canSkip: [STATES.ENTERING, STATES.FIGHTING, STATES.RESOLVING, STATES.WIN_BANNER].includes(phase),
     winChance: config.difficulties[state.difficulty].winChance,
     maxBet: maxAllowedBet(state),
