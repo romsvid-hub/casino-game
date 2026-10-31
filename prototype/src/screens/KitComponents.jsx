@@ -197,18 +197,6 @@ export default function KitComponents() {
           h={64}
           items={[{ x: 0, y: 0, el: <MultiplierPlate multiplier={3.9} /> }]}
         />
-        {/* L12: the plate art (554:4221) is hidden in the Figma component; the game shows it.
-            Boss level uses the wide "MAX WIN" variant (no Figma frame, our proposal). */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-baseline gap-3">
-            <h3 className="type-title-s m-0 text-text-parchment">Plate / Multiplier · in game (L12)</h3>
-            <code className="font-mono text-[12px] text-text-muted">554:4221 skin · boss MAX WIN</code>
-          </div>
-          <div className="flex flex-wrap items-center gap-10 bg-neutral-char p-[24px]">
-            <MultiplierPlate multiplier={1.6} />
-            <MultiplierPlate multiplier={19} final />
-          </div>
-        </div>
       </div>
       <Compare title="Skin / Side" node="540:2099" refName="skin-side" w={504} h={424} items={sideItems} />
       <div className="flex flex-wrap gap-10">

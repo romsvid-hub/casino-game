@@ -381,26 +381,6 @@
 }
 
 /* ── Boss level signals (L12) ─────────────────────────────────────────────── */
-/* Plate "MAX WIN ×19.00": soft gold halo, pops in with one pulse. */
-.plate-final-glow {
-  background: radial-gradient(closest-side, var(--color-glow-gold), transparent);
-}
-.plate-final-in {
-  animation: plate-final-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-@keyframes plate-final-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  45% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 /* Lit Final gate on the boss level: one pulse when it lights up. */
 .gate-final-pulse {
   animation: gate-final-pulse 900ms ease-out both;
@@ -419,7 +399,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .plate-final-in,
   .gate-final-pulse {
     animation: none;
   }

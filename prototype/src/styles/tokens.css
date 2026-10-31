@@ -33,7 +33,6 @@
   --color-cta-disabled: rgb(154 154 154 / 0.5); /* CTA disabled label + amount */
   --color-label-border: #3b3733; /* CTA / Skip label plate stroke */
   --color-shade-20: rgb(0 0 0 / 0.2); /* CTA Pressed plate -20% */
-  --color-shade-25: rgb(0 0 0 / 0.25); /* Plate/Multiplier skin darkening 554:4222 */
   --color-shade-30: rgb(0 0 0 / 0.3); /* chip / segment tile darkening */
   --color-shade-60: rgb(0 0 0 / 0.6); /* Progress/Path fx/shade */
 
@@ -254,7 +253,6 @@
   --fx-gate-text: 0 1px 2px rgb(0 0 0 / 0.8); /* Path/Gate multiplier */
   --fx-ellipsis-text: 0 2px 4px rgb(0 0 0 / 0.8); /* Progress/Path 7+ "…" */
   --fx-logo-glow: 0 0 24px rgb(242 178 61 / 0.35); /* setup logo 587:5179 */
-  --color-glow-gold: rgb(242 179 61 / 0.42); /* boss MAX WIN plate halo (L12) */
 
   /* Results effects (raw in Figma) */
   --fx-banner-title-glow: 0 0 12px rgb(242 179 61 / 0.5); /* Popup/Result VICTORY */
