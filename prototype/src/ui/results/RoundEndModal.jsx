@@ -56,9 +56,11 @@ export default function RoundEndModal({ type, amount, formatAmount, note, betLab
       <div className="popup-in absolute top-[250px] left-[460px] h-[540px] w-[1000px]">
         {type === 'defeat' ? (
           <img src={results.popupGlowDefeat.src} alt="" aria-hidden className="absolute block max-w-none" style={{ left: 30, top: -50, width: 940, height: 600 }} />
-        ) : type === 'cashedOut' ? (
+        ) : (
+          // Gold glow above the scrim (z-order scrim → glow → panel). MAX WIN uses it too
+          // so its halo reads as in 660:5112 instead of being dimmed by the scrim (L12).
           <img src={results.popupGlowGold.src} alt="" aria-hidden className="absolute block max-w-none mix-blend-screen" style={{ left: -40, top: -100, width: 1080, height: 700 }} />
-        ) : null}
+        )}
 
         {type === 'cashedOut' && (
           <div className="absolute top-0 left-[100px] h-[540px] w-[800px]" aria-hidden>
