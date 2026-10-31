@@ -1,0 +1,273 @@
+{
+  "generated": "2026-10-31T09:28:46.463Z",
+  "checks": [
+    {
+      "name": "L0: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "0.00 vs 0.00"
+    },
+    {
+      "name": "L0: AT RISK = game value",
+      "ok": true,
+      "detail": "0.00 vs 0"
+    },
+    {
+      "name": "L0: TAKE disabled before the first win",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L0: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 6.00 vs 6.00"
+    },
+    {
+      "name": "L0: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "0.00"
+    },
+    {
+      "name": "L0: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "6.00"
+    },
+    {
+      "name": "L0: WIN has 2 decimals",
+      "ok": true,
+      "detail": "0.00"
+    },
+    {
+      "name": "Balance after PLAY = start − bet",
+      "ok": true,
+      "detail": "35.00"
+    },
+    {
+      "name": "L1: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "6.00 vs 6.00"
+    },
+    {
+      "name": "L1: AT RISK = game value",
+      "ok": true,
+      "detail": "6.00 vs 6"
+    },
+    {
+      "name": "L1: TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "6.00 vs 6.00"
+    },
+    {
+      "name": "L1: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 8.00 vs 8.00"
+    },
+    {
+      "name": "L1: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "6.00"
+    },
+    {
+      "name": "L1: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "8.00"
+    },
+    {
+      "name": "L1: WIN has 2 decimals",
+      "ok": true,
+      "detail": "6.00"
+    },
+    {
+      "name": "L2: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "8.00 vs 8.00"
+    },
+    {
+      "name": "L2: AT RISK = game value",
+      "ok": true,
+      "detail": "8.00 vs 8"
+    },
+    {
+      "name": "L2: TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "8.00 vs 8.00"
+    },
+    {
+      "name": "L2: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 12.00 vs 12.00"
+    },
+    {
+      "name": "L2: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "8.00"
+    },
+    {
+      "name": "L2: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "12.00"
+    },
+    {
+      "name": "L2: WIN has 2 decimals",
+      "ok": true,
+      "detail": "8.00"
+    },
+    {
+      "name": "L3: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "12.00 vs 12.00"
+    },
+    {
+      "name": "L3: AT RISK = game value",
+      "ok": true,
+      "detail": "12.00 vs 12"
+    },
+    {
+      "name": "L3: TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "12.00 vs 12.00"
+    },
+    {
+      "name": "L3: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 19.50 vs 19.50"
+    },
+    {
+      "name": "L3: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "12.00"
+    },
+    {
+      "name": "L3: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "19.50"
+    },
+    {
+      "name": "L3: WIN has 2 decimals",
+      "ok": true,
+      "detail": "12.00"
+    },
+    {
+      "name": "L4: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "19.50 vs 19.50"
+    },
+    {
+      "name": "L4: AT RISK = game value",
+      "ok": true,
+      "detail": "19.50 vs 19.5"
+    },
+    {
+      "name": "L4: TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "19.50 vs 19.50"
+    },
+    {
+      "name": "L4: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 34.00 vs 34.00"
+    },
+    {
+      "name": "L4: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "19.50"
+    },
+    {
+      "name": "L4: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "34.00"
+    },
+    {
+      "name": "L4: WIN has 2 decimals",
+      "ok": true,
+      "detail": "19.50"
+    },
+    {
+      "name": "L5: AT RISK (dock) = WIN (counter)",
+      "ok": true,
+      "detail": "34.00 vs 34.00"
+    },
+    {
+      "name": "L5: AT RISK = game value",
+      "ok": true,
+      "detail": "34.00 vs 34"
+    },
+    {
+      "name": "L5: TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "34.00 vs 34.00"
+    },
+    {
+      "name": "L5: IF WON = FIGHT amount",
+      "ok": true,
+      "detail": "up to 57.50 vs 57.50"
+    },
+    {
+      "name": "L5: AT RISK has 2 decimals",
+      "ok": true,
+      "detail": "34.00"
+    },
+    {
+      "name": "L5: IF WON has 2 decimals",
+      "ok": true,
+      "detail": "57.50"
+    },
+    {
+      "name": "L5: WIN has 2 decimals",
+      "ok": true,
+      "detail": "34.00"
+    },
+    {
+      "name": "Victory banner = AT RISK growth (19.50 − 12.00)",
+      "ok": true,
+      "detail": "+7.50"
+    },
+    {
+      "name": "Defeat popup = −bet",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Defeat: balance = before − bet",
+      "ok": true,
+      "detail": "35.00"
+    },
+    {
+      "name": "Cashed out popup = TAKE amount = AT RISK",
+      "ok": true,
+      "detail": "+12.00 / 12.00 / 12.00"
+    },
+    {
+      "name": "Cashed out: balance = before − bet + payout",
+      "ok": true,
+      "detail": "47.00"
+    },
+    {
+      "name": "MAX WIN popup = IF WON before the boss fight",
+      "ok": true,
+      "detail": "+95.00 vs 95.00"
+    },
+    {
+      "name": "MAX WIN: balance unchanged until the popup shows",
+      "ok": true,
+      "detail": "35"
+    },
+    {
+      "name": "MAX WIN: balance = before − bet + payout",
+      "ok": true,
+      "detail": "130.00"
+    },
+    {
+      "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
+      "ok": true,
+      "detail": "15 mounts, worst 19 ms (hero_05_dead.json)"
+    },
+    {
+      "name": "No page errors or console errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "info": [
+    "Headless (software GL) long tasks during the perf round: 20, max 90 ms. Not a gate; see checklist for real-GPU numbers."
+  ]
+}

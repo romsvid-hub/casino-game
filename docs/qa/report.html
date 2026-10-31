@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casino Game · QA report</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 24px; background: #111; color: #e9dcc0; font: 14px/1.4 ui-sans-serif, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; } h2 { font-size: 16px; margin: 32px 0 8px; } code { color: #a89c86; }
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  figure { margin: 0; } img, canvas { width: 100%; height: auto; display: block; background: #000; }
+  figcaption { color: #a89c86; font-size: 12px; margin-top: 4px; }
+  table { border-collapse: collapse; margin-top: 12px; } td { padding: 4px 10px; border-bottom: 1px solid #333; vertical-align: top; }
+  tr.ok td:first-child { color: #3fe0d0; } tr.bad td:first-child { color: #f05a5a; font-weight: bold; }
+</style></head><body>
+<h1>Casino Game · visual QA</h1>
+<p>Generated 2026-10-31T09:28:46.450Z by <code>prototype/scripts/visual-qa.mjs</code> · app at 1920×1080 (shown at 960×540) · Figma file LXMHPQWUYxLjZiYVTfbx5X.
+Animated frames (attacks, boss entrance) will differ slightly: judge layout, UI and numbers. Character art comes from Lottie, so poses differ from the static Figma frames.</p>
+<h2>Money and runtime checks: 53/53 passed</h2>
+<table><tr class="ok"><td>PASS</td><td>L0: AT RISK (dock) = WIN (counter)</td><td>0.00 vs 0.00</td></tr><tr class="ok"><td>PASS</td><td>L0: AT RISK = game value</td><td>0.00 vs 0</td></tr><tr class="ok"><td>PASS</td><td>L0: TAKE disabled before the first win</td><td></td></tr><tr class="ok"><td>PASS</td><td>L0: IF WON = FIGHT amount</td><td>up to 6.00 vs 6.00</td></tr><tr class="ok"><td>PASS</td><td>L0: AT RISK has 2 decimals</td><td>0.00</td></tr><tr class="ok"><td>PASS</td><td>L0: IF WON has 2 decimals</td><td>6.00</td></tr><tr class="ok"><td>PASS</td><td>L0: WIN has 2 decimals</td><td>0.00</td></tr><tr class="ok"><td>PASS</td><td>Balance after PLAY = start − bet</td><td>35.00</td></tr><tr class="ok"><td>PASS</td><td>L1: AT RISK (dock) = WIN (counter)</td><td>6.00 vs 6.00</td></tr><tr class="ok"><td>PASS</td><td>L1: AT RISK = game value</td><td>6.00 vs 6</td></tr><tr class="ok"><td>PASS</td><td>L1: TAKE amount = AT RISK</td><td>6.00 vs 6.00</td></tr><tr class="ok"><td>PASS</td><td>L1: IF WON = FIGHT amount</td><td>up to 8.00 vs 8.00</td></tr><tr class="ok"><td>PASS</td><td>L1: AT RISK has 2 decimals</td><td>6.00</td></tr><tr class="ok"><td>PASS</td><td>L1: IF WON has 2 decimals</td><td>8.00</td></tr><tr class="ok"><td>PASS</td><td>L1: WIN has 2 decimals</td><td>6.00</td></tr><tr class="ok"><td>PASS</td><td>L2: AT RISK (dock) = WIN (counter)</td><td>8.00 vs 8.00</td></tr><tr class="ok"><td>PASS</td><td>L2: AT RISK = game value</td><td>8.00 vs 8</td></tr><tr class="ok"><td>PASS</td><td>L2: TAKE amount = AT RISK</td><td>8.00 vs 8.00</td></tr><tr class="ok"><td>PASS</td><td>L2: IF WON = FIGHT amount</td><td>up to 12.00 vs 12.00</td></tr><tr class="ok"><td>PASS</td><td>L2: AT RISK has 2 decimals</td><td>8.00</td></tr><tr class="ok"><td>PASS</td><td>L2: IF WON has 2 decimals</td><td>12.00</td></tr><tr class="ok"><td>PASS</td><td>L2: WIN has 2 decimals</td><td>8.00</td></tr><tr class="ok"><td>PASS</td><td>L3: AT RISK (dock) = WIN (counter)</td><td>12.00 vs 12.00</td></tr><tr class="ok"><td>PASS</td><td>L3: AT RISK = game value</td><td>12.00 vs 12</td></tr><tr class="ok"><td>PASS</td><td>L3: TAKE amount = AT RISK</td><td>12.00 vs 12.00</td></tr><tr class="ok"><td>PASS</td><td>L3: IF WON = FIGHT amount</td><td>up to 19.50 vs 19.50</td></tr><tr class="ok"><td>PASS</td><td>L3: AT RISK has 2 decimals</td><td>12.00</td></tr><tr class="ok"><td>PASS</td><td>L3: IF WON has 2 decimals</td><td>19.50</td></tr><tr class="ok"><td>PASS</td><td>L3: WIN has 2 decimals</td><td>12.00</td></tr><tr class="ok"><td>PASS</td><td>L4: AT RISK (dock) = WIN (counter)</td><td>19.50 vs 19.50</td></tr><tr class="ok"><td>PASS</td><td>L4: AT RISK = game value</td><td>19.50 vs 19.5</td></tr><tr class="ok"><td>PASS</td><td>L4: TAKE amount = AT RISK</td><td>19.50 vs 19.50</td></tr><tr class="ok"><td>PASS</td><td>L4: IF WON = FIGHT amount</td><td>up to 34.00 vs 34.00</td></tr><tr class="ok"><td>PASS</td><td>L4: AT RISK has 2 decimals</td><td>19.50</td></tr><tr class="ok"><td>PASS</td><td>L4: IF WON has 2 decimals</td><td>34.00</td></tr><tr class="ok"><td>PASS</td><td>L4: WIN has 2 decimals</td><td>19.50</td></tr><tr class="ok"><td>PASS</td><td>L5: AT RISK (dock) = WIN (counter)</td><td>34.00 vs 34.00</td></tr><tr class="ok"><td>PASS</td><td>L5: AT RISK = game value</td><td>34.00 vs 34</td></tr><tr class="ok"><td>PASS</td><td>L5: TAKE amount = AT RISK</td><td>34.00 vs 34.00</td></tr><tr class="ok"><td>PASS</td><td>L5: IF WON = FIGHT amount</td><td>up to 57.50 vs 57.50</td></tr><tr class="ok"><td>PASS</td><td>L5: AT RISK has 2 decimals</td><td>34.00</td></tr><tr class="ok"><td>PASS</td><td>L5: IF WON has 2 decimals</td><td>57.50</td></tr><tr class="ok"><td>PASS</td><td>L5: WIN has 2 decimals</td><td>34.00</td></tr><tr class="ok"><td>PASS</td><td>Victory banner = AT RISK growth (19.50 − 12.00)</td><td>+7.50</td></tr><tr class="ok"><td>PASS</td><td>Defeat popup = −bet</td><td></td></tr><tr class="ok"><td>PASS</td><td>Defeat: balance = before − bet</td><td>35.00</td></tr><tr class="ok"><td>PASS</td><td>Cashed out popup = TAKE amount = AT RISK</td><td>+12.00 / 12.00 / 12.00</td></tr><tr class="ok"><td>PASS</td><td>Cashed out: balance = before − bet + payout</td><td>47.00</td></tr><tr class="ok"><td>PASS</td><td>MAX WIN popup = IF WON before the boss fight</td><td>+95.00 vs 95.00</td></tr><tr class="ok"><td>PASS</td><td>MAX WIN: balance unchanged until the popup shows</td><td>35</td></tr><tr class="ok"><td>PASS</td><td>MAX WIN: balance = before − bet + payout</td><td>130.00</td></tr><tr class="ok"><td>PASS</td><td>Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)</td><td>15 mounts, worst 19 ms (hero_05_dead.json)</td></tr><tr class="ok"><td>PASS</td><td>No page errors or console errors</td><td></td></tr></table>
+<p><code>info</code> Headless (software GL) long tasks during the perf round: 20, max 90 ms. Not a gate; see checklist for real-GPU numbers.</p>
+
+    <section>
+      <h2>SETUP <code>587:5125</code></h2>
+      <div class="row" data-file="01-setup">
+        <figure><img src="figma/01-setup.jpg" alt="Figma SETUP"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/01-setup.jpg" alt="App SETUP"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>DECISION level 1 <code>472:7862</code></h2>
+      <div class="row" data-file="02-decision-l1">
+        <figure><img src="figma/02-decision-l1.jpg" alt="Figma DECISION level 1"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/02-decision-l1.jpg" alt="App DECISION level 1"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>DECISION level 2 <code>473:1037</code></h2>
+      <div class="row" data-file="03-decision-l2">
+        <figure><img src="figma/03-decision-l2.jpg" alt="Figma DECISION level 2"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/03-decision-l2.jpg" alt="App DECISION level 2"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>DECISION level 3 <code>473:1127</code></h2>
+      <div class="row" data-file="04-decision-l3">
+        <figure><img src="figma/04-decision-l3.jpg" alt="Figma DECISION level 3"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/04-decision-l3.jpg" alt="App DECISION level 3"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>DECISION level 4 <code>473:1217</code></h2>
+      <div class="row" data-file="05-decision-l4">
+        <figure><img src="figma/05-decision-l4.jpg" alt="Figma DECISION level 4"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/05-decision-l4.jpg" alt="App DECISION level 4"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>DECISION level 5 <code>473:1307</code></h2>
+      <div class="row" data-file="06-decision-l5">
+        <figure><img src="figma/06-decision-l5.jpg" alt="Figma DECISION level 5"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/06-decision-l5.jpg" alt="App DECISION level 5"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Hero attacks (level 3) <code>457:7257</code></h2>
+      <div class="row" data-file="07-hero-attacks">
+        <figure><img src="figma/07-hero-attacks.jpg" alt="Figma Hero attacks (level 3)"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/07-hero-attacks.jpg" alt="App Hero attacks (level 3)"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Enemy attacks (level 3) <code>456:7095</code></h2>
+      <div class="row" data-file="08-enemy-attacks">
+        <figure><img src="figma/08-enemy-attacks.jpg" alt="Figma Enemy attacks (level 3)"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/08-enemy-attacks.jpg" alt="App Enemy attacks (level 3)"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Victory banner L3 → L4 <code>474:2008</code></h2>
+      <div class="row" data-file="09-victory-banner">
+        <figure><img src="figma/09-victory-banner.jpg" alt="Figma Victory banner L3 → L4"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/09-victory-banner.jpg" alt="App Victory banner L3 → L4"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Defeat after level 3 <code>474:2089</code></h2>
+      <div class="row" data-file="10-defeat">
+        <figure><img src="figma/10-defeat.jpg" alt="Figma Defeat after level 3"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/10-defeat.jpg" alt="App Defeat after level 3"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Cashed out at level 3 <code>474:2175</code></h2>
+      <div class="row" data-file="11-cashed-out">
+        <figure><img src="figma/11-cashed-out.jpg" alt="Figma Cashed out at level 3"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/11-cashed-out.jpg" alt="App Cashed out at level 3"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Boss entrance <code>650:7598</code></h2>
+      <div class="row" data-file="12-boss-entrance">
+        <figure><img src="figma/12-boss-entrance.jpg" alt="Figma Boss entrance"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/12-boss-entrance.jpg" alt="App Boss entrance"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+    <section>
+      <h2>Boss final MAX WIN <code>660:5112</code></h2>
+      <div class="row" data-file="13-max-win">
+        <figure><img src="figma/13-max-win.jpg" alt="Figma Boss final MAX WIN"><figcaption>Figma</figcaption></figure>
+        <figure><img src="app/13-max-win.jpg" alt="App Boss final MAX WIN"><figcaption>App</figcaption></figure>
+        <figure><canvas width="960" height="540"></canvas><figcaption>Difference (black = identical)</figcaption></figure>
+      </div>
+    </section>
+<script>
+  // Pixel difference computed in the browser (no extra tooling): |figma − app| per channel.
+  for (const row of document.querySelectorAll('.row')) {
+    const [fig, app] = row.querySelectorAll('img');
+    const canvas = row.querySelector('canvas');
+    const draw = () => {
+      if (!fig.complete || !app.complete) return;
+      const ctx = canvas.getContext('2d');
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(fig, 0, 0, 960, 540);
+      ctx.globalCompositeOperation = 'difference';
+      ctx.drawImage(app, 0, 0, 960, 540);
+    };
+    fig.onload = app.onload = draw; draw();
+  }
+</script>
+</body></html>

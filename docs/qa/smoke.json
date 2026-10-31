@@ -1,0 +1,419 @@
+{
+  "generated": "2026-10-31T09:26:10.240Z",
+  "results": [
+    {
+      "browser": "chromium",
+      "name": "1280x720: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1280x720 at 0,0"
+    },
+    {
+      "browser": "chromium",
+      "name": "1280x720: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "1440x900: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1440x810 at 0,45"
+    },
+    {
+      "browser": "chromium",
+      "name": "1440x900: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "1920x1080: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1920x1080 at 0,0"
+    },
+    {
+      "browser": "chromium",
+      "name": "No debug panel without ?debug=1",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "1920x1080: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "2560x1440: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "2560x1440 at 0,0"
+    },
+    {
+      "browser": "chromium",
+      "name": "2560x1440: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Keyboard: Enter starts the round (PLAY)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Skip in ENTERING → DECISION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Keyboard: Space = FIGHT, S skips FIGHTING and WIN_BANNER (3 wins)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Skip in RESOLVING jumps to the result",
+      "ok": true,
+      "detail": "RESOLVING → DEFEAT"
+    },
+    {
+      "browser": "chromium",
+      "name": "Result popup: NEW ROUND focused, Esc ignored, Enter = NEW ROUND",
+      "ok": true,
+      "detail": "focused NEW ROUND"
+    },
+    {
+      "browser": "chromium",
+      "name": "Keyboard round: same bet and difficulty kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Keyboard round: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Click spam on FIGHT runs exactly one fight",
+      "ok": true,
+      "detail": "passed 0 → 1"
+    },
+    {
+      "browser": "chromium",
+      "name": "Click spam on TAKE pays once",
+      "ok": true,
+      "detail": "35 + 6 → 41"
+    },
+    {
+      "browser": "chromium",
+      "name": "Refresh mid-round returns to SETUP cleanly",
+      "ok": true,
+      "detail": "SETUP balance 40"
+    },
+    {
+      "browser": "chromium",
+      "name": "Spam / refresh: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "chromium",
+      "name": "/kit renders components with no broken images",
+      "ok": true,
+      "detail": "12 CTAs, 0 broken images"
+    },
+    {
+      "browser": "chromium",
+      "name": "Modals / kit: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "1280x720: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1280x720 at 0,0"
+    },
+    {
+      "browser": "firefox",
+      "name": "1280x720: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "1440x900: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1440x810 at 0,45"
+    },
+    {
+      "browser": "firefox",
+      "name": "1440x900: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "1920x1080: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1920x1080 at 0,0"
+    },
+    {
+      "browser": "firefox",
+      "name": "No debug panel without ?debug=1",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "1920x1080: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "2560x1440: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "2560x1440 at 0,0"
+    },
+    {
+      "browser": "firefox",
+      "name": "2560x1440: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Keyboard: Enter starts the round (PLAY)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Skip in ENTERING → DECISION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Keyboard: Space = FIGHT, S skips FIGHTING and WIN_BANNER (3 wins)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Skip in RESOLVING jumps to the result",
+      "ok": true,
+      "detail": "RESOLVING → DEFEAT"
+    },
+    {
+      "browser": "firefox",
+      "name": "Result popup: NEW ROUND focused, Esc ignored, Enter = NEW ROUND",
+      "ok": true,
+      "detail": "focused NEW ROUND"
+    },
+    {
+      "browser": "firefox",
+      "name": "Keyboard round: same bet and difficulty kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Keyboard round: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Click spam on FIGHT runs exactly one fight",
+      "ok": true,
+      "detail": "passed 0 → 1"
+    },
+    {
+      "browser": "firefox",
+      "name": "Click spam on TAKE pays once",
+      "ok": true,
+      "detail": "35 + 6 → 41"
+    },
+    {
+      "browser": "firefox",
+      "name": "Refresh mid-round returns to SETUP cleanly",
+      "ok": true,
+      "detail": "SETUP balance 40"
+    },
+    {
+      "browser": "firefox",
+      "name": "Spam / refresh: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "/kit renders components with no broken images",
+      "ok": true,
+      "detail": "12 CTAs, 0 broken images"
+    },
+    {
+      "browser": "firefox",
+      "name": "Modals / kit: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "1280x720: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1280x720 at 0,0"
+    },
+    {
+      "browser": "webkit",
+      "name": "1280x720: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "1440x900: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1440x810 at 0,45"
+    },
+    {
+      "browser": "webkit",
+      "name": "1440x900: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "1920x1080: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "1920x1080 at 0,0"
+    },
+    {
+      "browser": "webkit",
+      "name": "No debug panel without ?debug=1",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "1920x1080: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "2560x1440: stage 16:9, uncropped, centered, fills one side",
+      "ok": true,
+      "detail": "2560x1440 at 0,0"
+    },
+    {
+      "browser": "webkit",
+      "name": "2560x1440: no errors on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Keyboard: Enter starts the round (PLAY)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Skip in ENTERING → DECISION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Keyboard: Space = FIGHT, S skips FIGHTING and WIN_BANNER (3 wins)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Skip in RESOLVING jumps to the result",
+      "ok": true,
+      "detail": "RESOLVING → DEFEAT"
+    },
+    {
+      "browser": "webkit",
+      "name": "Result popup: NEW ROUND focused, Esc ignored, Enter = NEW ROUND",
+      "ok": true,
+      "detail": "focused NEW ROUND"
+    },
+    {
+      "browser": "webkit",
+      "name": "Keyboard round: same bet and difficulty kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Keyboard round: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Click spam on FIGHT runs exactly one fight",
+      "ok": true,
+      "detail": "passed 0 → 1"
+    },
+    {
+      "browser": "webkit",
+      "name": "Click spam on TAKE pays once",
+      "ok": true,
+      "detail": "35 + 6 → 41"
+    },
+    {
+      "browser": "webkit",
+      "name": "Refresh mid-round returns to SETUP cleanly",
+      "ok": true,
+      "detail": "SETUP balance 40"
+    },
+    {
+      "browser": "webkit",
+      "name": "Spam / refresh: no errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "webkit",
+      "name": "/kit renders components with no broken images",
+      "ok": true,
+      "detail": "12 CTAs, 0 broken images"
+    },
+    {
+      "browser": "webkit",
+      "name": "Modals / kit: no errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
