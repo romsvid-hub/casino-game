@@ -137,8 +137,17 @@ export function sceneFor(state, derived) {
   }
 }
 
-// Every clip a round can need; preloaded at SETUP so no blank frames appear.
-export const ALL_CLIPS = Object.values(L).map((c) => c.src)
+// Lottie JSON is loaded in three batches instead of all 8.8 MB at start-up:
+// the setup screen, the clips of a normal round (on PLAY), and the boss + MAX WIN
+// clips once the round gets close to the boss. ClipSlot waits for a clip's first
+// frame before fading it in, so a late load never shows a blank frame.
+export const CLIP_BATCHES = {
+  setup: [L.bgScene, L.focusHero, L.focusEnemy, L.focusClash, L.heroIdle],
+  round: [L.heroEnter, L.heroAttack, L.heroDead, L.heroVictory, L.enemyEnter, L.enemyIdle, L.enemyAttack, L.enemyDead, L.enemyVictory],
+  boss: [L.bossEnter, L.bossLandShake, L.bossIdle, L.bossAttack, L.bossDead, L.bossVictory, L.popupMaxWin],
+}
+// Start loading the boss batch this many gates before the boss.
+export const BOSS_PRELOAD_GATES = 3
 
 export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches

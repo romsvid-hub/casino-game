@@ -4,12 +4,34 @@ import lottie from 'lottie-web'
 // In-memory cache of fetched Lottie JSON, keyed by URL (one request per file).
 const cache = new Map()
 
+// lottie-web mutates animationData, so every instance needs its own copy.
+// Copies are prepared ahead of time in idle callbacks (one spare per file), so
+// mounting a clip mid-fight does not pay for cloning a ~1 MB JSON (L11 perf).
+const spares = new Map()
+const idle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 50))
+function prepareSpare(src, data) {
+  if (spares.has(src)) return
+  idle(() => {
+    if (!spares.has(src)) spares.set(src, structuredClone(data))
+  })
+}
+function takeCopy(src, data) {
+  const spare = spares.get(src)
+  spares.delete(src)
+  prepareSpare(src, data)
+  return spare ?? structuredClone(data)
+}
+
 export function preloadLottie(src) {
   if (!cache.has(src)) {
     const request = fetch(src)
       .then((res) => {
         if (!res.ok) throw new Error(`Lottie ${src}: HTTP ${res.status}`)
         return res.json()
+      })
+      .then((data) => {
+        prepareSpare(src, data)
+        return data
       })
       .catch((err) => {
         cache.delete(src)
@@ -69,8 +91,10 @@ export default function LottieLayer({
         const [introMarker, loopMarker] = markerSequence ?? []
         const frames = resolveSegment(data, segment, introMarker ?? marker)
         const loopFrames = loopMarker ? resolveSegment(data, null, loopMarker) : null
-        // lottie-web mutates animationData, so each instance gets its own copy.
-        const animationData = structuredClone(data)
+        // Timing shows up as "lottie mount …" in the Chrome performance panel.
+        const mountStart = performance.now()
+        // Own copy per instance (a pre-made spare when available, see takeCopy).
+        const animationData = takeCopy(src, data)
         if (keepLayerRef.current) animationData.layers = animationData.layers.filter((l) => keepLayerRef.current(l.nm ?? ''))
         anim = lottie.loadAnimation({
           container: containerRef.current,
@@ -80,6 +104,7 @@ export default function LottieLayer({
           animationData,
           rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
         })
+        performance.measure(`lottie mount ${src}`, { start: mountStart })
         if (loopFrames) {
           anim.addEventListener('complete', () => {
             if (anim.loop) return
