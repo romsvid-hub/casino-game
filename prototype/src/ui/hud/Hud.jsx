@@ -21,17 +21,17 @@ export default function Hud({ state, derived, onRules, onMenu }) {
     <div className="pointer-events-none absolute inset-0">
       <HudBalance balance={state.balance} className="pointer-events-auto absolute top-[24px] left-[40px]" />
 
-      {/* Setup screen 587:5125: logo, subtitle and responsible-gaming footer. */}
+      {/* Setup screen 587:5125: centred title (691:12273), subtitle and responsible-gaming footer. */}
       {inSetup && (
         <>
           <p
-            className="type-display-xl absolute top-[150px] left-[60px] m-0 w-[840px] text-center text-accent-amber"
+            className="type-display-xl absolute top-[193px] left-[568px] m-0 w-[840px] text-center text-accent-amber"
             style={{ textShadow: 'var(--fx-text-shadow-soft), var(--fx-logo-glow)' }}
           >
-            BATTLE OF MULTIPLIERS
+            SLAVIC FOREST
           </p>
           <p
-            className="type-number-s absolute top-[310px] left-[60px] m-0 w-[840px] text-center text-text-muted"
+            className="type-number-s absolute top-[285px] left-[568px] m-0 w-[840px] text-center text-text-muted"
             style={{ textShadow: 'var(--fx-text-shadow-soft)' }}
           >
             A cash-out battle in the Slavic forest

@@ -394,6 +394,63 @@
 }
 
 /* ── Boss landing shake: ±6 px, 0.35 s (docs/lottie.md) ─────────────────── */
+/* Scene environment (bg + focus light). Lobby 587:5125 shows the same scene
+   1.1332x closer: every ENV layer there is the battle layer (457:7471) scaled
+   by 1.1332 around (989px, -396px). bg_scene has no bleed above the stage, so
+   we scale around the top edge instead (scene ~53px higher than Figma, no gap).
+   Leaving the lobby zooms out to 1x. */
+.scene-env {
+  transform-origin: 989px 0;
+  transition: transform 1200ms cubic-bezier(0.45, 0, 0.25, 1);
+}
+.scene-env--lobby {
+  transform: scale(1.1332);
+}
+
+/* Lobby: soft light on the totem (totem 672..1308 x 251..675 in battle space)
+   and no fog band at its foot (bg_scene layer "fog at idol"). */
+.totem-light {
+  position: absolute;
+  left: 690px;
+  top: 150px;
+  width: 600px;
+  height: 640px;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-accent-amber) 26%, transparent),
+    color-mix(in srgb, var(--color-accent-amber) 8%, transparent) 60%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 600ms ease-out;
+}
+.scene-env--lobby .totem-light {
+  opacity: 1;
+  animation: totem-breathe 4s ease-in-out infinite alternate;
+}
+@keyframes totem-breathe {
+  from {
+    filter: brightness(0.85);
+  }
+  to {
+    filter: brightness(1.15);
+  }
+}
+.scene-env .lottie-fog-idol {
+  transition: opacity 600ms ease-out;
+}
+.scene-env--lobby .lottie-fog-idol {
+  opacity: 0 !important; /* beats lottie's own opacity on the layer group */
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-env,
+  .totem-light {
+    transition: none;
+    animation: none;
+  }
+}
+
 .stage-shake {
   animation: stage-shake 350ms linear both;
 }
