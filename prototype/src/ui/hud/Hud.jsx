@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
+import { config } from '../../game/config.js'
 import { STATES } from '../../game/machine.js'
+import FinalBattleBanner from '../results/FinalBattleBanner.jsx'
 import MultiplierPlate from '../MultiplierPlate.jsx'
 import CounterWin from './CounterWin.jsx'
 import HudBalance from './HudBalance.jsx'
@@ -11,11 +14,26 @@ import ProgressPath from './ProgressPath.jsx'
 const COUNTER_STATES = [STATES.ENTERING, STATES.DECISION, STATES.FIGHTING, STATES.RESOLVING]
 const COUNTER_MOUNTED = [...COUNTER_STATES, STATES.WIN_BANNER]
 
+// True for the first `bossIntro` ms of the boss entrance (the director delays
+// the boss by the same time). SKIP leaves ENTERING, which ends it.
+function useBossIntro(phase, isBoss, passed) {
+  const active = phase === STATES.ENTERING && isBoss
+  const [shown, setShown] = useState(active)
+  useEffect(() => {
+    setShown(active)
+    if (!active) return
+    const id = setTimeout(() => setShown(false), config.timings.bossIntro)
+    return () => clearTimeout(id)
+  }, [active, passed])
+  return active && shown
+}
+
 // HUD layer on the 1920x1080 stage. Positions from Figma screens
 // 587:5125 (setup), 472:7862…473:1307 (levels 1–5), 473:1397 (boss).
 export default function Hud({ state, derived, onRules, onMenu }) {
   const { phase } = state
   const inSetup = phase === STATES.SETUP
+  const bossIntro = useBossIntro(phase, derived.isBoss, state.passed)
 
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -53,23 +71,29 @@ export default function Hud({ state, derived, onRules, onMenu }) {
         </>
       )}
 
-      {!inSetup && <ProgressPath gates={derived.gates.map((g) => g.multiplier)} passed={derived.level} className="absolute top-[24px] left-[560px]" />}
+      {!inSetup && <ProgressPath path={derived.path} className="absolute top-[24px] left-[560px]" />}
 
       {/* Battle screens show WIN only (POTENTIAL WIN is hidden there; IF WON lives in the dock). */}
       {COUNTER_MOUNTED.includes(phase) && (
         <CounterWin
           win={derived.counterWin}
           className="absolute top-[150px] left-[560px] transition-opacity duration-150"
-          style={{ opacity: COUNTER_STATES.includes(phase) ? 1 : 0 }}
+          style={{ opacity: COUNTER_STATES.includes(phase) && !bossIntro ? 1 : 0 }}
         />
       )}
+      {bossIntro && <FinalBattleBanner multiplier={derived.finalMultiplier} className="absolute top-[150px] left-[560px]" />}
 
-      {/* Plate/Multiplier: Decision state only (Figma note on 554:4220); higher above the boss. */}
+      {/* Plate/Multiplier: Decision state only (Figma note on 554:4220), centred on the
+          enemy (Zone · Multiplier tag 1240,320 200x64 → centre x1340). The boss gets the
+          wide "MAX WIN" plate, higher, over its head. */}
       {phase === STATES.DECISION && derived.nextMultiplier != null && (
         <MultiplierPlate
-          multiplier={derived.nextMultiplier}
-          className="absolute left-[1217px]"
-          style={{ top: derived.isBoss ? 278 : 333 }}
+          key={derived.isBoss ? 'final' : 'plate'}
+          multiplier={derived.isBoss ? derived.finalMultiplier : derived.nextMultiplier}
+          final={derived.isBoss}
+          className="absolute -translate-x-1/2"
+          // Boss head in CHAR / Enemy Boss / Idle 473:1453 is at x≈1220 (mane top y≈352).
+          style={{ left: derived.isBoss ? 1220 : 1340, top: derived.isBoss ? 278 : 320 }}
         />
       )}
     </div>

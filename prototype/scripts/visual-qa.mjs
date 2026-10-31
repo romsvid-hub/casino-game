@@ -30,7 +30,8 @@ const SHOTS = [
   ['10-defeat', 'Defeat after level 3', '474:2089'],
   ['11-cashed-out', 'Cashed out at level 3', '474:2175'],
   ['12-boss-entrance', 'Boss entrance', '650:7598'],
-  ['13-max-win', 'Boss final MAX WIN', '660:5112'],
+  ['13-max-win', 'Boss final MAX WIN popup', '660:5112'],
+  ['14-boss-decision', 'Boss level before FIGHT', '473:1397'],
 ]
 
 const checks = []
@@ -173,6 +174,12 @@ async function run() {
     for (let level = 1; level <= 5; level++) {
       await winOne(page)
       await decisionMoney(page, level)
+      if (level === 1) {
+        // L12: the boss gate is always on the path, locked, with the fights left.
+        const finalGate = await page.evaluate(() => document.querySelector('[role="list"][aria-label^="Gates passed"]')?.lastElementChild?.lastElementChild?.textContent?.trim() ?? '')
+        const d = await derived(page)
+        check('L1: path ends with the locked boss gate (final multiplier)', finalGate === `×${d.finalMultiplier.toFixed(2)}`, finalGate)
+      }
       await shot(page, `0${level + 1}-decision-l${level}`)
     }
     allErrors.push(...page.qaErrors)
@@ -282,11 +289,25 @@ async function run() {
     await act(page, 'skip')
     await waitPhase(page, 'WIN_BANNER')
     await waitPhase(page, 'ENTERING', 4000)
-    await sleep(1300)
+    // L12: "FINAL BATTLE · MAX WIN ×19.00" banner first, then the boss enters.
+    await sleep(300)
+    const finalBanner = await text(page, '[data-qa="final-banner"]')
+    const bossDerived = await derived(page)
+    check('Boss intro banner shows FINAL BATTLE and the final multiplier', !!finalBanner && finalBanner.includes('FINAL BATTLE') && finalBanner.includes(`×${bossDerived.finalMultiplier.toFixed(2)}`), finalBanner ?? 'missing')
+    await sleep(2300)
     await shot(page, '12-boss-entrance')
     await waitPhase(page, 'DECISION')
     await sleep(900)
+    await shot(page, '14-boss-decision')
     const ifWonBoss = await slot(page, 'IF WON')
+    const bossLabel = await text(page, '[data-qa="slot-IF WON"] > span:first-child')
+    const bossFight = await cta(page, 'FIGHT')
+    const bossPlate = await text(page, '[data-qa="plate-final"]')
+    const fightGlows = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
+    check('Boss level: dock label reads MAX WIN', bossLabel === 'MAX WIN', bossLabel)
+    check('Boss level: FIGHT reads "max win" = MAX WIN slot', bossFight.amount === `max win ${ifWonBoss}`, `${bossFight.amount} vs ${ifWonBoss}`)
+    check('Boss level: FIGHT uses Highlight', fightGlows === true)
+    check('Boss level: plate reads MAX WIN + final multiplier', bossPlate === `MAX WIN×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
     await act(page, 'forceNext', 'win')
     await act(page, 'fight')
     await act(page, 'skip')

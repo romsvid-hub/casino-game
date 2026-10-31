@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-31T10:39:11.536Z",
+  "generated": "2026-10-31T13:44:52.561Z",
   "checks": [
     {
       "name": "L0: AT RISK (dock) = WIN (counter)",
@@ -75,6 +75,11 @@
       "name": "L1: WIN has 2 decimals",
       "ok": true,
       "detail": "6.00"
+    },
+    {
+      "name": "L1: path ends with the locked boss gate (final multiplier)",
+      "ok": true,
+      "detail": "×19.00"
     },
     {
       "name": "L2: AT RISK (dock) = WIN (counter)",
@@ -242,6 +247,31 @@
       "detail": "47.00"
     },
     {
+      "name": "Boss intro banner shows FINAL BATTLE and the final multiplier",
+      "ok": true,
+      "detail": "FINAL BATTLE·MAX WIN×19.00"
+    },
+    {
+      "name": "Boss level: dock label reads MAX WIN",
+      "ok": true,
+      "detail": "MAX WIN"
+    },
+    {
+      "name": "Boss level: FIGHT reads \"max win\" = MAX WIN slot",
+      "ok": true,
+      "detail": "max win 95.00 vs 95.00"
+    },
+    {
+      "name": "Boss level: FIGHT uses Highlight",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Boss level: plate reads MAX WIN + final multiplier",
+      "ok": true,
+      "detail": "MAX WIN×19.00"
+    },
+    {
       "name": "MAX WIN popup = IF WON before the boss fight",
       "ok": true,
       "detail": "+95.00 vs 95.00"
@@ -259,7 +289,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "17 mounts, worst 89 ms (enemy_05_dead.json)"
+      "detail": "17 mounts, worst 13 ms (hero_05_dead.json)"
     },
     {
       "name": "No page errors or console errors",
@@ -268,6 +298,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 40, max 381 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 6, max 86 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }
