@@ -1,0 +1,7 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="64" height="32" viewBox="0 0 64 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Toggle">
+<rect x="1" y="1" width="62" height="30" rx="15" fill="#F2B33D"/>
+<rect x="1" y="1" width="62" height="30" rx="15" stroke="#0A0A09" stroke-width="2"/>
+<circle id="knob" cx="48" cy="16" r="12" fill="#1C1916"/>
+</g>
+</svg>

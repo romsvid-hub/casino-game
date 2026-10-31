@@ -114,6 +114,10 @@ export const assets = {
       iconCover: ui('svg/icon-cover.svg', 58, 58, 'Popup/Actions · icon/cover'),
       iconMenu: ui('svg/icon-menu.svg', 33.8, 33.8, 'Popup/Actions · icon/menu'),
     },
+    toggle: {
+      on: ui('svg/toggle-on.svg', 64, 32, 'Toggle · On'),
+      off: ui('svg/toggle-off.svg', 64, 32, 'Toggle · Off'),
+    },
     badgePips: {
       easy: ui('svg/badge-pips-easy.svg', 33, 9, 'Badge/Mode · risk Easy'),
       medium: ui('svg/badge-pips-medium.svg', 33, 9, 'Badge/Mode · risk Medium'),
