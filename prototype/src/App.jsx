@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import Stage from './stage/Stage.jsx'
 import GuidesOverlay from './stage/GuidesOverlay.jsx'
 import Scene, { useBossShake } from './scene/Scene.jsx'
 import { prefersReducedMotion, useDirector } from './scene/director.js'
-import KitPage from './screens/KitPage.jsx'
+// /kit is a dev / review page: loaded on demand so it stays out of the game bundle.
+const KitPage = lazy(() => import('./screens/KitPage.jsx'))
 import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
@@ -28,7 +29,12 @@ function useHashRoute() {
 export default function App() {
   const route = useHashRoute()
 
-  if (route === 'kit') return <KitPage />
+  if (route === 'kit')
+    return (
+      <Suspense fallback={null}>
+        <KitPage />
+      </Suspense>
+    )
 
   return <Game />
 }
@@ -83,12 +89,17 @@ function Game() {
   )
   const showLowBalance = state.phase === STATES.SETUP && derived.belowMinBet && !modal
 
+  // Test hook for scripts/visual-qa.mjs: only with ?debug=1.
+  useEffect(() => {
+    if (DEBUG) window.__casino = { state, derived, actions, resultStage, modal }
+  })
+
   return (
     <>
       <Stage>
         {/* Whole stage content shakes when the boss lands. */}
         <div className={`absolute inset-0 ${shaking ? 'stage-shake' : ''}`}>
-          <Scene scene={scene} />
+          <Scene scene={scene} state={state} gateCount={derived.gates.length} />
           <Hud
             state={hudState}
             derived={derived}
