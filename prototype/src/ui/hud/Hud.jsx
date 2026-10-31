@@ -83,17 +83,14 @@ export default function Hud({ state, derived, onRules, onMenu }) {
       )}
       {bossIntro && <FinalBattleBanner multiplier={derived.finalMultiplier} className="absolute top-[150px] left-[560px]" />}
 
-      {/* Plate/Multiplier: Decision state only (Figma note on 554:4220), centred on the
-          enemy (Zone · Multiplier tag 1240,320 200x64 → centre x1340). The boss gets the
-          wide "MAX WIN" plate, higher, over its head. */}
+      {/* Plate/Multiplier 554:4220: Decision state only, text only, x1217 as in every
+          Figma frame. 60 px below Counter/Win (bottom y270 → y330); on the boss level
+          30 px (y300) so the number sits above the boss's mane. */}
       {phase === STATES.DECISION && derived.nextMultiplier != null && (
         <MultiplierPlate
-          key={derived.isBoss ? 'final' : 'plate'}
-          multiplier={derived.isBoss ? derived.finalMultiplier : derived.nextMultiplier}
-          final={derived.isBoss}
-          className="absolute -translate-x-1/2"
-          // Boss head in CHAR / Enemy Boss / Idle 473:1453 is at x≈1220 (mane top y≈352).
-          style={{ left: derived.isBoss ? 1220 : 1340, top: derived.isBoss ? 278 : 320 }}
+          multiplier={derived.nextMultiplier}
+          className="absolute left-[1217px]"
+          style={{ top: derived.isBoss ? 300 : 330 }}
         />
       )}
     </div>

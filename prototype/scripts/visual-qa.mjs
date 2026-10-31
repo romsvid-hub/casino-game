@@ -179,6 +179,14 @@ async function run() {
         const finalGate = await page.evaluate(() => document.querySelector('[role="list"][aria-label^="Gates passed"]')?.lastElementChild?.lastElementChild?.textContent?.trim() ?? '')
         const d = await derived(page)
         check('L1: path ends with the locked boss gate (final multiplier)', finalGate === `×${d.finalMultiplier.toFixed(2)}`, finalGate)
+        // Plate/Multiplier 554:4220: text only, x1217, 60 px below Counter/Win (y330).
+        const plate = await page.evaluate(() => {
+          const el = document.querySelector('[data-qa="plate-multiplier"]')
+          // Stage coordinates (offsetLeft/Top ignore the stage scale and letterbox).
+          return { x: el.offsetLeft, y: el.offsetTop, text: el.textContent.trim(), images: el.querySelectorAll('img').length }
+        })
+        check('L1: plate is text only (no plate art)', plate.images === 0 && plate.text === `×${d.nextMultiplier.toFixed(2)}`, plate.text)
+        check('L1: plate at x1217, 60 px below Counter/Win (y330)', plate.x === 1217 && plate.y === 330, `${plate.x},${plate.y}`)
       }
       await shot(page, `0${level + 1}-decision-l${level}`)
     }
@@ -302,12 +310,14 @@ async function run() {
     const ifWonBoss = await slot(page, 'IF WON')
     const bossLabel = await text(page, '[data-qa="slot-IF WON"] > span:first-child')
     const bossFight = await cta(page, 'FIGHT')
-    const bossPlate = await text(page, '[data-qa="plate-final"]')
+    const bossPlate = await text(page, '[data-qa="plate-multiplier"]')
+    const bossPlateBox = await page.evaluate(() => { const el = document.querySelector('[data-qa="plate-multiplier"]'); return { x: el.offsetLeft, y: el.offsetTop } })
     const fightGlows = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
     check('Boss level: dock label reads MAX WIN', bossLabel === 'MAX WIN', bossLabel)
     check('Boss level: FIGHT reads "max win" = MAX WIN slot', bossFight.amount === `max win ${ifWonBoss}`, `${bossFight.amount} vs ${ifWonBoss}`)
     check('Boss level: FIGHT uses Highlight', fightGlows === true)
-    check('Boss level: plate reads MAX WIN + final multiplier', bossPlate === `MAX WIN×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
+    check('Boss level: plate shows only the final multiplier', bossPlate === `×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
+    check('Boss level: plate at x1217, 30 px below Counter/Win (y300)', bossPlateBox.x === 1217 && bossPlateBox.y === 300, `${bossPlateBox.x},${bossPlateBox.y}`)
     await act(page, 'forceNext', 'win')
     await act(page, 'fight')
     await act(page, 'skip')
