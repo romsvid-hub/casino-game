@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { assets } from '../assets.js'
 import { STATES } from '../game/machine.js'
 import ClipSlot from './ClipSlot.jsx'
-import { ALL_CLIPS, BOSS_SHAKE } from './director.js'
+import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES } from './director.js'
 import LottieLayer, { preloadLottie } from './LottieLayer.jsx'
 
 const FOCUS = {
@@ -30,10 +30,24 @@ export function useBossShake(state, scene) {
 
 // Battle scene, bottom to top: bg_scene → focus light → hero → enemy → FX.
 // Every layer is a full 1920x1080 Lottie (files are pre-positioned).
-export default function Scene({ scene }) {
+const preload = (clips) => clips.forEach((c) => preloadLottie(c.src).catch(() => {}))
+
+// Loads Lottie per round (L11): setup clips at once, round clips when a round
+// starts, boss clips when the boss is a few gates away.
+function useLazyClips(state, gateCount) {
+  const inRound = state.phase !== STATES.SETUP
+  const nearBoss = inRound && state.passed >= gateCount - BOSS_PRELOAD_GATES
+  useEffect(() => preload(CLIP_BATCHES.setup), [])
   useEffect(() => {
-    ALL_CLIPS.forEach((src) => preloadLottie(src).catch(() => {}))
-  }, [])
+    if (inRound) preload(CLIP_BATCHES.round)
+  }, [inRound])
+  useEffect(() => {
+    if (nearBoss) preload(CLIP_BATCHES.boss)
+  }, [nearBoss])
+}
+
+export default function Scene({ scene, state, gateCount }) {
+  useLazyClips(state, gateCount)
 
   return (
     <div className="pointer-events-none absolute inset-0">

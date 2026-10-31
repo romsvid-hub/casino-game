@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qa": "node scripts/visual-qa.mjs",
+    "check:logic": "node scripts/logic-check.mjs",
+    "qa:smoke": "node scripts/smoke-qa.mjs"
   },
   "dependencies": {
     "lottie-web": "5.12.2",
@@ -14,6 +17,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
     "tailwindcss": "^4.3.3",
