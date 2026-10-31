@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slavic Forest — стан прототипу</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ruslan+Display&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; a sticky section index on wide screens, stacked on phones. */
+:root {
+  --bg: #f6f3ec;
+  --surface: #fffdf8;
+  --fg: #22201b;
+  --muted: #6b6457;
+  --line: #ddd5c4;
+  --accent: #9a6a10;
+  --accent-soft: #f3e3bf;
+  --ok: #2f7a4f;
+  --warn: #a5530f;
+  --risk: #a92c2c;
+  --font-display: "Ruslan Display", "Georgia", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14130f; --surface: #1d1b16; --fg: #ece5d6; --muted: #a59c89; --line: #37332a;
+    --accent: #f2b33d; --accent-soft: #3a2e14; --ok: #6cc28f; --warn: #e9a15a; --risk: #ec7a72;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14130f; --surface: #1d1b16; --fg: #ece5d6; --muted: #a59c89; --line: #37332a;
+  --accent: #f2b33d; --accent-soft: #3a2e14; --ok: #6cc28f; --warn: #e9a15a; --risk: #ec7a72;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--fg);
+  font: 400 16px/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 40px 72px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 48px; }
+nav.index { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; display: grid; gap: 6px; font-size: 14px; }
+nav.index .label { font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+nav.index a { color: var(--muted); text-decoration: none; padding: 3px 0 3px 10px; border-left: 2px solid var(--line); }
+nav.index a:hover, nav.index a:focus-visible { color: var(--fg); border-left-color: var(--accent); }
+main { min-width: 0; display: grid; gap: 56px; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 500 12px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 400 clamp(32px, 6vw, 52px)/1.05 var(--font-display); color: var(--accent); margin: 0; letter-spacing: .02em; text-wrap: balance; }
+.lede { margin: 0; max-width: 64ch; color: var(--fg); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font: 400 13px/1.4 var(--font-mono); color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button.copy {
+  font: 500 14px/1 var(--font-body); color: var(--bg); background: var(--fg);
+  border: 0; border-radius: 6px; padding: 11px 16px; cursor: pointer;
+}
+button.copy:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.copy-note { font-size: 13px; color: var(--muted); }
+textarea.copy-fallback { width: 100%; height: 200px; font: 400 13px/1.5 var(--font-mono); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px; }
+h2 { font: 600 22px/1.25 var(--font-body); margin: 0 0 6px; text-wrap: balance; }
+h3 { font: 600 16px/1.3 var(--font-body); margin: 0; }
+section > p.sub { margin: 0 0 20px; color: var(--muted); max-width: 64ch; }
+a { color: var(--accent); text-underline-offset: 2px; }
+code, .mono { font-family: var(--font-mono); font-size: .9em; }
+
+/* Links */
+.primary-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
+.primary-links a { display: grid; gap: 4px; padding: 16px 18px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); min-width: 0; }
+.primary-links .k { font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.primary-links .u { font: 500 15px/1.35 var(--font-mono); color: var(--accent); overflow-wrap: anywhere; }
+.primary-links .d { font-size: 14px; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tbl { overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); }
+th { font: 500 11px/1.2 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+td.u { font-family: var(--font-mono); font-size: 13.5px; overflow-wrap: anywhere; }
+td:first-child { width: 34%; }
+.group-row td { padding-top: 22px; font: 600 13px/1.2 var(--font-body); color: var(--muted); border-bottom: 0; }
+
+/* Done list */
+.levels { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.level { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.level .n { font: 500 13px/1.6 var(--font-mono); color: var(--muted); }
+.level .n a { color: var(--muted); }
+.level ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; }
+.level li::marker { color: var(--accent); }
+.qa { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+.qa div { padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.qa b { display: block; font: 600 22px/1.2 var(--font-mono); color: var(--ok); font-variant-numeric: tabular-nums; }
+.qa span { font-size: 13px; color: var(--muted); }
+
+/* Questions and gaps */
+ol.questions { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; counter-reset: q; }
+ol.questions li { counter-increment: q; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+ol.questions li::before { content: counter(q); font: 600 14px/1.6 var(--font-mono); color: var(--accent); }
+ol.questions p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+.tag { display: inline-block; font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; margin-left: 6px; vertical-align: 2px; }
+.tag.client { color: var(--warn); }
+.tag.you { color: var(--accent); }
+.tag.done { color: var(--ok); }
+.gaps { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.gap { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.gap .p { font: 500 12px/1.7 var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.p.high { color: var(--risk); } .p.mid { color: var(--warn); } .p.low { color: var(--muted); }
+.gap p { margin: 2px 0 0; color: var(--muted); font-size: 15px; }
+
+@media (max-width: 820px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 28px 56px; }
+  nav.index { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  nav.index .label { grid-column: 1 / -1; }
+  .primary-links { grid-template-columns: minmax(0, 1fr); }
+  .qa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gap { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .level { grid-template-columns: 48px minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="index" aria-label="Розділи">
+    <span class="label">Розділи</span>
+    <a href="#links">Посилання</a>
+    <a href="#done">Що зроблено</a>
+    <a href="#questions">Відкриті питання</a>
+    <a href="#missing">Чого бракує</a>
+  </nav>
+
+  <main id="doc">
+    <header>
+      <span class="eyebrow">Casino Game · прототип v0.1 + правки клієнта + виправлення з рев'ю</span>
+      <h1>Slavic Forest</h1>
+      <p class="lede">Клікабельний браузерний прототип гри «Battle of Multipliers»: ризик зростає з кожними воротами, гравець може будь-коли забрати виграш, а все обгорнуто в бій лицаря з вовками і босом. Гру зібрано з дизайну у Figma (Vite + React + Tailwind + Lottie). Тут описано, що вже готово, де все лежить, що треба уточнити в клієнта і чого ще бракує.</p>
+      <div class="meta"><span>Стан на 31.10.2026</span><span>main @ 69be3f8</span><span>13 PR злито</span><span>тег v0.1</span></div>
+      <div class="actions">
+        <button class="copy" id="copy-all" type="button">Скопіювати весь документ як текст</button>
+        <span class="copy-note" id="copy-note" aria-live="polite">Щоб вставити в інший чат.</span>
+      </div>
+    </header>
+
+    <section id="links" aria-labelledby="h-links">
+      <h2 id="h-links">Посилання</h2>
+      <p class="sub">Усі посилання перевірено 31.10.2026 після злиття PR #13. Перші два — головні. Результати демо-сценаріїв перевірено на продакшні: кожен сценарій зіграно до кінця.</p>
+      <div class="primary-links">
+        <a href="https://casino-game-bice.vercel.app" target="_blank" rel="noopener">
+          <span class="k">1 · Гра на Vercel (публічна)</span>
+          <span class="u">casino-game-bice.vercel.app</span>
+          <span class="d">Відкривається без входу. Оновлюється сама після кожного merge у main.</span>
+        </a>
+        <a href="https://github.com/romsvid-hub/casino-game" target="_blank" rel="noopener">
+          <span class="k">2 · Репозиторій GitHub (Public)</span>
+          <span class="u">github.com/romsvid-hub/casino-game</span>
+          <span class="d">Код, документація, історія PR за рівнями.</span>
+        </a>
+      </div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Що</th><th>Посилання</th></tr></thead>
+          <tbody>
+            <tr class="group-row"><td colspan="2">Демо-сценарії · Medium (ставка 5.00, перед кожним оновити сторінку)</td></tr>
+            <tr><td>Рання поразка: перший бій програно → −5.00, баланс 35.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=2&amp;difficulty=medium" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=2&amp;difficulty=medium</a></td></tr>
+            <tr><td>3 перемоги (×1.20, ×1.60, ×2.40), потім TAKE → +12.00, баланс 47.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=1&amp;difficulty=medium" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=1&amp;difficulty=medium</a></td></tr>
+            <tr><td>7 перемог поспіль, бос → MAX WIN +95.00 (×19.00), баланс 130.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=13&amp;difficulty=medium" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=13&amp;difficulty=medium</a></td></tr>
+            <tr class="group-row"><td colspan="2">Демо-сценарії · Easy</td></tr>
+            <tr><td>Рання поразка → −5.00, баланс 35.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=4&amp;difficulty=easy" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=4&amp;difficulty=easy</a></td></tr>
+            <tr><td>3 перемоги, потім TAKE → +7.75 (×1.55), баланс 42.75</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=1&amp;difficulty=easy" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=1&amp;difficulty=easy</a></td></tr>
+            <tr><td>7 перемог → MAX WIN +23.00 (×4.60), баланс 58.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=3&amp;difficulty=easy" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=3&amp;difficulty=easy</a></td></tr>
+            <tr class="group-row"><td colspan="2">Демо-сценарії · High</td></tr>
+            <tr><td>Рання поразка → −5.00, баланс 35.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=1&amp;difficulty=high" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=1&amp;difficulty=high</a></td></tr>
+            <tr><td>3 перемоги, потім TAKE → +25.25 (×5.05), баланс 60.25</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=52&amp;difficulty=high" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=52&amp;difficulty=high</a></td></tr>
+            <tr><td>7 перемог → MAX WIN +1,173.00 (×234.60), баланс 1,208.00</td><td class="u"><a href="https://casino-game-bice.vercel.app/?seed=29&amp;difficulty=high" target="_blank" rel="noopener">casino-game-bice.vercel.app/?seed=29&amp;difficulty=high</a></td></tr>
+
+            <tr class="group-row"><td colspan="2">Сторінки для перевірки</td></tr>
+            <tr><td>UI Kit: усі компоненти і стани, включно з плашкою MAX WIN (заміна Storybook)</td><td class="u"><a href="https://casino-game-bice.vercel.app/#/kit" target="_blank" rel="noopener">casino-game-bice.vercel.app/#/kit</a></td></tr>
+            <tr><td>Дебаг-панель (стан гри, примусова перемога / поразка)</td><td class="u"><a href="https://casino-game-bice.vercel.app/?debug=1" target="_blank" rel="noopener">casino-game-bice.vercel.app/?debug=1</a></td></tr>
+
+            <tr class="group-row"><td colspan="2">Vercel і GitHub</td></tr>
+            <tr><td>Проєкт у Vercel (деплої, preview-посилання PR; потрібен вхід)</td><td class="u"><a href="https://vercel.com/alien-eyes/casino-game" target="_blank" rel="noopener">vercel.com/alien-eyes/casino-game</a></td></tr>
+            <tr><td>Релізи (v0.1)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/releases" target="_blank" rel="noopener">github.com/romsvid-hub/casino-game/releases</a></td></tr>
+            <tr><td>Усі злиті PR (#1–#13)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/pulls?q=is%3Apr+is%3Amerged" target="_blank" rel="noopener">github.com/romsvid-hub/casino-game/pulls?q=is:pr+is:merged</a></td></tr>
+            <tr><td>Новий PR: виправлення з рев'ю (#13)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/pull/13" target="_blank" rel="noopener">github.com/romsvid-hub/casino-game/pull/13</a></td></tr>
+            <tr><td>Правки клієнта (#12)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/pull/12" target="_blank" rel="noopener">github.com/romsvid-hub/casino-game/pull/12</a></td></tr>
+
+            <tr class="group-row"><td colspan="2">Документація в репозиторії</td></tr>
+            <tr><td>Демо-інструкція для клієнта</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/README-demo.md" target="_blank" rel="noopener">README-demo.md</a></td></tr>
+            <tr><td>Правила для Claude і проєкту</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/CLAUDE.md" target="_blank" rel="noopener">CLAUDE.md</a></td></tr>
+            <tr><td>План рівнів (ROADMAP)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener">docs/ROADMAP.md</a></td></tr>
+            <tr><td>Рішення і компроміси</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/decisions.md" target="_blank" rel="noopener">docs/decisions.md</a></td></tr>
+            <tr><td>Правила гри і схема станів</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/game-rules.md" target="_blank" rel="noopener">docs/game-rules.md</a></td></tr>
+            <tr><td>Відкриті питання до клієнта</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/open-questions.md" target="_blank" rel="noopener">docs/open-questions.md</a></td></tr>
+            <tr><td>Демо-сценарії для всіх складностей</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/demo-seeds.md" target="_blank" rel="noopener">docs/demo-seeds.md</a></td></tr>
+            <tr><td>Нотатки по Lottie-анімаціях</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/lottie.md" target="_blank" rel="noopener">docs/lottie.md</a></td></tr>
+            <tr><td>QA-чекліст і результати</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/qa/checklist.md" target="_blank" rel="noopener">docs/qa/checklist.md</a></td></tr>
+            <tr><td>Візуальний звіт QA: Figma поруч із грою (14 станів)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/qa/report.html" target="_blank" rel="noopener">docs/qa/report.html</a></td></tr>
+            <tr><td>Еталони компонентів з Figma (для /#/kit)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/tree/main/docs/figma-refs" target="_blank" rel="noopener">docs/figma-refs/</a></td></tr>
+            <tr><td>Цей звіт</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/docs/status/status.html" target="_blank" rel="noopener">docs/status/status.html</a></td></tr>
+            <tr><td>Числа гри (заглушки PLACEHOLDER)</td><td class="u"><a href="https://github.com/romsvid-hub/casino-game/blob/main/prototype/src/game/config.js" target="_blank" rel="noopener">prototype/src/game/config.js</a></td></tr>
+
+            <tr class="group-row"><td colspan="2">Дизайн у Figma</td></tr>
+            <tr><td>Figma-файл «Mavka_game»</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game" target="_blank" rel="noopener">figma.com/design/LXMHPQWUYxLjZiYVTfbx5X</a></td></tr>
+            <tr><td>Стартовий екран (лобі, 587:5125)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=587-5125" target="_blank" rel="noopener">node-id=587-5125</a></td></tr>
+            <tr><td>Вихід героя / очікування бою (457:7471)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=457-7471" target="_blank" rel="noopener">node-id=457-7471</a></td></tr>
+            <tr><td>Очікування бою з босом (473:1397)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=473-1397" target="_blank" rel="noopener">node-id=473-1397</a></td></tr>
+            <tr><td>Перемога над ворогом / над босом (380:5467, 629:6879)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=380-5467" target="_blank" rel="noopener">node-id=380-5467</a> · <a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=629-6879" target="_blank" rel="noopener">node-id=629-6879</a></td></tr>
+            <tr><td>Попап MAX WIN (660:5112)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=660-5112" target="_blank" rel="noopener">node-id=660-5112</a></td></tr>
+            <tr><td>UI Kit (292:3759) · Plate/Multiplier (554:4220) · Path/Gate (335:3892)</td><td class="u"><a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=292-3759" target="_blank" rel="noopener">node-id=292-3759</a> · <a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=554-4220" target="_blank" rel="noopener">554-4220</a> · <a href="https://www.figma.com/design/LXMHPQWUYxLjZiYVTfbx5X/Mavka_game?node-id=335-3892" target="_blank" rel="noopener">335-3892</a></td></tr>
+
+            <tr class="group-row"><td colspan="2">Локально на Mac</td></tr>
+            <tr><td>Папка проєкту (усе разом)</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game</td></tr>
+            <tr><td>Цей звіт (копія)</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/Slavic_Forest_status.html</td></tr>
+            <tr><td>Репозиторій (копія GitHub, гілка main)</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/casino-game</td></tr>
+            <tr><td>Код гри</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/casino-game/prototype</td></tr>
+            <tr><td>Документація</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/casino-game/docs</td></tr>
+            <tr><td>Числа гри (заглушки)</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/casino-game/prototype/src/game/config.js</td></tr>
+            <tr><td>Візуальний звіт QA (відкрити подвійним кліком)</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/casino-game/docs/qa/report.html</td></tr>
+            <tr><td>Вихідні Lottie-анімації</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/lottie_here</td></tr>
+            <tr><td>Вихідні PNG та ілюстрації</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/ui-kit, _ui-kit-cta, Assets_illustrations</td></tr>
+            <tr><td>Бриф: перша розмова з клієнтом</td><td class="u">/Users/romanswiderskyi/Documents/Casino Game/Перша розмова з клієнтом.txt</td></tr>
+            <tr><td>Запуск гри локально (у Терміналі)</td><td class="u">cd "/Users/romanswiderskyi/Documents/Casino Game/casino-game/prototype" &amp;&amp; npm run dev → http://localhost:5173</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="done" aria-labelledby="h-done">
+      <h2 id="h-done">Що зроблено</h2>
+      <p class="sub">Один рівень — одна гілка — один PR у main, з комітами в стилі Conventional Commits. Рівні йдуть у порядку з ROADMAP.</p>
+      <div class="levels">
+        <div class="level"><span class="n">L0</span><div><h3>Репозиторій і правила</h3><ul><li>Репо <code>romsvid-hub/casino-game</code> (Public), <code>CLAUDE.md</code> з правилами роботи, <code>docs/</code> з ROADMAP.</li><li>Підключено Figma MCP: усе будується з макета, а не «на око».</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/1">L1</a></span><div><h3>Скелет і сцена 1920×1080</h3><ul><li>Vite 8 + React 19 + Tailwind v4.</li><li>Фіксована сцена 1920×1080, яка масштабується під будь-яке вікно з полями (letterbox) і не обрізається.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/2">L2</a></span><div><h3>Токени з Figma</h3><ul><li>Кольори, типографіка (Ruslan Display, Kurale) і ефекти перенесено в <code>tokens.css</code>, вони доступні як класи Tailwind.</li><li>Поза <code>tokens.css</code> у коді немає жодного hex-кольору (це перевіряється).</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/3">L3</a></span><div><h3>Ассети і Lottie</h3><ul><li>Растрові «шкурки» експортовано з Figma, кнопки CTA взято з <code>_ui-kit-cta</code>.</li><li>25 Lottie-файлів відтворюються через lottie-web 5.12.2 (svg).</li><li>Фон сцени анімований: хмари, туман, смолоскип, місяць.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/4">L4</a></span><div><h3>Логіка гри і гроші</h3><ul><li>Стани гри зроблено як скінченний автомат: SETUP → ENTERING → DECISION → FIGHTING → RESOLVING → WIN_BANNER / DEFEAT / CASHED_OUT / MAX_WIN.</li><li>Гроші рахуються в центах з правильним округленням.</li><li>Випадковість детермінована: <code>?seed=</code> відтворює однаковий раунд.</li><li>Раунд має 7 воріт, на 7-х чекає бос. Є три складності.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/5">L5</a></span><div><h3>Базові UI-компоненти</h3><ul><li>Компоненти зібрано за UI Kit: CTA (Fight / Take / Play / Skip), фішки ставок, степер, складність, бейдж, плашка множника, ворота шляху та інші.</li><li>Сторінка <code>/#/kit</code> показує кожен компонент у всіх станах і замінює Storybook.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/6">L6</a></span><div><h3>HUD</h3><ul><li>Угорі: баланс, медальйони Rules і Menu, шлях із воротами, лічильник WIN, плашка наступного множника.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/7">L7</a></span><div><h3>Нижня панель</h3><ul><li>Варіанти панелі: Setup (ставка + складність + PLAY), Battle (FIGHT / TAKE), Animation (SKIP), Result.</li><li>Керування з клавіатури: Space / Enter, T, S.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/8">L8</a></span><div><h3>Сцена і анімації</h3><ul><li>«Режисер» сцени: кожен стан гри однозначно визначає, що показано на сцені.</li><li>Персонажі змінюють анімації з плавним переходом, фокус-світло переходить між героєм, ворогом і зіткненням.</li><li>Приземлення боса трясе камеру.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/9">L9</a></span><div><h3>Результати</h3><ul><li>Банери Victory і Defeat, попапи Round end (Defeat, Cashed out) і MAX WIN.</li><li>Суми анімовано лічильником, баланс у HUD змінюється тільки разом із попапом.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/10">L10</a></span><div><h3>Правила, меню, повний цикл</h3><ul><li>Модалки Rules і Menu з пасткою фокусу (Esc закриває).</li><li>У меню є «Skip animations» (налаштування запам'ятовується) і «Reset demo balance».</li><li>Повідомлення про низький баланс.</li><li><code>?difficulty=</code> у посиланні, демо-сценарії для всіх складностей.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/11">L11</a></span><div><h3>QA, швидкодія, демо v0.1</h3><ul><li>Lottie вантажиться частинами по ходу раунду, а не 8.8 MB одразу. Копії JSON готуються заздалегідь, у вільний час браузера.</li><li><code>/kit</code> винесено з основного бандла.</li><li>Три автоматичні набори тестів на Playwright: логіка, візуальне порівняння з Figma, смоук у Chrome, Firefox і Safari.</li><li>README-demo для клієнта, QA-чекліст, реліз <code>v0.1</code>.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/12">#12</a></span><div><h3>Правки клієнта після v0.1</h3><ul><li>Стартовий екран: лицаря немає, тотем у фокусі з м'яким світлом, туману над ним немає, заголовок «SLAVIC FOREST» по центру.</li><li>Сцена на старті показана зблизька. Після PLAY камера віддаляється, поки герой заходить на сцену.</li><li>Бій тепер іде в три такти: удар, після якого суперник у позі поразки; переможець торжествує над тілом; тіло розсипається в попіл. Так само для боса і для героя, коли він програє.</li><li>Посилання на гру додано в README-demo, в опис репозиторію і в реліз v0.1.</li></ul></div></div>
+        <div class="level"><span class="n"><a href="https://github.com/romsvid-hub/casino-game/pull/13">#13</a></span><div><h3>Виправлення з рев'ю (бос, плашка, шлях, MAX WIN)</h3><ul><li><b>Бос читається як фінальний бій.</b> Ворота боса завжди стоять у кінці шляху. До рівня боса це заблокований маркер Final, а поруч мітка «+N» — скільки боїв лишилось. На рівні боса ворота світяться і один раз пульсують.</li><li>Перед виходом боса 1.2 с показується банер «FINAL BATTLE · MAX WIN ×19.00», Skip його пропускає. Над головою боса — плашка «MAX WIN ×19.00» із золотим сяйвом.</li><li>У нижній панелі на рівні боса: «MAX WIN» замість IF WON, FIGHT показує «max win 95.00» і світиться (стан Highlight). Усі числа беруться з логіки гри.</li><li><b>Плашка множника</b> отримала скін із Figma (554:4221) і стоїть по центру над ворогом. Обидва варіанти є на сторінці <code>/#/kit</code>.</li><li><b>Тінь під шляхом</b> тепер як у Figma (25 px зверху, 35 px знизу). На 1, 4 і 7 воротах медальйони добре видно і над місяцем.</li><li><b>Сяйво MAX WIN</b> тепер малюється над затемненням фону, як у кадрі 660:5112. Попап Cashed out не змінився.</li><li>Документація: у <code>open-questions.md</code> закрито питання про лицаря і додано три нові. Рішення записано в <code>decisions.md</code>.</li></ul></div></div>
+        <div class="level"><span class="n">Deploy</span><div><h3>Публікація</h3><ul><li>Проєкт на Vercel підключено до GitHub: кожен merge оновлює публічне посилання, кожен PR отримує своє preview.</li><li>Після злиття #13 продакшн оновився приблизно за 20 с.</li></ul></div></div>
+      </div>
+      <div class="qa" aria-label="Останні результати QA">
+        <div><b>ALL PASS</b><span>Логіка гри і гроші, всі 9 демо-сценаріїв</span></div>
+        <div><b>59 / 59</b><span>Візуальний QA проти Figma (14 станів), гроші, бос, швидкодія</span></div>
+        <div><b>69 / 69</b><span>Смоук у Chromium, Firefox, WebKit</span></div>
+        <div><b>9 / 9</b><span>Демо-сценарії перевірено на продакшні</span></div>
+      </div>
+    </section>
+
+    <section id="questions" aria-labelledby="h-q">
+      <h2 id="h-q">Відкриті питання</h2>
+      <p class="sub">Розділ збігається з <code>docs/open-questions.md</code>. Поки відповідей немає, у коді стоять заглушки. Відповіді записуються в <code>docs/decisions.md</code>, і змінюється тільки <code>config.js</code>.</p>
+      <ol class="questions">
+        <li><div><h3>Скільки воріт у раунді: 7 чи 9? <span class="tag client">клієнт</span></h3><p>Кадри рівнів у Figma показують 7 множників (бос ×19.00), але фінальний кадр боса (660:5112) підписує їх «Gate 4…9». Зараз зроблено 7.</p></div></li>
+        <li><div><h3>Фінальний бос і другий бос <span class="tag client">клієнт</span></h3><p>Фінальний бос дає автоматичний максимальний виграш, і раунд закінчується. Який максимальний множник для кожної складності, і де стоїть другий бос: на проміжному рівні чи у фіналі іншої складності?</p></div></li>
+        <li><div><h3>Множники і шанси перемоги за складністю <span class="tag client">клієнт</span></h3><p>Зараз шанси 80 / 65 / 45 % зі старого прототипу, а криві Easy і High виведено з Medium.</p></div></li>
+        <li><div><h3>Ставки і демо-баланс <span class="tag client">клієнт</span></h3><p>Мінімум, максимум, номінали фішок, стартовий демо-баланс (зараз 40.00).</p></div></li>
+        <li><div><h3>Значення кнопки MAX <span class="tag client">клієнт</span></h3><p>Зараз MAX = 20 з обмеженням балансом.</p></div></li>
+        <li><div><h3>Текст правил і RTP <span class="tag client">клієнт</span></h3><p>Правила зараз — чернетка зі старого прототипу (<code>RulesModal.jsx</code>). Чи показувати RTP (у макеті лобі заглушка «[96.00%]»)?</p></div></li>
+        <li><div><h3>Rules і Menu під час раунду <span class="tag client">клієнт</span></h3><p>У Figma медальйони є тільки на стартовому екрані. Чи можна відкривати правила або меню посеред раунду?</p></div></li>
+        <li><div><h3>Що потрібно до наступного показу <span class="tag client">клієнт</span></h3><p>Звуки, мобільний ландшафт, звичайні вовки, другий бос — що з цього потрібно і в якому порядку?</p></div></li>
+        <li><div><h3>Шрифт для цифр <span class="tag you">дизайн</span></h3><p>В описі компонентів у Figma сказано «Spectral SemiBold, tabular figures», а всі цифри в макеті набрані Kurale. Який шрифт фінальний?</p></div></li>
+        <li><div><h3>Підзаголовок під «SLAVIC FOREST» <span class="tag you">дизайн</span></h3><p>У Figma (587:5180) там «Lorem ipsum». Зараз стоїть «A cash-out battle in the Slavic forest». Потрібен фінальний текст.</p></div></li>
+        <li><div><h3>Фінальна назва гри <span class="tag you">дизайн</span></h3><p>«Slavic Forest» (заголовок стартового екрана) чи «Battle of Multipliers» (README, реліз, опис репозиторію)?</p></div></li>
+        <li><div><h3>Як показувати бос і MAX WIN <span class="tag you">дизайн</span></h3><p>У Figma немає окремого стану «це останній бій». Наша пропозиція — PR #13: ворота боса завжди видно на шляху, банер «FINAL BATTLE», плашка «MAX WIN ×19.00», підписи MAX WIN у панелі. Треба підтвердити або дати дизайн.</p></div></li>
+        <li><div><h3>Лицар на стартовому екрані <span class="tag done">вирішено</span></h3><p>Лицаря на старті немає, у фокусі тотем, герой заходить після PLAY. Зроблено в PR #12.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="missing" aria-labelledby="h-m">
+      <h2 id="h-m">Чого бракує</h2>
+      <p class="sub">Відсортовано за пріоритетом. «Високий» — те, що варто закрити перед показом клієнту. Пункти, виправлені в PR #13 (сигнали боса, плашка, тінь шляху, сяйво MAX WIN), прибрано.</p>
+      <div class="gaps">
+        <div class="gap"><span class="p high">Високий</span><div><h3>Ручна перевірка на MacBook</h3><p>Гру ще не проходили вручну в справжніх Chrome, Safari і Firefox (шрифти, розмиття фону, нова плашка MAX WIN) і не дивилися панель Performance в Chrome під час бою. Автотести рендерять без відеокарти, тому їхні fps не показові. Пункти — у <code>docs/qa/checklist.md</code>.</p></div></div>
+        <div class="gap"><span class="p high">Високий</span><div><h3>Фінальні числа від клієнта</h3><p>Усі множники, шанси, ставки і баланс — заглушки з позначкою PLACEHOLDER у <code>config.js</code>. Після відповідей треба перегенерувати демо-сценарії (<code>?seed=</code>).</p></div></div>
+        <div class="gap"><span class="p high">Високий</span><div><h3>Безпека: видимість репозиторію</h3><p>Репозиторій зараз Public. Якщо проєкт клієнтський, зроби його приватним: GitHub → Settings → Danger Zone → Change repository visibility → Make private. Vercel (Hobby, особистий репозиторій) після цього деплоїтиме так само.</p></div></div>
+        <div class="gap"><span class="p high">Високий</span><div><h3>Безпека: старий токен GitHub</h3><p>Його досі не відкликано. Зроби це в GitHub → Settings → Developer settings → Personal access tokens. Claude працює через окремий OAuth-токен GitHub CLI з Keychain.</p></div></div>
+        <div class="gap"><span class="p mid">Середній</span><div><h3>Проміжні кадри замаху в атаці</h3><p>Зараз атака перескакує з пози idle у позу удару. Потрібні проміжні кадри замаху (арт). Робить Роман.</p></div></div>
+        <div class="gap"><span class="p mid">Середній</span><div><h3>Звук</h3><p>У прототипі немає звуку, тому кнопку Sound з макета прибрано.</p></div></div>
+        <div class="gap"><span class="p mid">Середній</span><div><h3>Мобільна версія</h3><p>Сцена фіксована 1920×1080 і просто масштабується. Окремого мобільного чи портретного макета немає.</p></div></div>
+        <div class="gap"><span class="p mid">Середній</span><div><h3>Інші вороги і другий бос</h3><p>Зараз є один тип ворога і один бос.</p></div></div>
+        <div class="gap"><span class="p low">Низький</span><div><h3>Storybook + Chromatic, Style Dictionary</h3><p>Бонусний рівень із ROADMAP. Зараз їх замінює <code>/#/kit</code>. Корисно для практики з курсу, для демо не потрібно.</p></div></div>
+        <div class="gap"><span class="p low">Низький</span><div><h3>Сцена на старті на 53 px вище, ніж у Figma</h3><p>Фон не має запасу картинки над сценою. Щоб не було темної смуги, зум зроблено від верхнього краю. Якщо потрібна точна відповідність, треба зробити фон з більшим полем.</p></div></div>
+        <div class="gap"><span class="p low">Низький</span><div><h3>Preview-посилання PR</h3><p>Preview-посилання Vercel для кожного PR відкриваються лише після входу у Vercel. Публічне тільки основне посилання. Якщо preview треба показувати клієнту, захист можна вимкнути: Settings → Deployment Protection.</p></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('copy-all');
+  var note = document.getElementById('copy-note');
+  function asText() {
+    var doc = document.getElementById('doc').cloneNode(true);
+    var actions = doc.querySelector('.actions');
+    if (actions) actions.remove();
+    doc.querySelectorAll('a[href^="http"]').forEach(function (a) {
+      if (a.textContent.indexOf('http') !== 0) a.textContent = a.textContent.trim() + ' (' + a.href + ')';
+    });
+    var holder = document.createElement('div');
+    holder.style.position = 'fixed'; holder.style.left = '-99999px'; holder.style.whiteSpace = 'pre-wrap';
+    holder.appendChild(doc); document.body.appendChild(holder);
+    var text = holder.innerText.replace(/\n{3,}/g, '\n\n').trim();
+    holder.remove();
+    return text;
+  }
+  btn.addEventListener('click', function () {
+    var text = asText();
+    var done = function () { note.textContent = 'Скопійовано. Встав у інший чат.'; };
+    var fallback = function () {
+      var ta = document.createElement('textarea');
+      ta.className = 'copy-fallback';
+      ta.value = text; ta.setAttribute('readonly', '');
+      note.textContent = 'Скопіювати автоматично не вдалося: виділи текст нижче і натисни Cmd+C.';
+      btn.parentNode.after(ta); ta.focus(); ta.select();
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
