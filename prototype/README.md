@@ -18,5 +18,11 @@ npm run build    # production build into dist/
 - `src/game` — game state and all money math.
 - `src/ui`, `src/scene`, `src/screens`, `src/styles` — UI, Lottie scene, screens, tokens.
 - `public/assets`, `public/lottie` — raster skins and Lottie files.
-- `D` — show / hide the debug panel.
+- `D` — show / hide the debug panel (only rendered with `?debug=1`).
 - `Space` / `Enter` — FIGHT (PLAY on the setup screen), `T` — TAKE, `S` — SKIP animation.
+
+## URL parameters
+
+- `?seed=123` — same fights every time (see `docs/demo-seeds.md`).
+- `?difficulty=easy|medium|high` — preselect the difficulty.
+- `?debug=1` — show the debug panel.

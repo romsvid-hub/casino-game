@@ -12,3 +12,4 @@
 - [ ] Max bet: what value should the "MAX" chip use (prototype assumes 20, capped by balance)?
 - [ ] Rules / Menu during a round: Figma shows the medallions only on the setup screen. Should players be able to open Rules or the menu mid-round?
 - [ ] Setup screen: Figma shows the knight already standing there, but the round start plays his entrance from the left. Keep both (he walks back in), or show no knight on setup?
+- [ ] Rules text (DRAFT): the "How to play" modal uses six lines adapted from the old prototype to our rules (`src/ui/modals/RulesModal.jsx`). Please confirm or replace them, and tell us whether to show an RTP figure (the Figma lobby frame shows "[96.00%]" as a placeholder).
