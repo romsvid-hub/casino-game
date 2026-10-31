@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { assets } from '../../assets.js'
 import LottieLayer from '../../scene/LottieLayer.jsx'
 import Digits from '../Digits.jsx'
 import SkinSide from '../SkinSide.jsx'
 import { useCountUp } from '../useCountUp.js'
+import { useFocusTrap } from '../useFocusTrap.js'
 import PopupActions from './PopupActions.jsx'
 
 const { results } = assets.vectors
@@ -25,30 +26,6 @@ const VARIANTS = {
   cashedOut: { title: 'CASHED OUT', titleColor: 'text-accent-amber', amountColor: 'text-text-parchment', border: 'border-popup-border-gold' },
   maxWin: { title: 'MAX WIN', titleColor: 'text-accent-amber', amountColor: 'text-text-parchment', border: 'border-popup-border-gold' },
   defeat: { title: 'DEFEAT', titleColor: 'text-defeat-title', amountColor: 'text-defeat-amount', border: 'border-popup-border-blood' },
-}
-
-// Keeps keyboard focus inside the modal; Esc does nothing (a result must be
-// acknowledged). Enter / Space act on the focused button (NEW ROUND by default).
-function useFocusTrap(containerRef, initialRef) {
-  useEffect(() => {
-    initialRef.current?.focus()
-    const el = containerRef.current
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        return
-      }
-      if (e.key !== 'Tab') return
-      const focusable = [...el.querySelectorAll('button:not(:disabled)')]
-      if (!focusable.length) return
-      const i = focusable.indexOf(document.activeElement)
-      const next = e.shiftKey ? (i <= 0 ? focusable.length - 1 : i - 1) : (i + 1) % focusable.length
-      e.preventDefault()
-      focusable[next].focus()
-    }
-    el.addEventListener('keydown', onKey)
-    return () => el.removeEventListener('keydown', onKey)
-  }, [containerRef, initialRef])
 }
 
 // Popup/Round end 475:2904 (1000x540 at x460 y250) over Overlay/Modal scrim 475:2895.
