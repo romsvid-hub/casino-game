@@ -29,9 +29,13 @@ export const INSUFFICIENT_BALANCE_HINT = 'Not enough balance'
 
 function SetupContent({ state, actions, derived }) {
   const difficulty = config.difficulties[state.difficulty]
+  // Below the minimum bet PLAY reads "min bet 1.00" (555:5220) and the
+  // low-balance notice above the dock offers ADD.
   const playAmount = derived.canPlay
     ? `bet ${formatMoney(state.bet)} · ${difficulty.label}`
-    : INSUFFICIENT_BALANCE_HINT
+    : derived.belowMinBet
+      ? `min bet ${formatMoney(derived.minBet)}`
+      : INSUFFICIENT_BALANCE_HINT
 
   return (
     <>
@@ -143,8 +147,9 @@ function RoundContent({ variant, state, actions, derived }) {
 
 // Keyboard: Space / Enter = Fight (Play in setup), T = Take, S = Skip.
 // Ignored while a button has focus, so its own Enter / Space still work normally.
-function useDockKeys(state, actions, derived) {
+function useDockKeys(state, actions, derived, enabled) {
   useEffect(() => {
+    if (!enabled) return
     const onKey = (e) => {
       if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
       if (e.target instanceof Element && e.target.closest('button, input, select, textarea, a')) return
@@ -159,13 +164,13 @@ function useDockKeys(state, actions, derived) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [state.phase, actions, derived])
+  }, [state.phase, actions, derived, enabled])
 }
 
 // Bottom dock (1500x168 at x210 y888), driven by the game state.
-export default function Dock({ state, actions, derived, className = '' }) {
+export default function Dock({ state, actions, derived, keysEnabled = true, className = '' }) {
   const variant = VARIANT[state.phase]
-  useDockKeys(state, actions, derived)
+  useDockKeys(state, actions, derived, keysEnabled)
 
   return (
     <div className={`absolute h-[168px] w-[1500px] ${className}`} data-variant={variant}>

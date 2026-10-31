@@ -44,6 +44,8 @@
   --color-defeat-title: #d94a4f;
   --color-defeat-amount: #cfc3aa;
   --color-ray: rgb(255 210 122 / 0.13); /* Cashed out fx/rays */
+  --color-notice-bg: rgb(140 20 15 / 0.22); /* notice/low-balance 555:5379 */
+  --color-notice-border: rgb(191 38 26 / 0.7);
 
   --color-transparent: transparent;
   --color-black: #000;
@@ -257,6 +259,7 @@
   --fx-banner-amount-glow: 0 0 12px rgb(63 224 208 / 0.7); /* Popup/Result amount */
   --fx-popup-shadow: 0 12px 40px rgb(0 0 0 / 0.7); /* Popup/Round end body */
   --fx-popup-text: 0 2px 6px rgb(0 0 0 / 0.85); /* Popup/Round end texts */
+  --fx-modal-shadow: 0 12px 32px rgb(0 0 0 / 0.6); /* lobby modal body 555:4999 */
 }
 
 @utility fx-text-shadow {

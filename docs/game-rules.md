@@ -75,7 +75,14 @@ Every number below lives in `config.js`, marked `PLACEHOLDER - pending client`.
 | 6 (boss next) | 57.50 | ×19.00 | 95.00 |
 | 7 (boss beaten) | MAX WIN +95.00 | — | — |
 
-## Debug
+## URL parameters
 
-- The `D` key toggles the debug panel. It shows the state, balance, bet, difficulty, level, AT RISK, IF WON and seed, plus a button for every event and force win / force lose (applies to the next fight only).
-- `?seed=123` in the URL replays the same round every time.
+- `?seed=123`: replays the same fights every time (first round after a page load). Demo values are in `docs/demo-seeds.md`.
+- `?difficulty=easy|medium|high`: preselects the difficulty.
+- `?debug=1`: shows the debug panel. `D` toggles it; it shows state, balance, bet, difficulty, level, AT RISK, IF WON and seed, plus buttons for ENTER_DONE / ANIM_DONE / NEW_ROUND / MENU, force win / force lose (next fight only) and the "auto beats" switch.
+
+## Menu and demo balance
+
+- The Rules and Menu medallions are on the setup screen. MENU on a round-end popup returns to setup and opens the menu.
+- Menu: Skip animations (remembered in this browser; the default follows the OS reduce-motion setting), Rules, Reset demo balance (back to the starting balance), Close.
+- If the balance falls below the minimum bet, setup shows "Not enough balance" with ADD, which resets the demo balance.

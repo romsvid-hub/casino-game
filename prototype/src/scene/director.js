@@ -140,7 +140,7 @@ export function sceneFor(state, derived) {
 // Every clip a round can need; preloaded at SETUP so no blank frames appear.
 export const ALL_CLIPS = Object.values(L).map((c) => c.src)
 
-function prefersReducedMotion() {
+export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 

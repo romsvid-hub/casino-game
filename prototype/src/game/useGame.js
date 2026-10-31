@@ -17,6 +17,7 @@ export function useGame() {
       skip: () => dispatch({ type: EVENTS.SKIP }),
       newRound: () => dispatch({ type: EVENTS.NEW_ROUND }),
       menu: () => dispatch({ type: EVENTS.MENU }),
+      resetBalance: () => dispatch({ type: EVENTS.RESET_BALANCE }),
       forceNext: (value) => dispatch({ type: EVENTS.FORCE_NEXT, value }),
     }),
     [],
