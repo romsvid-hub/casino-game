@@ -59,6 +59,9 @@ export default function LottieLayer({
   src,
   loop = false,
   autoplay = true,
+  // Hold the first frame, then play after this many ms (Infinity = keep holding).
+  // Used for the dead clips: the body lies on frame 0, then crumbles to ash.
+  playDelay,
   segment,
   marker,
   // [introMarker, loopMarker]: play the first marker once, then loop the second
@@ -80,10 +83,21 @@ export default function LottieLayer({
   const sequenceKey = markerSequence ? markerSequence.join(':') : ''
   const keepLayerRef = useRef(keepLayer)
   keepLayerRef.current = keepLayer
+  // playDelay can change after mount (body lies → ash) without remounting.
+  const playDelayRef = useRef(playDelay)
+  playDelayRef.current = playDelay
+  const animRef = useRef(null)
+  const delayTimer = useRef(null)
+  const schedulePlay = () => {
+    clearTimeout(delayTimer.current)
+    const anim = animRef.current
+    if (anim && Number.isFinite(playDelayRef.current)) delayTimer.current = setTimeout(() => anim.play(), playDelayRef.current)
+  }
 
   useEffect(() => {
     let anim = null
     let cancelled = false
+    const held = playDelayRef.current != null
 
     preloadLottie(src)
       .then((data) => {
@@ -100,7 +114,7 @@ export default function LottieLayer({
           container: containerRef.current,
           renderer: 'svg',
           loop: loopFrames ? false : loop,
-          autoplay: autoplay && !frames,
+          autoplay: autoplay && !frames && !held,
           animationData,
           rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
         })
@@ -118,15 +132,27 @@ export default function LottieLayer({
         // With inline animationData lottie may finish loading synchronously.
         if (anim.isLoaded) onReadyRef.current?.()
         if (frames && autoplay) anim.playSegments(frames, true)
+        animRef.current = anim
+        if (held) {
+          anim.goToAndStop(0, true)
+          schedulePlay()
+        }
       })
       .catch((err) => console.error(err))
 
     return () => {
       cancelled = true
+      clearTimeout(delayTimer.current)
+      animRef.current = null
       anim?.destroy()
     }
     // segment is compared by value through segmentKey
   }, [src, loop, autoplay, segmentKey, marker, sequenceKey])
+
+  // A held clip whose playDelay becomes finite starts its countdown now.
+  useEffect(() => {
+    if (animRef.current && playDelay != null) schedulePlay()
+  }, [playDelay])
 
   return <div ref={containerRef} className={`pointer-events-none ${className}`} />
 }

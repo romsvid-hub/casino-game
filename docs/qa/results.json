@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-31T09:28:46.463Z",
+  "generated": "2026-10-31T10:39:11.536Z",
   "checks": [
     {
       "name": "L0: AT RISK (dock) = WIN (counter)",
@@ -259,7 +259,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "15 mounts, worst 19 ms (hero_05_dead.json)"
+      "detail": "17 mounts, worst 89 ms (enemy_05_dead.json)"
     },
     {
       "name": "No page errors or console errors",
@@ -268,6 +268,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 20, max 90 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 40, max 381 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

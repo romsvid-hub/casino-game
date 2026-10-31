@@ -2,7 +2,7 @@
 
 A clickable browser prototype of the escalating-risk / cash-out game with a battle wrapper. It is built from the approved Figma designs (file "Mavka_game") for testing, presenting and approval. **It is not production code.**
 
-**Link:** _to be added once the Vercel project is connected_ (for local runs see `prototype/README.md`: `npm install && npm run dev`).
+**Link:** https://casino-game-bice.vercel.app (updates automatically after every merge into `main`). For local runs see `prototype/README.md`: `npm install && npm run dev`.
 
 ## How to play (3 lines)
 1. Pick a bet and a difficulty in the bottom panel, then press **PLAY**.
@@ -12,13 +12,13 @@ A clickable browser prototype of the escalating-risk / cash-out game with a batt
 Keyboard: Space / Enter = FIGHT (PLAY on the setup screen), T = TAKE, S = skip the animation. The ⓘ medallion opens the rules; ≡ opens the menu (Skip animations, Reset demo balance).
 
 ## Demo links
-Append these to the link and reload the page before each run (the bet stays at 5.00):
+Open these links and reload the page before each run (the bet stays at 5.00):
 
 | Story | Parameters | Result |
 | --- | --- | --- |
-| Early defeat | `?seed=2&difficulty=medium` | First fight lost → −5.00 |
-| Take at level 3 | `?seed=1&difficulty=medium` | 3 wins, press TAKE → +12.00 |
-| Boss win | `?seed=13&difficulty=medium` | 7 wins → MAX WIN +95.00 |
+| Early defeat | [`?seed=2&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=2&difficulty=medium) | First fight lost → −5.00 |
+| Take at level 3 | [`?seed=1&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=1&difficulty=medium) | 3 wins, press TAKE → +12.00 |
+| Boss win | [`?seed=13&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=13&difficulty=medium) | 7 wins → MAX WIN +95.00 |
 
 Easy and High seeds are listed in `docs/demo-seeds.md`.
 

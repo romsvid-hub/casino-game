@@ -48,20 +48,26 @@ function useLazyClips(state, gateCount) {
 
 export default function Scene({ scene, state, gateCount }) {
   useLazyClips(state, gateCount)
+  const lobby = state.phase === STATES.SETUP
 
   return (
     <div className="pointer-events-none absolute inset-0">
-      <LottieLayer src={assets.lottie.bgScene.src} loop />
-      {/* Focus light: all three loop; the active one crossfades in over 350 ms. */}
-      {Object.entries(FOCUS).map(([name, src]) => (
-        <div
-          key={name}
-          className="absolute inset-0 transition-opacity duration-[350ms] ease-in-out"
-          style={{ opacity: scene.focus === name ? 1 : 0 }}
-        >
-          <LottieLayer src={src} loop />
-        </div>
-      ))}
+      {/* Environment: zoomed in on the totem in the lobby (587:5125), zooms out to
+          the battle framing (457:7471) when a round starts. */}
+      <div className={`scene-env absolute inset-0 ${lobby ? 'scene-env--lobby' : ''}`}>
+        <LottieLayer src={assets.lottie.bgScene.src} loop />
+        <div className="totem-light" />
+        {/* Focus light: all three loop; the active one crossfades in over 350 ms. */}
+        {Object.entries(FOCUS).map(([name, src]) => (
+          <div
+            key={name}
+            className="absolute inset-0 transition-opacity duration-[350ms] ease-in-out"
+            style={{ opacity: scene.focus === name ? 1 : 0 }}
+          >
+            <LottieLayer src={src} loop />
+          </div>
+        ))}
+      </div>
       <ClipSlot cue={scene.hero} />
       <ClipSlot cue={scene.enemy} />
       <ClipSlot cue={scene.fx ?? null} />

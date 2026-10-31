@@ -10,6 +10,7 @@ const HERO = {
   enter: L.heroEnter,
   idle: L.heroIdle,
   attack: L.heroAttack,
+  hit: L.heroHit,
   dead: L.heroDead,
   victory: L.heroVictory,
 }
@@ -17,6 +18,7 @@ const ENEMY = {
   enter: L.enemyEnter,
   idle: L.enemyIdle,
   attack: L.enemyAttack,
+  hit: L.enemyHit,
   dead: L.enemyDead,
   victory: L.enemyVictory,
   impact: 270, // hit lands ~0.27 s into the attack (docs/lottie.md)
@@ -25,6 +27,7 @@ const BOSS = {
   enter: L.bossEnter,
   idle: L.bossIdle,
   attack: L.bossAttack,
+  hit: L.bossHit,
   dead: L.bossDead,
   victory: L.bossVictory,
   impact: 380,
@@ -32,6 +35,18 @@ const BOSS = {
 
 // Round start: the enemy enters 0.7 s after the hero (roadmap L8).
 const ENEMY_ENTER_DELAY = 700
+// A fight ends in three beats (Figma "Fight - … атакує" → "VICTORY / DEFEAT"):
+// the loser takes the hit (*_hit, Loss pose), then lies on the ground (frame 0
+// of *_dead) while the winner celebrates, then crumbles to ash.
+const DOWN_HOLD = 300 // body on the ground before the result shows
+const ASH_DELAY = 700 // body on the ground under the result banner, then ash
+// Lying body: frame 0 of the dead clip, held. The result state reuses the same
+// cue key with a finite playDelay, so the mounted clip just starts to crumble
+// (no second mount of a ~1 MB file mid-round).
+const downKey = (fightIndex, who) => `fight-${fightIndex}-${who}-down`
+const down = (key, clip) => cue(key, clip, { playDelay: Infinity })
+const ash = (key, clip) => cue(key, clip, { playDelay: ASH_DELAY })
+
 // Boss landing: CSS shake of the stage at 0.9 s, 0.35 s long (docs/lottie.md).
 export const BOSS_SHAKE = { at: 900, duration: 350 }
 
@@ -43,6 +58,8 @@ const cue = (key, clip, extra = {}) => ({ key, src: clip.src, loop: clip.mode ==
 // (`beats`, ms after the state starts).
 export function sceneFor(state, derived) {
   const { phase, passed, outcome } = state
+  // The win banner and MAX WIN look back at the fight just won, so they pick the
+  // loser explicitly; elsewhere the current gate decides.
   const E = derived.isBoss && phase !== STATES.WIN_BANNER && phase !== STATES.MAX_WIN ? BOSS : ENEMY
   const heroIdle = cue('hero-idle', HERO.idle)
   const enemyIdle = cue(`enemy-idle-${passed}`, E.idle)
@@ -50,7 +67,8 @@ export function sceneFor(state, derived) {
 
   switch (phase) {
     case STATES.SETUP:
-      return { hero: heroIdle, enemy: null, focus: 'hero', beats: [] }
+      // Lobby (587:5125): no characters, the totem is the focus (Scene lights it).
+      return { hero: null, enemy: null, focus: null, beats: [] }
 
     case STATES.ENTERING: {
       const enemyEnter = cue(`enemy-enter-${passed}`, E.enter, { then: enemyIdle })
@@ -98,39 +116,47 @@ export function sceneFor(state, derived) {
 
     case STATES.RESOLVING:
       // Same attack cue keys as FIGHTING, so the swing keeps playing; the victim
-      // reacts. Enemies always die in one fight in this prototype.
+      // takes the hit, then drops (enemies always die in one fight here).
       if (outcome === 'win') {
         return {
           hero: cue(`${fight}-hero-attack`, HERO.attack, { then: heroIdle }),
-          enemy: cue(`${fight}-enemy-dead`, E.dead),
+          enemy: cue(`${fight}-enemy-hit`, E.hit, { then: down(downKey(passed, 'enemy'), E.dead) }),
           focus: 'clash',
-          beats: [{ at: ms(E.dead), action: 'animDone' }],
+          beats: [{ at: ms(E.hit) + DOWN_HOLD, action: 'animDone' }],
         }
       }
       return {
-        hero: cue(`${fight}-hero-dead`, HERO.dead),
+        hero: cue(`${fight}-hero-hit`, HERO.hit, { then: down(downKey(passed, 'hero'), HERO.dead) }),
         enemy: cue(`${fight}-enemy-attack`, E.attack, { then: enemyIdle }),
         focus: 'clash',
-        beats: [{ at: ms(HERO.dead), action: 'animDone' }],
+        beats: [{ at: ms(HERO.hit) + DOWN_HOLD, action: 'animDone' }],
       }
 
     case STATES.WIN_BANNER:
-      // Victory beat while the result banner shows, then the next enemy enters.
+      // Hero celebrates over the fallen enemy (380:5467), the body turns to ash,
+      // then the next enemy enters.
       return {
         hero: cue('hero-victory', HERO.victory),
-        enemy: null,
+        enemy: ash(downKey(passed - 1, 'enemy'), ENEMY.dead),
         focus: 'hero',
-        beats: [{ at: config.timings.resultBanner, action: 'animDone' }],
+        beats: [{ at: Math.max(config.timings.resultBanner, ASH_DELAY + ms(ENEMY.dead)), action: 'animDone' }],
       }
 
     case STATES.CASHED_OUT:
       return { hero: cue('hero-victory', HERO.victory), enemy: enemyIdle, focus: 'hero', beats: [] }
 
     case STATES.MAX_WIN:
-      return { hero: cue('hero-victory', HERO.victory), enemy: null, focus: 'hero', beats: [] }
+      // Boss lies beaten under the victory banner (629:6879), then turns to ash.
+      return { hero: cue('hero-victory', HERO.victory), enemy: ash(downKey(passed - 1, 'enemy'), BOSS.dead), focus: 'hero', beats: [] }
 
     case STATES.DEFEAT:
-      return { hero: null, enemy: cue(`enemy-victory-${passed}`, E.victory), focus: 'enemy', beats: [] }
+      // Enemy celebrates over the fallen hero (380:5864 / 640:7126), hero turns to ash.
+      return {
+        hero: ash(downKey(passed, 'hero'), HERO.dead),
+        enemy: cue(`enemy-victory-${passed}`, E.victory),
+        focus: 'enemy',
+        beats: [],
+      }
 
     default:
       return { hero: heroIdle, enemy: null, focus: 'hero', beats: [] }
@@ -143,8 +169,11 @@ export function sceneFor(state, derived) {
 // frame before fading it in, so a late load never shows a blank frame.
 export const CLIP_BATCHES = {
   setup: [L.bgScene, L.focusHero, L.focusEnemy, L.focusClash, L.heroIdle],
-  round: [L.heroEnter, L.heroAttack, L.heroDead, L.heroVictory, L.enemyEnter, L.enemyIdle, L.enemyAttack, L.enemyDead, L.enemyVictory],
-  boss: [L.bossEnter, L.bossLandShake, L.bossIdle, L.bossAttack, L.bossDead, L.bossVictory, L.popupMaxWin],
+  round: [
+    L.heroEnter, L.heroAttack, L.heroHit, L.heroDead, L.heroVictory,
+    L.enemyEnter, L.enemyIdle, L.enemyAttack, L.enemyHit, L.enemyDead, L.enemyVictory,
+  ],
+  boss: [L.bossEnter, L.bossLandShake, L.bossIdle, L.bossAttack, L.bossHit, L.bossDead, L.bossVictory, L.popupMaxWin],
 }
 // Start loading the boss batch this many gates before the boss.
 export const BOSS_PRELOAD_GATES = 3
