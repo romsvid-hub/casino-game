@@ -232,6 +232,10 @@ export function selectDerived(state) {
     ifWon: ended ? null : ifWon(bet, gates, passed),
     nextMultiplier: !ended && passed < gates.length ? gates[passed] : null,
     isBoss: passed === last,
+    // The boss fight is the last one and pays the maximum (review fix, L12).
+    finalMultiplier: gates[last],
+    maxWin: payout(bet, gates[last]),
+    path: pathOf(gates, passed, phase),
     canTake: phase === STATES.DECISION && passed > 0,
     canFight: phase === STATES.DECISION,
     canPlay: phase === STATES.SETUP && state.balance >= bet,
@@ -249,6 +253,30 @@ export function selectDerived(state) {
         : state.balance,
     ...betControls(state),
   }
+}
+
+// Progress path (Path/Gate 335:3892): the reached gates, plus the boss gate at
+// the end so the player always sees how far the final fight is. Before the boss
+// level it is a locked "final" marker; on the boss level and after MAX WIN it is
+// the lit Final gate. `remaining` = fights still to win before the boss.
+function pathOf(gates, passed, phase) {
+  const last = gates.length - 1
+  const bossReached = passed >= last
+  const reachedCount = Math.min(passed, last)
+  const reached = gates.slice(0, reachedCount).map((multiplier, index) => ({
+    index,
+    multiplier,
+    // Before the boss level the newest gate is Current; once the boss is next,
+    // the lit Final gate takes over and every earlier gate reads as Passed.
+    state: !bossReached && index === reachedCount - 1 ? 'current' : 'passed',
+  }))
+  const final = {
+    index: last,
+    multiplier: gates[last],
+    state: bossReached ? 'final' : 'finalLocked',
+    won: phase === STATES.MAX_WIN,
+  }
+  return { reached, final, remaining: Math.max(0, last - passed) }
 }
 
 // Bet chips and stepper targets for the setup dock (Figma note 536:1900:
