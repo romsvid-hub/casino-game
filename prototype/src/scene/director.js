@@ -84,13 +84,16 @@ export function sceneFor(state, derived) {
         }
       }
       const boss = E === BOSS
+      // The boss waits for the "FINAL BATTLE" banner (HUD, config.timings.bossIntro).
+      const wait = boss ? config.timings.bossIntro : 0
       return {
         hero: heroIdle,
-        enemy: enemyEnter,
-        fx: boss ? cue(`boss-land-${passed}`, L.bossLandShake) : null,
+        enemy: wait ? { ...enemyEnter, delay: wait } : enemyEnter,
+        fx: boss ? cue(`boss-land-${passed}`, L.bossLandShake, { delay: wait }) : null,
         shake: boss,
+        shakeAt: wait + BOSS_SHAKE.at,
         focus: 'enemy',
-        beats: [{ at: ms(E.enter), action: 'enterDone' }],
+        beats: [{ at: wait + ms(E.enter), action: 'enterDone' }],
       }
     }
 

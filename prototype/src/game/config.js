@@ -36,6 +36,8 @@ export const config = {
   // UI beats in ms (used by the scene / UI from Level 6).
   timings: {
     resultBanner: 1500,
+    // "FINAL BATTLE · MAX WIN" banner before the boss enters (L12 review fix).
+    bossIntro: 1200,
     crossfade: 150,
     countUp: 400,
     countUpLong: 600,

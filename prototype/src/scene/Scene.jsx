@@ -17,8 +17,9 @@ export function useBossShake(state, scene) {
   const active = state.phase === STATES.ENTERING && scene.shake
   useEffect(() => {
     if (!active) return
-    const on = setTimeout(() => setShaking(true), BOSS_SHAKE.at)
-    const off = setTimeout(() => setShaking(false), BOSS_SHAKE.at + BOSS_SHAKE.duration)
+    const at = scene.shakeAt ?? BOSS_SHAKE.at
+    const on = setTimeout(() => setShaking(true), at)
+    const off = setTimeout(() => setShaking(false), at + BOSS_SHAKE.duration)
     return () => {
       clearTimeout(on)
       clearTimeout(off)
