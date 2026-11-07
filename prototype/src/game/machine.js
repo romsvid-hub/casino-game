@@ -231,11 +231,17 @@ export function selectDerived(state) {
     counterWin: !inRound ? 0 : atRisk(bet, gates, phase === STATES.WIN_BANNER ? passed - 1 : passed),
     ifWon: ended ? null : ifWon(bet, gates, passed),
     nextMultiplier: !ended && passed < gates.length ? gates[passed] : null,
-    isBoss: passed === last,
-    // The boss fight is the last one and pays the maximum (review fix, L12).
+    // Enemy on the scene: the one being fought, or (after a win) the one just beaten.
+    enemy: enemyOn(phase, passed),
+    // Final fight (Baba Yaga, gate 7): the only one that ends with MAX WIN.
+    isFinal: config.enemies[config.enemyByGate[Math.min(passed, last)]].final && passed === last,
+    // Boss-class enemy at the current gate (vovkulak boss or Baba Yaga).
+    isBoss: config.enemyByGate[Math.min(passed, last)] !== 'vovkulak' && passed <= last,
+    // Hero pose when he loses at the current gate: 'dead', or 'caged' by Baba Yaga.
+    heroDefeat: config.enemies[config.enemyByGate[Math.min(passed, last)]].defeat,
     finalMultiplier: gates[last],
     maxWin: payout(bet, gates[last]),
-    path: pathOf(gates, passed, phase),
+    path: pathOf(gates, passed),
     canTake: phase === STATES.DECISION && passed > 0,
     canFight: phase === STATES.DECISION,
     canPlay: phase === STATES.SETUP && state.balance >= bet,
@@ -262,28 +268,24 @@ export function selectDerived(state) {
   }
 }
 
-// Progress path (Path/Gate 335:3892): the reached gates, plus the boss gate at
-// the end so the player always sees how far the final fight is. Before the boss
-// level it is a locked "final" marker; on the boss level and after MAX WIN it is
-// the lit Final gate. `remaining` = fights still to win before the boss.
-function pathOf(gates, passed, phase) {
-  const last = gates.length - 1
-  const bossReached = passed >= last
-  const reachedCount = Math.min(passed, last)
-  const reached = gates.slice(0, reachedCount).map((multiplier, index) => ({
+// Progress/Path · Levels 473:943 (decision 18.10): only the reached gates,
+// (N−1) Passed + 1 Current; after MAX WIN the last gate stays Current.
+function pathOf(gates, passed) {
+  const reached = gates.slice(0, passed).map((multiplier, index) => ({
     index,
     multiplier,
-    // Before the boss level the newest gate is Current; once the boss is next,
-    // the lit Final gate takes over and every earlier gate reads as Passed.
-    state: !bossReached && index === reachedCount - 1 ? 'current' : 'passed',
+    state: index === passed - 1 ? 'current' : 'passed',
   }))
-  const final = {
-    index: last,
-    multiplier: gates[last],
-    state: bossReached ? 'final' : 'finalLocked',
-    won: phase === STATES.MAX_WIN,
-  }
-  return { reached, final, remaining: Math.max(0, last - passed) }
+  return { reached }
+}
+
+// Enemy kind on the scene for a state. After a win (banner / MAX WIN) it is the
+// enemy just beaten (gate `passed`, 1-based); otherwise the one at gate passed + 1.
+function enemyOn(phase, passed) {
+  const g = config.enemyByGate
+  const beaten = phase === STATES.WIN_BANNER || phase === STATES.MAX_WIN
+  const index = beaten ? passed - 1 : passed
+  return g[Math.max(0, Math.min(index, g.length - 1))]
 }
 
 // Bet chips and stepper targets for the setup dock (Figma note 536:1900:
