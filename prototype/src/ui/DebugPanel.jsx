@@ -67,6 +67,19 @@ export default function DebugPanel({ state, actions, derived, autoBeats, onAutoB
         {state.insufficientBalance && <Row label="!" value="insufficient balance" />}
       </div>
 
+      {/* Effective RTP per gate (p^n × multiplier_n) for the selected difficulty. */}
+      <div className="flex flex-col gap-0.5 border-t border-neutral-iron pt-2">
+        <span className="text-text-muted">RTP per gate · p^n × m_n</span>
+        <div className="grid grid-cols-3 gap-x-3" data-qa="debug-rtp">
+          {derived.rtpByGate.map((g) => (
+            <span key={g.gate} className="text-text-parchment tabular-nums" title={formatMultiplier(g.multiplier)}>
+              <span className="text-text-muted">g{g.gate} </span>
+              {(g.rtp * 100).toFixed(1)}%
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Bet, difficulty, PLAY, FIGHT, TAKE and SKIP live in the dock now (Level 7). */}
       <div className="flex flex-wrap gap-1">
         <Btn onClick={actions.enterDone}>ENTER_DONE</Btn>

@@ -244,6 +244,13 @@ export function selectDerived(state) {
     minBet: config.minBet,
     canSkip: [STATES.ENTERING, STATES.FIGHTING, STATES.RESOLVING, STATES.WIN_BANNER].includes(phase),
     winChance: config.difficulties[state.difficulty].winChance,
+    // Effective RTP of cashing out after gate n: p^n × multiplier_n (debug only, block H).
+    // Shows how consistent the placeholder curves are; it does not change any number.
+    rtpByGate: gates.map((multiplier, i) => ({
+      gate: i + 1,
+      multiplier,
+      rtp: config.difficulties[state.difficulty].winChance ** (i + 1) * multiplier,
+    })),
     maxBet: maxAllowedBet(state),
     // Balance before the round's payout was added: the HUD shows it until the
     // payout popup appears (L9: "balance updates when the payout is shown").
