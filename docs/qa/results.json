@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07T09:42:40.770Z",
+  "generated": "2026-11-07T10:49:28.993Z",
   "checks": [
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
@@ -252,6 +252,16 @@
       "detail": "1201,327"
     },
     {
+      "name": "Gate 6 boss intro banner: BOSS BATTLE · ×11.50, no MAX WIN",
+      "ok": true,
+      "detail": "BOSS BATTLE·×11.50"
+    },
+    {
+      "name": "Gate 6: FIGHT uses Highlight (boss)",
+      "ok": true,
+      "detail": ""
+    },
+    {
       "name": "Victory banner = AT RISK growth (19.50 − 12.00)",
       "ok": true,
       "detail": "+7.50"
@@ -329,7 +339,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "17 mounts, worst 60 ms (hero_04_hit.json)"
+      "detail": "17 mounts, worst 79 ms (enemy_05_dead.json)"
     },
     {
       "name": "No page errors or console errors",
@@ -338,6 +348,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 38, max 999 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 62, max 323 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

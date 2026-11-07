@@ -204,6 +204,25 @@ async function run() {
     allErrors.push(...page.qaErrors)
     await page.close()
 
+    // Gate 6 boss intro: "BOSS BATTLE · ×11.50" before the boss enters (no MAX WIN), FIGHT glows.
+    page = await open(browser)
+    await playToLevel(page, 4)
+    await act(page, 'forceNext', 'win')
+    await act(page, 'fight')
+    await act(page, 'skip')
+    await waitPhase(page, 'WIN_BANNER')
+    await waitPhase(page, 'ENTERING', 4000)
+    await sleep(300)
+    const bossBanner = await text(page, '[data-qa="boss-banner"]')
+    check('Gate 6 boss intro banner: BOSS BATTLE · ×11.50, no MAX WIN', !!bossBanner && bossBanner.includes('BOSS BATTLE') && bossBanner.includes('×11.50') && !bossBanner.includes('MAX WIN'), bossBanner ?? 'missing')
+    await act(page, 'skip')
+    await waitPhase(page, 'DECISION')
+    await sleep(500)
+    const gate6Glow = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
+    check('Gate 6: FIGHT uses Highlight (boss)', gate6Glow === true)
+    allErrors.push(...page.qaErrors)
+    await page.close()
+
     // 07: hero attacks at level 3 (real animation), with long-task observer.
     page = await open(browser)
     await playToLevel(page, 3)
@@ -310,7 +329,7 @@ async function run() {
     await waitPhase(page, 'ENTERING', 4000)
     // L12: "FINAL BATTLE · MAX WIN ×19.00" banner first, then the boss enters.
     await sleep(300)
-    const finalBanner = await text(page, '[data-qa="final-banner"]')
+    const finalBanner = await text(page, '[data-qa="boss-banner"]')
     const bossDerived = await derived(page)
     check('Baba Yaga intro banner shows FINAL BATTLE and the final multiplier', !!finalBanner && finalBanner.includes('FINAL BATTLE') && finalBanner.includes(`×${bossDerived.finalMultiplier.toFixed(2)}`), finalBanner ?? 'missing')
     await sleep(2300)
