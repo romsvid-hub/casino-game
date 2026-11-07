@@ -3,6 +3,7 @@
 // level frames (472:7862 … 473:1307, 474:2008, 474:2175, 660:5112).
 import { createInitialState, gameReducer as R, selectDerived as D, EVENTS as E, STATES } from '../src/game/machine.js'
 import { formatMoney as f } from '../src/game/money.js'
+import { exchangeCount, fightScript, HOME, STEP } from '../src/game/fightScript.js'
 const go = (s, ...evs) => evs.reduce((st, e) => R(st, typeof e === 'string' ? { type: e } : e), s)
 const fightWin = (s) => go(s, { type: E.FORCE_NEXT, value: 'win' }, E.FIGHT, E.ANIM_DONE, E.ANIM_DONE, E.ANIM_DONE, E.ENTER_DONE)
 let ok = true; const check = (name, a, b) => { const pass = a === b; ok &&= pass; console.log((pass ? 'ok  ' : 'FAIL') + ' ' + name + ': ' + a + (pass ? '' : ' expected ' + b)) }
@@ -74,6 +75,33 @@ for (const [k, p] of [['easy', .8], ['medium', .65], ['high', .45]]) { let r = {
     check(`demo ${diff} seed ${cash3}: first 3 fights won`, fightOut(cash3, diff, 3).out.join(), 'win,win,win')
     check(`demo ${diff} seed ${boss}: boss beaten`, fightOut(boss, diff, 7).s.phase, STATES.MAX_WIN)
   }
+}
+// Block C+B: the exchange of blows (presentation only, ticket #93).
+{
+  const allowedX = { hero: [HOME.hero, HOME.hero + STEP], enemy: [HOME.enemy, HOME.enemy - STEP] }
+  let bad = 0
+  for (const seed of [1, 2, 13, 42, 99, 123, 2026]) {
+    let s = go(createInitialState(seed), E.PLAY, E.ENTER_DONE, E.FIGHT)
+    const n = exchangeCount(s.rngState)
+    const script = fightScript({ outcome: s.outcome, exchanges: n, defeat: D(s).heroDefeat })
+    const attacks = script.steps.filter((st) => st.hero?.pose === 'attack' && st.t === Math.round(st.t / 700) * 700 || st.enemy?.pose === 'attack' && st.t === Math.round(st.t / 700) * 700)
+    const last = script.steps[script.steps.length - 1]
+    const winner = s.outcome === 'win' ? 'hero' : 'enemy'
+    const loser = winner === 'hero' ? 'enemy' : 'hero'
+    const xs = script.steps.flatMap((st) => ['hero', 'enemy'].filter((w) => st[w]).map((w) => [w, st[w].x]))
+    if (!(n === 2 || n === 3)) bad++
+    if (last[winner].pose !== 'victory' || last[loser].pose !== 'dead') bad++
+    if (last[winner].x !== allowedX[winner][1] || last[loser].x !== allowedX[loser][0]) bad++
+    if (xs.some(([w, x]) => !allowedX[w].includes(x))) bad++
+    if (script.duration < 2000 || script.duration > 4000) bad++
+    // Same seed → same script; the game RNG is not advanced by the script.
+    if (exchangeCount(s.rngState) !== n) bad++
+    check(`fight script seed ${seed}: ${n} exchanges, final blow by ${winner}, ${script.duration} ms`, attacks.length >= n + 1, true)
+  }
+  check('fight scripts: 2–3 exchanges, winner ends on its step in Victory, loser down at home, only home/step x', bad, 0)
+  // Baba Yaga cages the hero instead of killing him.
+  const caged = fightScript({ outcome: 'lose', exchanges: 2, defeat: 'caged' })
+  check('fight script vs Baba Yaga: hero caged at home', caged.steps[caged.steps.length - 1].hero.pose + '@' + caged.steps[caged.steps.length - 1].hero.x, 'caged@565')
 }
 console.log(ok ? 'ALL PASS' : 'SOME FAILED')
 process.exitCode = ok ? 0 : 1

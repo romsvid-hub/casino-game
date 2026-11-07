@@ -83,10 +83,29 @@ const balance = (page) => page.evaluate(() => document.querySelector('[aria-labe
 const derived = (page) => page.evaluate(() => window.__casino.derived)
 const toNum = (s) => Number(String(s).replace(/[^0-9.\-]/g, ''))
 
+// Waits until the characters show the given poses (data-pose on the sprite wrappers).
+async function waitPoses(page, hero, enemy, timeout = 20000) {
+  await page.waitForFunction(
+    ([h, e]) => document.querySelector('[data-qa="char-hero"]')?.dataset.pose === h && document.querySelector('[data-qa="char-enemy"]')?.dataset.pose === e,
+    [hero, enemy],
+    { timeout },
+  )
+}
+
+// Slow motion for fight screenshots: page timers run 8x longer after slow(page),
+// so a full-size screenshot (~1–2 s to render) lands on the step it waited for.
+const slowInit = () => {
+  const st = window.setTimeout
+  window.__slow = 1
+  window.setTimeout = (fn, ms = 0, ...a) => st(fn, ms * window.__slow, ...a)
+}
+const slow = (page) => page.evaluate(() => (window.__slow = 8))
+
 async function open(browser, params = '') {
   // deviceScaleFactor 1: Chromium renders backdrop-filter mirrored below DPR 1,
   // so shots are taken at full size and downscaled to 960x540 afterwards.
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })
+  await page.addInitScript(slowInit)
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
@@ -223,12 +242,66 @@ async function run() {
     allErrors.push(...page.qaErrors)
     await page.close()
 
+    // Block C+B: the exchange of blows (ticket #93). For a fixed seed: 2–3 exchanges,
+    // the final blow by the winner, and no sprite jumps (sampled every frame).
+    for (const outcome of ['win', 'lose']) {
+      page = await open(browser)
+      await playToLevel(page, 2)
+      await act(page, 'forceNext', outcome)
+      // Every x change of a sprite must happen through a CSS transform transition
+      // (a slide), never as an instant jump; shadows always sit on the y750 line.
+      const samples = page.evaluate(() => new Promise((resolve) => {
+        const moves = []
+        let fight = null
+        let yOff = 0
+        const shadowY = (el) => {
+          const sh = el.querySelector('.char-shadow').getBoundingClientRect()
+          const stage = el.offsetParent.getBoundingClientRect()
+          return (sh.top + sh.height / 2 - stage.top) / (stage.width / 1920)
+        }
+        const obs = new MutationObserver((list) => {
+          for (const m of list) {
+            const el = m.target
+            if (m.attributeName !== 'data-x' || m.oldValue === el.dataset.x) continue
+            const tr = el.style.transition
+            const ms = Number((tr.match(/transform (\d+)ms/) || [0, 0])[1])
+            moves.push({ who: el.dataset.qa, from: +m.oldValue, to: +el.dataset.x, ms })
+          }
+        })
+        obs.observe(document.body, { subtree: true, attributes: true, attributeOldValue: true, attributeFilter: ['data-x'] })
+        const t0 = performance.now()
+        const tick = () => {
+          fight = window.__casino.fight ?? fight
+          for (const q of ['char-hero', 'char-enemy']) {
+            const el = document.querySelector(`[data-qa="${q}"]`)
+            if (el) yOff = Math.max(yOff, Math.abs(shadowY(el) - 750))
+          }
+          if (['WIN_BANNER', 'DEFEAT'].includes(window.__casino.state.phase) || performance.now() - t0 > 8000) {
+            obs.disconnect()
+            resolve({ moves, fight, yOff })
+          } else setTimeout(tick, 16)
+        }
+        tick()
+      }))
+      await act(page, 'fight')
+      const { moves, fight: script, yOff } = await samples
+      const winner = outcome === 'win' ? 'hero' : 'enemy'
+      const last = script?.steps[script.steps.length - 1]
+      check(`Fight (${outcome}): 2–3 exchanges, final blow by the ${winner}`, !!script && [2, 3].includes(script.exchanges) && script.winner === winner && last[winner].pose === 'victory', script ? `${script.exchanges} exchanges, winner ${script.winner}` : 'no script')
+      const jumps = moves.filter((m) => m.ms < 150)
+      check(`Fight (${outcome}): no sprite jumps — every move slides (≥150 ms), shadows on y750 ±4`, moves.length >= 4 && jumps.length === 0 && yOff <= 4, `${moves.length} moves, ${jumps.length} jumps${jumps[0] ? ` (${jumps[0].who} ${jumps[0].from}→${jumps[0].to})` : ''}, y off ${yOff.toFixed(1)} px`)
+      allErrors.push(...page.qaErrors)
+      await page.close()
+    }
+
     // 07: hero attacks at level 3 (real animation), with long-task observer.
     page = await open(browser)
     await playToLevel(page, 3)
     await act(page, 'forceNext', 'win')
+    await slow(page)
     await act(page, 'fight')
-    await sleep(200)
+    // First blow of the exchange: knight on his step in Attack, vovkulak Hit at home (457:7257).
+    await waitPoses(page, 'attack', 'hit')
     await shot(page, '07-hero-attacks')
     allErrors.push(...page.qaErrors)
     await page.close()
@@ -266,8 +339,10 @@ async function run() {
     page = await open(browser)
     await playToLevel(page, 3)
     await act(page, 'forceNext', 'lose')
+    await slow(page)
     await act(page, 'fight')
-    await sleep(220)
+    // The vovkulak answers: enemy on its step in Attack, knight Hit at home (456:7095).
+    await waitPoses(page, 'hit', 'attack')
     await shot(page, '08-enemy-attacks')
     allErrors.push(...page.qaErrors)
     await page.close()
@@ -368,7 +443,8 @@ async function run() {
     // is the JS cost we control: cloning + building each Lottie clip. Real fps /
     // long tasks are checked in Chrome on a MacBook (docs/qa/checklist.md).
     const worstMount = mounts.reduce((w, m) => (m.ms > w.ms ? m : w), { ms: 0, name: '—' })
-    check('Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)', mounts.length > 0 && worstMount.ms < 100, `${mounts.length} mounts, worst ${Math.round(worstMount.ms)} ms (${worstMount.name})`)
+    // Block C+B: characters are sprites, so a round mounts no character Lottie at all.
+    check('Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)', worstMount.ms < 100, mounts.length ? `${mounts.length} mounts, worst ${Math.round(worstMount.ms)} ms (${worstMount.name})` : 'no Lottie mounted during the round (characters are sprites)')
     const maxLong = longTasks.length ? Math.round(Math.max(...longTasks)) : 0
     info.push(`Headless (software GL) long tasks during the perf round: ${longTasks.length}, max ${maxLong} ms. Not a gate; see checklist for real-GPU numbers.`)
     check('No page errors or console errors', allErrors.length === 0, allErrors.slice(0, 3).join(' | '))
