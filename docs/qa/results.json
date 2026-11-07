@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07T09:13:08.254Z",
+  "generated": "2026-11-07T09:42:40.770Z",
   "checks": [
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
@@ -82,9 +82,9 @@
       "detail": "6.00"
     },
     {
-      "name": "L1: path ends with the locked boss gate (final multiplier)",
+      "name": "L1: path shows only the reached gate",
       "ok": true,
-      "detail": "×19.00"
+      "detail": "1"
     },
     {
       "name": "L1: plate is text only (no plate art)",
@@ -92,9 +92,9 @@
       "detail": "×1.60"
     },
     {
-      "name": "L1: plate at x1217, 60 px below Counter/Win (y330)",
+      "name": "L1: plate over the vovkulak at 1193,360 (Figma 756:6778)",
       "ok": true,
-      "detail": "1217,330"
+      "detail": "1193,360"
     },
     {
       "name": "L2: AT RISK (dock) = WIN (counter)",
@@ -237,6 +237,21 @@
       "detail": "34.00"
     },
     {
+      "name": "L5: gate 6 enemy is the vovkulak boss, not final",
+      "ok": true,
+      "detail": "vovkulakBoss final=false"
+    },
+    {
+      "name": "L5: dock still reads IF WON on gate 6",
+      "ok": true,
+      "detail": "IF WON"
+    },
+    {
+      "name": "L5: plate over the boss at 1201,327 (Figma 756:6539)",
+      "ok": true,
+      "detail": "1201,327"
+    },
+    {
       "name": "Victory banner = AT RISK growth (19.50 − 12.00)",
       "ok": true,
       "detail": "+7.50"
@@ -262,34 +277,39 @@
       "detail": "47.00"
     },
     {
-      "name": "Boss intro banner shows FINAL BATTLE and the final multiplier",
+      "name": "Baba Yaga intro banner shows FINAL BATTLE and the final multiplier",
       "ok": true,
       "detail": "FINAL BATTLE·MAX WIN×19.00"
     },
     {
-      "name": "Boss level: dock label reads MAX WIN",
+      "name": "Baba Yaga: dock label reads MAX WIN",
       "ok": true,
       "detail": "MAX WIN"
     },
     {
-      "name": "Boss level: FIGHT reads \"max win\" = MAX WIN slot",
+      "name": "Baba Yaga: FIGHT reads \"max win\" = MAX WIN slot",
       "ok": true,
       "detail": "max win 95.00 vs 95.00"
     },
     {
-      "name": "Boss level: FIGHT uses Highlight",
+      "name": "Baba Yaga: FIGHT uses Highlight",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "Boss level: plate shows only the final multiplier",
+      "name": "Baba Yaga: plate shows only the final multiplier",
       "ok": true,
       "detail": "×19.00"
     },
     {
-      "name": "Boss level: plate at x1217, 30 px below Counter/Win (y300)",
+      "name": "Baba Yaga: plate over her head at 1247,306 (Figma 748:6069)",
       "ok": true,
-      "detail": "1217,300"
+      "detail": "1247,306"
+    },
+    {
+      "name": "Baba Yaga: gate 7 enemy is final",
+      "ok": true,
+      "detail": "babaYaga final=true"
     },
     {
       "name": "MAX WIN popup = IF WON before the boss fight",
@@ -309,7 +329,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "17 mounts, worst 35 ms (hero_05_dead.json)"
+      "detail": "17 mounts, worst 60 ms (hero_04_hit.json)"
     },
     {
       "name": "No page errors or console errors",
@@ -318,6 +338,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 51, max 494 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 38, max 999 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

@@ -14,6 +14,27 @@ check('L0 atRisk', f(D(s).atRisk), '0.00'); check('L0 ifWon', f(D(s).ifWon), '6.
 const exp = [['6.00','1.6','8.00'],['8.00','2.4','12.00'],['12.00','3.9','19.50'],['19.50','6.8','34.00'],['34.00','11.5','57.50'],['57.50','19','95.00']]
 for (let i = 0; i < 6; i++) { s = fightWin(s); const d = D(s); check('L'+(i+1)+' atRisk', f(d.atRisk), exp[i][0]); check('L'+(i+1)+' next', String(d.nextMultiplier), exp[i][1]); check('L'+(i+1)+' ifWon', f(d.ifWon), exp[i][2]) }
 check('L6 isBoss', D(s).isBoss, true)
+// Block A: enemy per gate. Gates 1–5 vovkulak, 6 the old boss, 7 Baba Yaga (final).
+{
+  let r = go(createInitialState(1), E.PLAY, E.ENTER_DONE)
+  const kinds = []
+  for (let i = 0; i < 7; i++) { kinds.push(D(r).enemy); if (i < 6) r = fightWin(r) }
+  check('enemy per gate', kinds.join(','), 'vovkulak,vovkulak,vovkulak,vovkulak,vovkulak,vovkulakBoss,babaYaga')
+  check('only gate 7 is final', [0, 1, 2, 3, 4, 5, 6].map((p) => D({ ...r, passed: p, phase: STATES.DECISION }).isFinal).join(), 'false,false,false,false,false,false,true')
+  // Winning gate 6 (the old boss) is a normal win: banner, round continues.
+  let b = go(createInitialState(1), E.PLAY, E.ENTER_DONE); for (let i = 0; i < 5; i++) b = fightWin(b)
+  check('gate 6 enemy', D(b).enemy, 'vovkulakBoss')
+  b = go(b, { type: E.FORCE_NEXT, value: 'win' }, E.FIGHT, E.ANIM_DONE, E.ANIM_DONE)
+  check('gate 6 win -> WIN_BANNER (round continues)', b.phase, STATES.WIN_BANNER)
+  check('win banner shows the boss just beaten', D(b).enemy, 'vovkulakBoss')
+  // Defeat pose by enemy: vovkulak and boss kill the hero, Baba Yaga cages him.
+  check('defeat pose at gate 1', D(go(createInitialState(1), E.PLAY, E.ENTER_DONE)).heroDefeat, 'dead')
+  check('defeat pose at gate 6', D({ ...b, phase: STATES.DECISION, passed: 5 }).heroDefeat, 'dead')
+  const y = go({ ...r, phase: STATES.DECISION }, { type: E.FORCE_NEXT, value: 'lose' }, E.FIGHT, E.SKIP)
+  check('lose to Baba Yaga -> DEFEAT, hero caged', y.phase + ' ' + D(y).heroDefeat, 'DEFEAT caged')
+  // Path: only reached gates, the last one Current.
+  check('path at L6', D({ ...r, passed: 6 }).path.reached.map((g) => g.state[0]).join(''), 'pppppc')
+}
 // Boss win -> MAX WIN +95, balance 130 (Figma 660:5112)
 let m = go(s, { type: E.FORCE_NEXT, value: 'win' }, E.FIGHT, E.ANIM_DONE, E.ANIM_DONE)
 check('boss -> MAX_WIN', m.phase, STATES.MAX_WIN); check('max win amount', f(m.lastResult.amount), '95.00'); check('balance after max win', m.balance, 130)
