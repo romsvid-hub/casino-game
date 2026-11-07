@@ -23,15 +23,15 @@ const SHOTS = [
   ['03-decision-l2', 'DECISION level 2', '473:1037'],
   ['04-decision-l3', 'DECISION level 3', '473:1127'],
   ['05-decision-l4', 'DECISION level 4', '473:1217'],
-  ['06-decision-l5', 'DECISION level 5', '473:1307'],
+  ['06-decision-l5', 'DECISION after 5 wins: gate 6, Vovkulak Boss (L6 reference)', '756:6539'],
   ['07-hero-attacks', 'Hero attacks (level 3)', '457:7257'],
   ['08-enemy-attacks', 'Enemy attacks (level 3)', '456:7095'],
   ['09-victory-banner', 'Victory banner L3 → L4', '474:2008'],
   ['10-defeat', 'Defeat after level 3', '474:2089'],
   ['11-cashed-out', 'Cashed out at level 3', '474:2175'],
-  ['12-boss-entrance', 'Boss entrance', '650:7598'],
-  ['13-max-win', 'Boss final MAX WIN popup', '660:5112'],
-  ['14-boss-decision', 'Boss level before FIGHT', '473:1397'],
+  ['12-boss-entrance', 'Baba Yaga entrance (gate 7)', '843:6304'],
+  ['13-max-win', 'Big Boss final MAX WIN popup', '819:6677'],
+  ['14-boss-decision', 'Baba Yaga (gate 7) before FIGHT (L7 reference)', '748:6069'],
 ]
 
 const checks = []
@@ -178,21 +178,48 @@ async function run() {
       await winOne(page)
       await decisionMoney(page, level)
       if (level === 1) {
-        // L12: the boss gate is always on the path, locked, with the fights left.
-        const finalGate = await page.evaluate(() => document.querySelector('[role="list"][aria-label^="Gates passed"]')?.lastElementChild?.lastElementChild?.textContent?.trim() ?? '')
+        // Block A: the path shows only the reached gates (decision 18.10).
+        const gatesShown = await page.evaluate(() => document.querySelectorAll('[role="list"][aria-label^="Gates passed"] [role="listitem"]').length)
+        check('L1: path shows only the reached gate', gatesShown === 1, String(gatesShown))
         const d = await derived(page)
-        check('L1: path ends with the locked boss gate (final multiplier)', finalGate === `×${d.finalMultiplier.toFixed(2)}`, finalGate)
-        // Plate/Multiplier 554:4220: text only, x1217, 60 px below Counter/Win (y330).
+        // Plate/Multiplier 554:4220: text only, over the vovkulak's head (L3 reference 756:6778: 1193,360).
         const plate = await page.evaluate(() => {
           const el = document.querySelector('[data-qa="plate-multiplier"]')
-          // Stage coordinates (offsetLeft/Top ignore the stage scale and letterbox).
           return { x: el.offsetLeft, y: el.offsetTop, text: el.textContent.trim(), images: el.querySelectorAll('img').length }
         })
         check('L1: plate is text only (no plate art)', plate.images === 0 && plate.text === `×${d.nextMultiplier.toFixed(2)}`, plate.text)
-        check('L1: plate at x1217, 60 px below Counter/Win (y330)', plate.x === 1217 && plate.y === 330, `${plate.x},${plate.y}`)
+        check('L1: plate over the vovkulak at 1193,360 (Figma 756:6778)', plate.x === 1193 && plate.y === 360, `${plate.x},${plate.y}`)
+      }
+      if (level === 5) {
+        // Block A: gate 6 is the vovkulak boss, a normal fight (no MAX WIN labels).
+        const d = await derived(page)
+        const label = await text(page, '[data-qa="slot-IF WON"] > span:first-child')
+        const plate = await page.evaluate(() => { const el = document.querySelector('[data-qa="plate-multiplier"]'); return { x: el.offsetLeft, y: el.offsetTop } })
+        check('L5: gate 6 enemy is the vovkulak boss, not final', d.enemy === 'vovkulakBoss' && d.isFinal === false, `${d.enemy} final=${d.isFinal}`)
+        check('L5: dock still reads IF WON on gate 6', label === 'IF WON', label)
+        check('L5: plate over the boss at 1201,327 (Figma 756:6539)', plate.x === 1201 && plate.y === 327, `${plate.x},${plate.y}`)
       }
       await shot(page, `0${level + 1}-decision-l${level}`)
     }
+    allErrors.push(...page.qaErrors)
+    await page.close()
+
+    // Gate 6 boss intro: "BOSS BATTLE · ×11.50" before the boss enters (no MAX WIN), FIGHT glows.
+    page = await open(browser)
+    await playToLevel(page, 4)
+    await act(page, 'forceNext', 'win')
+    await act(page, 'fight')
+    await act(page, 'skip')
+    await waitPhase(page, 'WIN_BANNER')
+    await waitPhase(page, 'ENTERING', 4000)
+    await sleep(300)
+    const bossBanner = await text(page, '[data-qa="boss-banner"]')
+    check('Gate 6 boss intro banner: BOSS BATTLE · ×11.50, no MAX WIN', !!bossBanner && bossBanner.includes('BOSS BATTLE') && bossBanner.includes('×11.50') && !bossBanner.includes('MAX WIN'), bossBanner ?? 'missing')
+    await act(page, 'skip')
+    await waitPhase(page, 'DECISION')
+    await sleep(500)
+    const gate6Glow = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
+    check('Gate 6: FIGHT uses Highlight (boss)', gate6Glow === true)
     allErrors.push(...page.qaErrors)
     await page.close()
 
@@ -302,9 +329,9 @@ async function run() {
     await waitPhase(page, 'ENTERING', 4000)
     // L12: "FINAL BATTLE · MAX WIN ×19.00" banner first, then the boss enters.
     await sleep(300)
-    const finalBanner = await text(page, '[data-qa="final-banner"]')
+    const finalBanner = await text(page, '[data-qa="boss-banner"]')
     const bossDerived = await derived(page)
-    check('Boss intro banner shows FINAL BATTLE and the final multiplier', !!finalBanner && finalBanner.includes('FINAL BATTLE') && finalBanner.includes(`×${bossDerived.finalMultiplier.toFixed(2)}`), finalBanner ?? 'missing')
+    check('Baba Yaga intro banner shows FINAL BATTLE and the final multiplier', !!finalBanner && finalBanner.includes('FINAL BATTLE') && finalBanner.includes(`×${bossDerived.finalMultiplier.toFixed(2)}`), finalBanner ?? 'missing')
     await sleep(2300)
     await shot(page, '12-boss-entrance')
     await waitPhase(page, 'DECISION')
@@ -316,11 +343,12 @@ async function run() {
     const bossPlate = await text(page, '[data-qa="plate-multiplier"]')
     const bossPlateBox = await page.evaluate(() => { const el = document.querySelector('[data-qa="plate-multiplier"]'); return { x: el.offsetLeft, y: el.offsetTop } })
     const fightGlows = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
-    check('Boss level: dock label reads MAX WIN', bossLabel === 'MAX WIN', bossLabel)
-    check('Boss level: FIGHT reads "max win" = MAX WIN slot', bossFight.amount === `max win ${ifWonBoss}`, `${bossFight.amount} vs ${ifWonBoss}`)
-    check('Boss level: FIGHT uses Highlight', fightGlows === true)
-    check('Boss level: plate shows only the final multiplier', bossPlate === `×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
-    check('Boss level: plate at x1217, 30 px below Counter/Win (y300)', bossPlateBox.x === 1217 && bossPlateBox.y === 300, `${bossPlateBox.x},${bossPlateBox.y}`)
+    check('Baba Yaga: dock label reads MAX WIN', bossLabel === 'MAX WIN', bossLabel)
+    check('Baba Yaga: FIGHT reads "max win" = MAX WIN slot', bossFight.amount === `max win ${ifWonBoss}`, `${bossFight.amount} vs ${ifWonBoss}`)
+    check('Baba Yaga: FIGHT uses Highlight', fightGlows === true)
+    check('Baba Yaga: plate shows only the final multiplier', bossPlate === `×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
+    check('Baba Yaga: plate over her head at 1247,306 (Figma 748:6069)', bossPlateBox.x === 1247 && bossPlateBox.y === 306, `${bossPlateBox.x},${bossPlateBox.y}`)
+    check('Baba Yaga: gate 7 enemy is final', bossDerived.enemy === 'babaYaga' && bossDerived.isFinal === true, `${bossDerived.enemy} final=${bossDerived.isFinal}`)
     await act(page, 'forceNext', 'win')
     await act(page, 'fight')
     await act(page, 'skip')

@@ -10,8 +10,19 @@ export const config = {
   betOptions: [1, 2, 5, 10, 'max'], // PLACEHOLDER - pending client
   defaultDifficulty: 'medium',
 
-  // gates: multiplier reached after each won fight. The last gate is the boss;
-  // beating it ends the round with MAX WIN.
+  // Who you fight at each gate (index = gate − 1), the same for every difficulty
+  // (Figma 04.11: gates 1–5 vovkulak, 6 the old boss, 7 Baba Yaga). The round ends
+  // with MAX WIN only after the enemy marked `final`. `defeat` is the hero's pose
+  // when that enemy wins: the vovkulaks kill him, Baba Yaga puts him in a cage.
+  enemyByGate: ['vovkulak', 'vovkulak', 'vovkulak', 'vovkulak', 'vovkulak', 'vovkulakBoss', 'babaYaga'],
+  enemies: {
+    vovkulak: { name: 'Vovkulak', defeat: 'dead', final: false },
+    vovkulakBoss: { name: 'Vovkulak Boss', defeat: 'dead', final: false },
+    babaYaga: { name: 'Baba Yaga', defeat: 'caged', final: true },
+  },
+
+  // gates: multiplier reached after each won fight. Winning the last gate (Baba
+  // Yaga, the `final` enemy) ends the round with MAX WIN.
   difficulties: {
     easy: {
       label: 'Easy',
@@ -36,7 +47,7 @@ export const config = {
   // UI beats in ms (used by the scene / UI from Level 6).
   timings: {
     resultBanner: 1500,
-    // "FINAL BATTLE · MAX WIN" banner before the boss enters (L12 review fix).
+    // "FINAL BATTLE · MAX WIN" banner before Baba Yaga (gate 7) enters.
     bossIntro: 1200,
     crossfade: 150,
     countUp: 400,

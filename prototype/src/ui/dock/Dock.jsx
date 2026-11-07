@@ -117,15 +117,16 @@ function RoundContent({ variant, state, actions, derived }) {
         color="teal"
         className="right-[289px]"
       />
-      {/* Boss level (L12): IF WON reads MAX WIN, FIGHT says "max win" and glows. */}
-      <DockSlot label={derived.isBoss && hasNext ? 'MAX WIN' : 'IF WON'} qa="IF WON" value={hasNext ? formatMoney(ifWon) : '—'} color="amber" className="right-[121px]" />
+      {/* Final fight (Baba Yaga, gate 7): IF WON reads MAX WIN, FIGHT says "max win" and glows.
+          To confirm with Artem (open-questions.md). */}
+      <DockSlot label={derived.isFinal && hasNext ? 'MAX WIN' : 'IF WON'} qa="IF WON" value={hasNext ? formatMoney(ifWon) : '—'} color="amber" className="right-[121px]" />
 
       <CtaButton
         variant="fight"
         label="FIGHT"
-        amount={hasNext ? `${derived.isBoss ? 'max win' : 'up to'} ${formatMoney(derived.ifWon)}` : '—'}
+        amount={hasNext ? `${derived.isFinal ? 'max win' : 'up to'} ${formatMoney(derived.ifWon)}` : '—'}
         disabled={!decision || !derived.canFight}
-        // Glow when FIGHT is the only move (before the first win, TAKE is locked).
+        // Glow when FIGHT is the only move (before the first win, TAKE is locked) and on boss gates (6, 7).
         highlight={decision && (!derived.canTake || derived.isBoss)}
         onClick={actions.fight}
         className="absolute top-[24px] left-[434px]"

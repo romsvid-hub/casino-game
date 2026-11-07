@@ -7,7 +7,7 @@ A clickable browser prototype of the escalating-risk / cash-out game with a batt
 ## How to play (3 lines)
 1. Pick a bet and a difficulty in the bottom panel, then press **PLAY**.
 2. Each **FIGHT** won moves the knight to the next gate and raises the multiplier. **TAKE** ends the round and collects AT RISK.
-3. Lose a fight and the bet is lost. Beat the boss on the last gate for the **MAX WIN**.
+3. Lose a fight and the bet is lost. Gate 6 is the vovkulak boss (a normal win); beat Baba Yaga on gate 7 for the **MAX WIN**.
 
 Keyboard: Space / Enter = FIGHT (PLAY on the setup screen), T = TAKE, S = skip the animation. The ⓘ medallion opens the rules; ≡ opens the menu (Skip animations, Reset demo balance).
 
@@ -18,7 +18,7 @@ Open these links and reload the page before each run (the bet stays at 5.00):
 | --- | --- | --- |
 | Early defeat | [`?seed=2&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=2&difficulty=medium) | First fight lost → −5.00 |
 | Take at level 3 | [`?seed=1&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=1&difficulty=medium) | 3 wins, press TAKE → +12.00 |
-| Boss win | [`?seed=13&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=13&difficulty=medium) | 7 wins → MAX WIN +95.00 |
+| Baba Yaga win | [`?seed=13&difficulty=medium`](https://casino-game-bice.vercel.app/?seed=13&difficulty=medium) | 7 wins → MAX WIN +95.00 |
 
 Easy and High seeds are listed in `docs/demo-seeds.md`.
 
@@ -32,7 +32,7 @@ Easy and High seeds are listed in `docs/demo-seeds.md`.
 - Sound and music
 - Mobile / portrait layout (the stage is a fixed 1920×1080, scaled to the window)
 - A lobby screen (the setup lives in the bottom panel, as agreed)
-- Extra enemies and the second boss (one enemy type and one boss only)
+- Baba Yaga's own art and the caged-knight defeat (coming with the Figma 04–06.11 update)
 - Real money, accounts, persistence (refreshing the page resets the demo balance)
 
 ## For the team
