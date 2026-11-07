@@ -126,30 +126,14 @@ export const assets = {
   },
 
   // 1920x1080, transparent, 30 fps. Durations and modes from docs/lottie.md.
+  // Backgrounds and FX only: since block C+B the characters are Figma sprites
+  // (public/sprites, src/scene/sprites.json); the old character Lottie were removed.
   lottie: {
     bgScene: lottie('bg_scene', 12, 'loop'),
     focusHero: lottie('fx_focus_hero', 3, 'loop'),
     focusEnemy: lottie('fx_focus_enemy', 3, 'loop'),
     focusClash: lottie('fx_focus_clash', 3, 'loop'),
-    heroEnter: lottie('hero_01_enter', 2.2, 'once'),
-    heroIdle: lottie('hero_02_idle', 2.4, 'loop'),
-    heroAttack: lottie('hero_03_attack', 0.9, 'once'),
-    heroHit: lottie('hero_04_hit', 0.6, 'once'),
-    heroDead: lottie('hero_05_dead', 1.33, 'once'),
-    heroVictory: lottie('hero_06_victory', 2.4, 'loop'),
-    enemyEnter: lottie('enemy_01_enter', 1.5, 'once'),
-    enemyIdle: lottie('enemy_02_idle', 2.4, 'loop'),
-    enemyHit: lottie('enemy_03_hit', 0.6, 'once'),
-    enemyAttack: lottie('enemy_04_attack', 0.9, 'once'),
-    enemyDead: lottie('enemy_05_dead', 1.33, 'once'),
-    enemyVictory: lottie('enemy_06_victory', 2.4, 'loop'),
-    bossEnter: lottie('boss_01_enter', 1.8, 'once'),
     bossLandShake: lottie('fx_boss_land_shake', 1.8, 'once'),
-    bossIdle: lottie('boss_02_idle', 3, 'loop'),
-    bossHit: lottie('boss_03_hit', 0.6, 'once'),
-    bossAttack: lottie('boss_04_attack', 1, 'once'),
-    bossVictory: lottie('boss_05_victory', 2.4, 'loop'),
-    bossDead: lottie('boss_06_dead', 1.33, 'once'),
     popupMaxWin: lottie('popup_maxwin', 3, 'markers: intro, loop'),
     popupCashedOut: lottie('popup_cashed_out', 0.5, 'once, hold last frame'),
   },

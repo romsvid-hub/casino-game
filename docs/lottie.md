@@ -1,5 +1,8 @@
 # Lottie-набір — Casino Game
 
+> **Since block C+B (2026-11-07) the characters are Figma sprites** (`prototype/public/sprites`, `src/scene/sprites.json`, `src/scene/Character.jsx`). The character Lottie files below (`hero_*`, `enemy_*`, `boss_0*`) were removed from the repo; only `bg_scene`, `fx_focus_*`, `fx_boss_land_shake` and the popups remain. The rest of this page is kept for reference.
+
+
 Усі файли мають розмір 1920×1080 і прозорий фон, частота 30 fps. Персонажі вже стоять на своїх позиціях у сцені, тому шари просто кладуться один на одного на весь екран без зсувів. Картинки вбудовані у файли (WebP base64), зовнішніх ассетів немає.
 Відтворювати через **lottie-web 5.12.x, renderer `svg`**. Спалах удару зроблено ефектом Fill, а `canvas` його не малює.
 

@@ -1,0 +1,289 @@
+{
+  "hero.walk": {
+    "src": "/sprites/hero-walk.webp",
+    "src2x": "/sprites/hero-walk@2x.webp",
+    "figma": "843:7794",
+    "w": 294,
+    "h": 341,
+    "ax": 134,
+    "ay": 330,
+    "shadow": {
+      "w": 320,
+      "h": 40,
+      "blur": 11,
+      "a": 0.65
+    },
+    "rim": {
+      "src": "/sprites/rim-walk.webp",
+      "src2x": "/sprites/rim-walk@2x.webp",
+      "x": 34,
+      "y": 0,
+      "w": 237,
+      "h": 322
+    }
+  },
+  "hero.idle": {
+    "src": "/sprites/hero-idle.webp",
+    "src2x": "/sprites/hero-idle@2x.webp",
+    "figma": "843:8125",
+    "w": 270,
+    "h": 365,
+    "ax": 157.9,
+    "ay": 353.6,
+    "shadow": {
+      "w": 298,
+      "h": 41,
+      "blur": 11,
+      "a": 0.72
+    },
+    "rim": {
+      "src": "/sprites/rim-idle.webp",
+      "src2x": "/sprites/rim-idle@2x.webp",
+      "x": 51,
+      "y": 1,
+      "w": 219,
+      "h": 254
+    }
+  },
+  "hero.attack": {
+    "src": "/sprites/hero-attack.webp",
+    "src2x": "/sprites/hero-attack@2x.webp",
+    "figma": "843:7816",
+    "w": 668,
+    "h": 310,
+    "ax": 167.5,
+    "ay": 300,
+    "shadow": {
+      "w": 494,
+      "h": 62,
+      "blur": 17,
+      "a": 0.65
+    },
+    "rim": {
+      "src": "/sprites/rim-attack.webp",
+      "src2x": "/sprites/rim-attack@2x.webp",
+      "x": 292,
+      "y": 0,
+      "w": 376,
+      "h": 120
+    }
+  },
+  "hero.hit": {
+    "src": "/sprites/hero-hit.webp",
+    "src2x": "/sprites/hero-hit@2x.webp",
+    "figma": "843:7806",
+    "w": 336,
+    "h": 321,
+    "ax": 143.5,
+    "ay": 310,
+    "shadow": {
+      "w": 351,
+      "h": 44,
+      "blur": 12,
+      "a": 0.65
+    },
+    "rim": {
+      "src": "/sprites/rim-hit.webp",
+      "src2x": "/sprites/rim-hit@2x.webp",
+      "x": 0,
+      "y": 0,
+      "w": 320,
+      "h": 321
+    }
+  },
+  "hero.dead": {
+    "src": "/sprites/hero-dead.webp",
+    "src2x": "/sprites/hero-dead@2x.webp",
+    "figma": "843:7824",
+    "w": 411,
+    "h": 208,
+    "ax": 181,
+    "ay": 196,
+    "shadow": {
+      "w": 443,
+      "h": 55,
+      "blur": 15,
+      "a": 0.65
+    }
+  },
+  "hero.caged": {
+    "src": "/sprites/hero-caged.webp",
+    "src2x": "/sprites/hero-caged@2x.webp",
+    "figma": "838:9219",
+    "w": 239,
+    "h": 361,
+    "ax": 117.9,
+    "ay": 328.3,
+    "shadow": {
+      "w": 261,
+      "h": 46,
+      "blur": 12,
+      "a": 0.75
+    }
+  },
+  "hero.victory": {
+    "src": "/sprites/hero-victory.webp",
+    "src2x": "/sprites/hero-victory@2x.webp",
+    "figma": "838:9878",
+    "w": 282,
+    "h": 516,
+    "ax": 152,
+    "ay": 507,
+    "shadow": {
+      "w": 240,
+      "h": 30,
+      "blur": 8,
+      "a": 0.65
+    }
+  },
+  "vovkulak.idle": {
+    "src": "/sprites/vovkulak-idle.webp",
+    "src2x": "/sprites/vovkulak-idle@2x.webp",
+    "figma": "756:6827",
+    "w": 428,
+    "h": 319,
+    "ax": 261.1,
+    "ay": 301.9,
+    "shadow": {
+      "w": 456,
+      "h": 57,
+      "blur": 15,
+      "a": 0.55
+    }
+  },
+  "vovkulak.hit": {
+    "src": "/sprites/vovkulak-hit.webp",
+    "src2x": "/sprites/vovkulak-hit@2x.webp",
+    "figma": "457:7316",
+    "w": 448,
+    "h": 374,
+    "ax": 208.5,
+    "ay": 363,
+    "shadow": {
+      "w": 469,
+      "h": 59,
+      "blur": 16,
+      "a": 0.55
+    }
+  },
+  "vovkulak.attack": {
+    "src": "/sprites/vovkulak-attack.webp",
+    "src2x": "/sprites/vovkulak-attack@2x.webp",
+    "figma": "457:7417",
+    "w": 589,
+    "h": 334,
+    "ax": 411.5,
+    "ay": 324,
+    "shadow": {
+      "w": 439,
+      "h": 55,
+      "blur": 15,
+      "a": 0.55
+    }
+  },
+  "vovkulak.dead": {
+    "src": "/sprites/vovkulak-dead.webp",
+    "src2x": "/sprites/vovkulak-dead@2x.webp",
+    "figma": "457:7656",
+    "w": 447,
+    "h": 125,
+    "ax": 220.5,
+    "ay": 111,
+    "shadow": {
+      "w": 531,
+      "h": 66,
+      "blur": 18,
+      "a": 0.55
+    }
+  },
+  "vovkulak.victory": {
+    "src": "/sprites/vovkulak-victory.webp",
+    "src2x": "/sprites/vovkulak-victory@2x.webp",
+    "figma": "457:7447",
+    "w": 407,
+    "h": 415,
+    "ax": 224,
+    "ay": 403,
+    "shadow": {
+      "w": 423,
+      "h": 53,
+      "blur": 14,
+      "a": 0.55
+    }
+  },
+  "vovkulakBoss.idle": {
+    "src": "/sprites/vovkulakBoss-idle.webp",
+    "src2x": "/sprites/vovkulakBoss-idle@2x.webp",
+    "figma": "756:6588",
+    "w": 614,
+    "h": 394,
+    "ax": 343,
+    "ay": 379.5,
+    "shadow": {
+      "w": 518,
+      "h": 61,
+      "blur": 15,
+      "a": 0.65
+    }
+  },
+  "vovkulakBoss.hit": {
+    "src": "/sprites/vovkulakBoss-hit.webp",
+    "src2x": "/sprites/vovkulakBoss-hit@2x.webp",
+    "figma": "629:6661",
+    "w": 603,
+    "h": 508,
+    "ax": 302.3,
+    "ay": 416.1,
+    "shadow": {
+      "w": 504,
+      "h": 48,
+      "blur": 15,
+      "a": 0.455
+    }
+  },
+  "vovkulakBoss.attack": {
+    "src": "/sprites/vovkulakBoss-attack.webp",
+    "src2x": "/sprites/vovkulakBoss-attack@2x.webp",
+    "figma": "621:6382",
+    "w": 709,
+    "h": 487,
+    "ax": 357.8,
+    "ay": 466.5,
+    "shadow": {
+      "w": 430,
+      "h": 48,
+      "blur": 15,
+      "a": 0.455
+    }
+  },
+  "vovkulakBoss.dead": {
+    "src": "/sprites/vovkulakBoss-dead.webp",
+    "src2x": "/sprites/vovkulakBoss-dead@2x.webp",
+    "figma": "629:6917",
+    "w": 692,
+    "h": 349,
+    "ax": 141,
+    "ay": 260.5,
+    "shadow": {
+      "w": 354,
+      "h": 62,
+      "blur": 18,
+      "a": 0.65
+    }
+  },
+  "vovkulakBoss.victory": {
+    "src": "/sprites/vovkulakBoss-victory.webp",
+    "src2x": "/sprites/vovkulakBoss-victory@2x.webp",
+    "figma": "640:7171",
+    "w": 680,
+    "h": 556,
+    "ax": 340.9,
+    "ay": 552,
+    "shadow": {
+      "w": 423,
+      "h": 53,
+      "blur": 14,
+      "a": 0.65
+    }
+  }
+}

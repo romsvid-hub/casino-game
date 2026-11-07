@@ -18,4 +18,6 @@
 - [ ] Boss / MAX WIN signalling — **to confirm with Artem.** Since 04.11 MAX WIN exists only on gate 7 (Baba Yaga); gate 6 (vovkulak boss) is a normal win. In the prototype only Baba Yaga gets the "FINAL BATTLE · MAX WIN ×19.00" banner before she enters, and on her gate the dock reads "MAX WIN" / "max win 95.00" with FIGHT highlighted. Figma 748:6069 still shows "IF WON" and FIGHT "risk 57.50" there. Keep the MAX WIN labels for her, or follow the frame?
 - [x] Gate 6 vovkulak boss: should it get a "boss" signal of its own? **Resolved (Roman, 07.11):** yes, like the old boss, a bit brighter: "BOSS BATTLE · ×11.50" banner before it enters, FIGHT highlighted, landing dust and shake. No MAX WIN wording (it is a normal win).
 - [ ] Dock FIGHT sub-label: Figma reference frames 756:6778 / 756:6539 / 748:6069 show "risk 12.00" (= AT RISK), the prototype shows "up to 19.50" (= IF WON). Which one? (Handled in block F.)
+- [ ] Next enemy entrance (block C+B): with sprites the next vovkulak slides in from the right and fades in (500 ms); the old Lottie had a jump-in. Is a slide-in fine until there is entrance art? — *to confirm with Roman*
+- [ ] Dead pose timing: the body darkens at the blow, then fades out from 0.9 s to 1.8 s (placeholder for the ash FX). OK as a stand-in? — *to confirm with Roman*
 

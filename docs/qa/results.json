@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07T10:49:28.993Z",
+  "generated": "2026-11-07T11:38:20.683Z",
   "checks": [
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
@@ -262,6 +262,26 @@
       "detail": ""
     },
     {
+      "name": "Fight (win): 2–3 exchanges, final blow by the hero",
+      "ok": true,
+      "detail": "2 exchanges, winner hero"
+    },
+    {
+      "name": "Fight (win): no sprite jumps — every move slides (≥150 ms), shadows on y750 ±4",
+      "ok": true,
+      "detail": "5 moves, 0 jumps, y off 0.0 px"
+    },
+    {
+      "name": "Fight (lose): 2–3 exchanges, final blow by the enemy",
+      "ok": true,
+      "detail": "2 exchanges, winner enemy"
+    },
+    {
+      "name": "Fight (lose): no sprite jumps — every move slides (≥150 ms), shadows on y750 ±4",
+      "ok": true,
+      "detail": "5 moves, 0 jumps, y off 0.0 px"
+    },
+    {
       "name": "Victory banner = AT RISK growth (19.50 − 12.00)",
       "ok": true,
       "detail": "+7.50"
@@ -339,7 +359,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "17 mounts, worst 79 ms (enemy_05_dead.json)"
+      "detail": "no Lottie mounted during the round (characters are sprites)"
     },
     {
       "name": "No page errors or console errors",
@@ -348,6 +368,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 62, max 323 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 62, max 946 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

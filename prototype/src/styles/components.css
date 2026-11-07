@@ -380,6 +380,52 @@
   }
 }
 
+/* ── Characters (block C+B, minimal motion) ──────────────────────────────── */
+/* Next enemy fades in as it slides onto its gate. */
+.char-enter {
+  animation: fade-in 400ms ease-out both;
+}
+/* Idle: subtle 2 px breathing. */
+.char-breathe {
+  animation: char-breathe 2.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@keyframes char-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-2px) scaleY(1.006);
+  }
+}
+/* Dead: darken, then fade out with the shadow (the ash FX comes later). */
+.char-dead {
+  animation: char-dead 600ms ease-out both;
+}
+@keyframes char-dead {
+  to {
+    filter: brightness(0.45) saturate(0.7);
+  }
+}
+.char-down {
+  animation: char-down 900ms ease-in 900ms both;
+}
+@keyframes char-down {
+  to {
+    opacity: 0;
+  }
+}
+/* Caged by Baba Yaga: dimmed and desaturated (Figma 843:6912), no ash yet. */
+.char-caged {
+  filter: brightness(0.55) saturate(0.55) contrast(0.9);
+}
+@media (prefers-reduced-motion: reduce) {
+  .char-breathe {
+    animation: none;
+  }
+}
+
 /* ── Dock variant crossfade (Setup ↔ round, 150 ms) ─────────────────────── */
 .dock-fade {
   animation: dock-fade 150ms ease-out both;
