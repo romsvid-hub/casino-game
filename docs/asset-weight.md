@@ -14,3 +14,18 @@ Total size of what the game loads from `prototype/public/`. Measure with `npm ru
 Largest: `lottie/bg_scene.json` 2.55 MB, `lottie/boss_06_dead.json` 1.31 MB, `lottie/hero_05_dead.json` 0.86 MB, `lottie/enemy_05_dead.json` 0.73 MB, `lottie/popup_maxwin.json` 0.38 MB
 
 All characters are still Lottie (old knight, vovkulak, boss). In blocks C–E they move to cropped WebP sprites from Figma, so the Lottie total should drop. The next measurement goes below.
+
+## After block C+B (2026-11-07): characters are Figma sprites
+
+| Group | Files | Size |
+| --- | --- | --- |
+| Lottie JSON | 7 | 3.43 MB |
+| Images | 113 | 4.22 MB |
+| Other public files | 0 | 0.00 MB |
+| Total public/ | 120 | 7.65 MB |
+
+Largest: `lottie/bg_scene.json` 2.55 MB, `lottie/popup_maxwin.json` 0.38 MB, `lottie/fx_boss_land_shake.json` 0.31 MB, `sprites/vovkulakBoss-attack@2x.webp` 0.24 MB, `sprites/vovkulakBoss-victory@2x.webp` 0.19 MB
+
+- The 18 character Lottie files (old knight, vovkulak, boss: 5.29 MB) are removed. Lottie is now backgrounds and FX only (3.43 MB).
+- New: 17 pose sprites + 4 rim-light masks in `public/sprites/`, WebP @1x and @2x (2.9 MB both sets). A browser loads one set: `srcset` picks @1x or @2x by screen density.
+- Per scene (hero + its enemy): forest **0.64 MB @1x / 1.46 MB @2x**, field (boss) **0.74 MB @1x / 1.70 MB @2x**. The field scene at @2x is above the ~1.5 MB budget; @2x is encoded at WebP q0.74 (q0.86 for @1x). Baba Yaga is not counted yet (block D).
