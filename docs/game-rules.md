@@ -13,7 +13,7 @@ Code: `prototype/src/game/` (`config.js`, `money.js`, `rng.js`, `machine.js`, `u
    - **IF WON** = bet × NEXT.
 5. **FIGHT**: if you win, you move to the next gate. If you lose, the round ends with **DEFEAT** and the bet is lost.
 6. **TAKE**: ends the round with **CASHED OUT** and adds AT RISK to the balance.
-7. The **last gate is the boss**. Beating it ends the round automatically with **MAX WIN** = bet × final multiplier.
+7. Enemies per gate (`config.enemyByGate`): gates 1–5 vovkulak, **gate 6 the vovkulak boss** (a normal win, the round continues), **gate 7 Baba Yaga**. Beating her ends the round automatically with **MAX WIN** = bet × final multiplier. Losing to her cages the knight instead of killing him.
 8. After any ending, **NEW ROUND** returns to setup with the same bet and difficulty.
 9. **SKIP** jumps any animation straight to its end result.
 
@@ -32,10 +32,10 @@ stateDiagram-v2
   FIGHTING --> RESOLVING: ANIM_DONE
   FIGHTING --> WIN_BANNER: SKIP (win)
   FIGHTING --> DEFEAT: SKIP (lose)
-  FIGHTING --> MAX_WIN: SKIP (boss win)
+  FIGHTING --> MAX_WIN: SKIP (Baba Yaga win)
   RESOLVING --> WIN_BANNER: ANIM_DONE / SKIP (win)
   RESOLVING --> DEFEAT: ANIM_DONE / SKIP (lose)
-  RESOLVING --> MAX_WIN: ANIM_DONE / SKIP (boss win, paid)
+  RESOLVING --> MAX_WIN: ANIM_DONE / SKIP (Baba Yaga win, paid)
   WIN_BANNER --> ENTERING: ANIM_DONE (next enemy)
   WIN_BANNER --> DECISION: SKIP
   DEFEAT --> SETUP: NEW_ROUND / MENU
@@ -56,7 +56,7 @@ Every number below lives in `config.js`, marked `PLACEHOLDER - pending client`.
 | Bet chips | 1, 2, 5, 10, MAX | Figma 587:5125 |
 | Min / max bet | 1 / 20 (MAX = min(20, balance)) | assumption |
 | Win chance | Easy 80% · Medium 65% · High 45% | old prototype, Figma "win ~65%" |
-| Gates per round | 7 (gate 7 = boss) | Figma 660:5112 (Gate 9 label, 7 values) |
+| Gates per round | 7 (gate 6 = vovkulak boss, gate 7 = Baba Yaga) | Figma 660:5112 (Gate 9 label, 7 values) |
 | Medium gates | ×1.20 · ×1.60 · ×2.40 · ×3.90 · ×6.80 · ×11.50 · ×19.00 | Figma 472:7862 … 473:1307, 473:1397 |
 | Easy gates | ×1.10 · ×1.30 · ×1.55 · ×2.00 · ×2.70 · ×3.55 · ×4.60 | Medium^0.518, rounded to 0.05 |
 | High gates | ×1.40 · ×2.40 · ×5.05 · ×12.45 · ×34.95 · ×92.50 · ×234.60 | Medium^1.854, rounded to 0.05 |
@@ -72,8 +72,8 @@ Every number below lives in `config.js`, marked `PLACEHOLDER - pending client`.
 | 3 | 12.00 | ×3.90 | 19.50 |
 | 4 | 19.50 | ×6.80 | 34.00 |
 | 5 | 34.00 | ×11.50 | 57.50 |
-| 6 (boss next) | 57.50 | ×19.00 | 95.00 |
-| 7 (boss beaten) | MAX WIN +95.00 | — | — |
+| 6 (Baba Yaga next) | 57.50 | ×19.00 | 95.00 |
+| 7 (Baba Yaga beaten) | MAX WIN +95.00 | — | — |
 
 ## URL parameters
 
