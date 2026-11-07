@@ -167,6 +167,9 @@ async function run() {
     // 01–06: setup and decision levels 1–5 (one round), with money checks.
     let page = await open(browser)
     await shot(page, '01-setup')
+    // Block H: the debug panel shows p^n × m_n per gate (Medium: 0.65 × 1.20 = 78.0 %).
+    const rtp = await page.evaluate(() => [...document.querySelectorAll('[data-qa="debug-rtp"] > span')].map((s) => s.textContent.trim()))
+    check('Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)', rtp.length === 7 && rtp[0] === 'g1 78.0%' && rtp[6] === 'g7 93.1%', rtp.join(' '))
     const balanceStart = toNum(await balance(page))
     await playToLevel(page, 0)
     await decisionMoney(page, 0)
