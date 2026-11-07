@@ -1,186 +1,175 @@
 import { useEffect, useMemo } from 'react'
 import { assets } from '../assets.js'
 import { config } from '../game/config.js'
+import { exchangeCount, fightScript, finalPoses } from '../game/fightScript.js'
 import { STATES } from '../game/machine.js'
+import { ENEMY_IN_FROM, ENEMY_SPRITES, HOME, MOVE, SCENE_OF, STEP, WALK_IN_FROM } from './stage.js'
 
 const L = assets.lottie
-const ms = (clip) => Math.round(clip.duration * 1000)
 
-const HERO = {
-  enter: L.heroEnter,
-  idle: L.heroIdle,
-  attack: L.heroAttack,
-  hit: L.heroHit,
-  dead: L.heroDead,
-  victory: L.heroVictory,
-}
-const ENEMY = {
-  enter: L.enemyEnter,
-  idle: L.enemyIdle,
-  attack: L.enemyAttack,
-  hit: L.enemyHit,
-  dead: L.enemyDead,
-  victory: L.enemyVictory,
-  impact: 270, // hit lands ~0.27 s into the attack (docs/lottie.md)
-}
-const BOSS = {
-  enter: L.bossEnter,
-  idle: L.bossIdle,
-  attack: L.bossAttack,
-  hit: L.bossHit,
-  dead: L.bossDead,
-  victory: L.bossVictory,
-  impact: 380,
-}
-
-const ENEMY_CLIPS = { vovkulak: ENEMY, vovkulakBoss: BOSS, babaYaga: BOSS }
-
-// Round start: the enemy enters 0.7 s after the hero (roadmap L8).
+// Round start: the enemy appears 0.7 s after the knight starts walking in (roadmap L8).
 const ENEMY_ENTER_DELAY = 700
-// A fight ends in three beats (Figma "Fight - … атакує" → "VICTORY / DEFEAT"):
-// the loser takes the hit (*_hit, Loss pose), then lies on the ground (frame 0
-// of *_dead) while the winner celebrates, then crumbles to ash.
-const DOWN_HOLD = 300 // body on the ground before the result shows
-const ASH_DELAY = 700 // body on the ground under the result banner, then ash
-// Lying body: frame 0 of the dead clip, held. The result state reuses the same
-// cue key with a finite playDelay, so the mounted clip just starts to crumble
-// (no second mount of a ~1 MB file mid-round).
-const downKey = (fightIndex, who) => `fight-${fightIndex}-${who}-down`
-const down = (key, clip) => cue(key, clip, { playDelay: Infinity })
-const ash = (key, clip) => cue(key, clip, { playDelay: ASH_DELAY })
-
-// Boss landing: CSS shake of the stage at 0.9 s, 0.35 s long (docs/lottie.md).
+// Boss landing (FX Lottie fx_boss_land_shake + CSS shake of the stage at 0.9 s, 0.35 s long).
 export const BOSS_SHAKE = { at: 900, duration: 350 }
+// The boss slides in so it lands when the landing dust hits (0.9 s).
+const BOSS_SLIDE_DELAY = BOSS_SHAKE.at - MOVE.enemyIn.ms
+// Win banner: the beaten enemy lies, darkens and fades (char-down), then the next one enters.
+const WIN_BANNER_MS = Math.max(config.timings.resultBanner, 2000)
 
 const cue = (key, clip, extra = {}) => ({ key, src: clip.src, loop: clip.mode === 'loop', ...extra })
 
+// The fight script of the current fight (FIGHTING / RESOLVING / result states).
+// The outcome is already rolled; the script only presents it (game/fightScript.js).
+export function scriptFor(state, derived) {
+  return fightScript({
+    outcome: state.outcome ?? (state.phase === STATES.DEFEAT ? 'lose' : 'win'),
+    exchanges: exchangeCount(state.rngState),
+    defeat: derived.heroDefeat,
+  })
+}
+
 // What the scene shows for a game state. Pure: the same state always gives the
 // same scene, so SKIP (which jumps the reducer to the end state) simply shows
-// the end poses. Returns cues per slot, the focus light, and timed game events
-// (`beats`, ms after the state starts).
+// the end poses. Returns
+//   hero / enemy  { pose, x, move? }    sprite pose at a stage x (shadow centre)
+//   timeline      [{ t, hero?, enemy?, flash? }]  steps played over the state
+//   fx, shake, focus, beats             FX Lottie, boss shake, focus light, timed game events
 export function sceneFor(state, derived) {
-  const { phase, passed, outcome } = state
-  // Clips for the enemy on the scene (derived.enemy is the one just beaten on the
-  // win banner / MAX WIN). Baba Yaga uses the boss clips as a placeholder until
-  // her sprites arrive (block D).
-  const E = ENEMY_CLIPS[derived.enemy]
-  const heroIdle = cue('hero-idle', HERO.idle)
-  const enemyIdle = cue(`enemy-idle-${passed}`, E.idle)
-  const fight = `fight-${passed}`
+  const { phase, passed } = state
+  const kind = derived.enemy
+  const set = ENEMY_SPRITES[kind]
+  const scene = SCENE_OF[kind]
+  const base = { set, kind, scene, fx: null, shake: false, timeline: null, beats: [] }
+  const idleHero = { pose: 'idle', x: HOME.hero }
+  const idleEnemy = { pose: 'idle', x: HOME.enemy }
 
   switch (phase) {
     case STATES.SETUP:
       // Lobby (587:5125): no characters, the totem is the focus (Scene lights it).
-      return { hero: null, enemy: null, focus: null, beats: [] }
+      return { ...base, hero: null, enemy: null, focus: null }
 
     case STATES.ENTERING: {
-      const enemyEnter = cue(`enemy-enter-${passed}`, E.enter, { then: enemyIdle })
       if (passed === 0) {
-        // Round start: hero walks in, then the first enemy jumps in.
-        const enemy = { ...enemyEnter, delay: ENEMY_ENTER_DELAY }
-        const done = Math.max(ms(HERO.enter), ENEMY_ENTER_DELAY + ms(E.enter))
+        // Round start: the knight walks in from the left, then the first enemy slides in.
+        const done = Math.max(MOVE.walkIn.ms, ENEMY_ENTER_DELAY + MOVE.enemyIn.ms)
         return {
-          hero: cue(`hero-enter-${state.seed}-${state.rngState}`, HERO.enter, { then: heroIdle }),
-          enemy,
+          ...base,
+          hero: { pose: 'walk', x: WALK_IN_FROM },
+          enemy: null,
           focus: 'hero',
+          timeline: [
+            { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.walkIn } },
+            { t: ENEMY_ENTER_DELAY, enemy: { pose: 'idle', x: ENEMY_IN_FROM, enter: true } },
+            { t: ENEMY_ENTER_DELAY + 30, enemy: { pose: 'idle', x: HOME.enemy, move: MOVE.enemyIn } },
+            { t: MOVE.walkIn.ms + 30, hero: idleHero },
+          ],
           beats: [{ at: done, action: 'enterDone' }],
         }
       }
-      const boss = E === BOSS
-      // Bosses (gate 6 and Baba Yaga) wait for the boss intro banner (HUD, config.timings.bossIntro).
-      const wait = derived.isBoss ? config.timings.bossIntro : 0
+      // Next gate: the winner walks back home from his step, the next enemy slides in.
+      // Bosses wait for the boss intro banner (HUD, config.timings.bossIntro) and land.
+      const boss = derived.isBoss
+      const wait = boss ? config.timings.bossIntro : 0
+      const slideAt = wait + (boss ? BOSS_SLIDE_DELAY : 150)
       return {
-        hero: heroIdle,
-        enemy: wait ? { ...enemyEnter, delay: wait } : enemyEnter,
+        ...base,
+        hero: { pose: 'walk', x: HOME.hero + STEP },
+        enemy: null,
         fx: boss ? cue(`boss-land-${passed}`, L.bossLandShake, { delay: wait }) : null,
         shake: boss,
         shakeAt: wait + BOSS_SHAKE.at,
         focus: 'enemy',
-        beats: [{ at: wait + ms(E.enter), action: 'enterDone' }],
+        timeline: [
+          { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.home } },
+          { t: MOVE.home.ms + 30, hero: idleHero },
+          { t: slideAt, enemy: { pose: 'idle', x: ENEMY_IN_FROM, enter: true } },
+          { t: slideAt + 30, enemy: { pose: 'idle', x: HOME.enemy, move: MOVE.enemyIn } },
+        ],
+        beats: [{ at: slideAt + 30 + MOVE.enemyIn.ms + 200, action: 'enterDone' }],
       }
     }
 
     case STATES.DECISION:
-      return { hero: heroIdle, enemy: enemyIdle, focus: 'hero', beats: [] }
+      return { ...base, hero: idleHero, enemy: idleEnemy, focus: 'hero' }
 
-    case STATES.FIGHTING:
-      // The attacker swings; at the impact frame the game moves to RESOLVING.
-      if (outcome === 'win') {
-        return {
-          hero: cue(`${fight}-hero-attack`, HERO.attack, { then: heroIdle }),
-          enemy: enemyIdle,
-          focus: 'hero',
-          beats: [{ at: ENEMY.impact, action: 'animDone' }],
-        }
-      }
+    case STATES.FIGHTING: {
+      // The exchange of blows up to the decisive impact, then RESOLVING.
+      const script = scriptFor(state, derived)
       return {
-        hero: heroIdle,
-        enemy: cue(`${fight}-enemy-attack`, E.attack, { then: enemyIdle }),
-        focus: 'enemy',
-        beats: [{ at: E.impact, action: 'animDone' }],
-      }
-
-    case STATES.RESOLVING:
-      // Same attack cue keys as FIGHTING, so the swing keeps playing; the victim
-      // takes the hit, then drops (enemies always die in one fight here).
-      if (outcome === 'win') {
-        return {
-          hero: cue(`${fight}-hero-attack`, HERO.attack, { then: heroIdle }),
-          enemy: cue(`${fight}-enemy-hit`, E.hit, { then: down(downKey(passed, 'enemy'), E.dead) }),
-          focus: 'clash',
-          beats: [{ at: ms(E.hit) + DOWN_HOLD, action: 'animDone' }],
-        }
-      }
-      return {
-        hero: cue(`${fight}-hero-hit`, HERO.hit, { then: down(downKey(passed, 'hero'), HERO.dead) }),
-        enemy: cue(`${fight}-enemy-attack`, E.attack, { then: enemyIdle }),
+        ...base,
+        script,
+        hero: idleHero,
+        enemy: idleEnemy,
         focus: 'clash',
-        beats: [{ at: ms(HERO.hit) + DOWN_HOLD, action: 'animDone' }],
+        timeline: withMoves(script.steps.filter((s) => s.t < script.impactAt)),
+        beats: [{ at: script.impactAt, action: 'animDone' }],
       }
+    }
+
+    case STATES.RESOLVING: {
+      // Decisive impact: the loser goes down at home, the winner turns to Victory on his step.
+      const script = scriptFor(state, derived)
+      const rest = script.steps.filter((s) => s.t >= script.impactAt).map((s) => ({ ...s, t: s.t - script.impactAt }))
+      const first = rest[0]
+      return {
+        ...base,
+        script,
+        hero: first.hero,
+        enemy: first.enemy,
+        flash: first.flash,
+        focus: 'clash',
+        timeline: rest.slice(1),
+        beats: [{ at: script.duration - script.impactAt, action: 'animDone' }],
+      }
+    }
 
     case STATES.WIN_BANNER:
-      // Hero celebrates over the fallen enemy (380:5467), the body turns to ash,
-      // then the next enemy enters.
+    case STATES.MAX_WIN: {
+      // Hero celebrates on his step over the fallen enemy (380:5467 / 629:6879).
+      const end = finalPoses(scriptFor({ ...state, outcome: 'win' }, derived))
       return {
-        hero: cue('hero-victory', HERO.victory),
-        enemy: ash(downKey(passed - 1, 'enemy'), E.dead),
+        ...base,
+        hero: end.hero,
+        enemy: end.enemy,
         focus: 'hero',
-        beats: [{ at: Math.max(config.timings.resultBanner, ASH_DELAY + ms(ENEMY.dead)), action: 'animDone' }],
+        beats: phase === STATES.WIN_BANNER ? [{ at: WIN_BANNER_MS, action: 'animDone' }] : [],
       }
+    }
+
+    case STATES.DEFEAT: {
+      // Enemy celebrates on its step; the knight lies dead (or caged by Baba Yaga) at home.
+      const end = finalPoses(scriptFor({ ...state, outcome: 'lose' }, derived))
+      return { ...base, hero: end.hero, enemy: end.enemy, focus: 'enemy' }
+    }
 
     case STATES.CASHED_OUT:
-      return { hero: cue('hero-victory', HERO.victory), enemy: enemyIdle, focus: 'hero', beats: [] }
-
-    case STATES.MAX_WIN:
-      // Boss lies beaten under the victory banner (629:6879), then turns to ash.
-      return { hero: cue('hero-victory', HERO.victory), enemy: ash(downKey(passed - 1, 'enemy'), E.dead), focus: 'hero', beats: [] }
-
-    case STATES.DEFEAT:
-      // Enemy celebrates over the fallen hero (380:5864 / 640:7126), hero turns to ash.
-      // Against Baba Yaga he is caged instead (derived.heroDefeat); no sprite until block C+B.
-      return {
-        hero: ash(downKey(passed, 'hero'), HERO.dead),
-        enemy: cue(`enemy-victory-${passed}`, E.victory),
-        focus: 'enemy',
-        beats: [],
-      }
+      // TAKE: the knight stays home in Victory, the enemy leaves.
+      return { ...base, hero: { pose: 'victory', x: HOME.hero }, enemy: null, focus: 'hero' }
 
     default:
-      return { hero: heroIdle, enemy: null, focus: 'hero', beats: [] }
+      return { ...base, hero: idleHero, enemy: null, focus: 'hero' }
   }
 }
 
-// Lottie JSON is loaded in three batches instead of all 8.8 MB at start-up:
-// the setup screen, the clips of a normal round (on PLAY), and the boss + MAX WIN
-// clips once the round gets close to the boss. ClipSlot waits for a clip's first
-// frame before fading it in, so a late load never shows a blank frame.
+// Fight steps get their CSS move: forward steps are quick (ease-out), the way back home is softer.
+function withMoves(steps) {
+  return steps.map((s) => {
+    const out = { ...s }
+    for (const who of ['hero', 'enemy']) {
+      if (!s[who]) continue
+      const forward = s[who].pose === 'attack'
+      out[who] = { ...s[who], move: forward ? MOVE.step : MOVE.back }
+    }
+    return out
+  })
+}
+
+// Lottie is now only backgrounds and FX (characters are Figma sprites, block C+B):
+// the scene at start-up, and the boss landing + MAX WIN popup close to the bosses.
 export const CLIP_BATCHES = {
-  setup: [L.bgScene, L.focusHero, L.focusEnemy, L.focusClash, L.heroIdle],
-  round: [
-    L.heroEnter, L.heroAttack, L.heroHit, L.heroDead, L.heroVictory,
-    L.enemyEnter, L.enemyIdle, L.enemyAttack, L.enemyHit, L.enemyDead, L.enemyVictory,
-  ],
-  boss: [L.bossEnter, L.bossLandShake, L.bossIdle, L.bossAttack, L.bossHit, L.bossDead, L.bossVictory, L.popupMaxWin],
+  setup: [L.bgScene, L.focusHero, L.focusEnemy, L.focusClash],
+  round: [],
+  boss: [L.bossLandShake, L.popupMaxWin],
 }
 // Start loading the boss batch this many gates before the first boss gate.
 export const BOSS_PRELOAD_GATES = 3
@@ -209,5 +198,6 @@ export function useDirector(state, actions, derived, { reduceMotion = prefersRed
     // beats depend only on the state that beatKey describes
   }, [beatKey, reduceMotion, enabled])
 
-  return useMemo(() => scene, [beatKey, scene.hero?.key, scene.enemy?.key, scene.fx?.key, scene.focus])
+  // A new scene object only when the state changes (the timeline restarts then).
+  return useMemo(() => ({ ...scene, beatKey }), [beatKey, scene.kind])
 }

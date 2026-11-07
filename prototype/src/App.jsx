@@ -91,7 +91,7 @@ function Game() {
 
   // Test hook for scripts/visual-qa.mjs: only with ?debug=1.
   useEffect(() => {
-    if (DEBUG) window.__casino = { state, derived, actions, resultStage, modal }
+    if (DEBUG) window.__casino = { state, derived, actions, resultStage, modal, fight: scene.script ?? null }
   })
 
   return (
