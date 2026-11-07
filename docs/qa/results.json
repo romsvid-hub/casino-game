@@ -1,6 +1,11 @@
 {
-  "generated": "2026-10-31T19:52:39.455Z",
+  "generated": "2026-11-07T09:13:08.254Z",
   "checks": [
+    {
+      "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
+      "ok": true,
+      "detail": "g1 78.0% g2 67.6% g3 65.9% g4 69.6% g5 78.9% g6 86.7% g7 93.1%"
+    },
     {
       "name": "L0: AT RISK (dock) = WIN (counter)",
       "ok": true,
@@ -304,7 +309,7 @@
     {
       "name": "Lottie clip mount during a round (JS) < 100 ms each (roadmap long-task target)",
       "ok": true,
-      "detail": "17 mounts, worst 14 ms (hero_01_enter.json)"
+      "detail": "17 mounts, worst 35 ms (hero_05_dead.json)"
     },
     {
       "name": "No page errors or console errors",
@@ -313,6 +318,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 16, max 117 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 51, max 494 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

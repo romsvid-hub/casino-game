@@ -154,8 +154,12 @@ async function spamAndRefresh(browser) {
   await page.evaluate(() => window.__casino.actions.play())
   await waitPhase(page, 'DECISION')
   const before = await game(page)
-  // Spam FIGHT: only one fight may start.
-  for (let i = 0; i < 6; i++) await cta('FIGHT').click({ force: true, noWaitAfter: true }).catch(() => {})
+  // Spam FIGHT: 6 clicks in one frame, so a slow browser cannot finish the first
+  // fight between clicks (a later click on a new DECISION would be a real 2nd fight).
+  await page.evaluate(() => {
+    const fight = [...document.querySelectorAll('.cta')].find((b) => b.querySelector('.cta__label')?.textContent === 'FIGHT')
+    for (let i = 0; i < 6; i++) fight.click()
+  })
   await waitPhase(page, ['WIN_BANNER', 'DEFEAT'], 8000)
   const afterFight = await game(page)
   check('Click spam on FIGHT runs exactly one fight', afterFight.passed - before.passed <= 1 && afterFight.rngState !== before.rngState, `passed ${before.passed} → ${afterFight.passed}`)
