@@ -16,6 +16,6 @@
 - [ ] Subtitle under "SLAVIC FOREST": Figma 587:5180 has "Lorem ipsum"; the prototype shows "A cash-out battle in the Slavic forest". What is the final line?
 - [ ] Final game name: "Slavic Forest" (start-screen title in Figma) or "Battle of Multipliers" (README, release, repo description)?
 - [ ] Boss / MAX WIN signalling — **to confirm with Artem.** Since 04.11 MAX WIN exists only on gate 7 (Baba Yaga); gate 6 (vovkulak boss) is a normal win. In the prototype only Baba Yaga gets the "FINAL BATTLE · MAX WIN ×19.00" banner before she enters, and on her gate the dock reads "MAX WIN" / "max win 95.00" with FIGHT highlighted. Figma 748:6069 still shows "IF WON" and FIGHT "risk 57.50" there. Keep the MAX WIN labels for her, or follow the frame?
-- [ ] Gate 6 vovkulak boss: should it get any "boss" signal of its own (banner, landing shake), or is it presented as a normal fight? The prototype keeps the landing dust and camera shake from the old boss, no banner.
+- [x] Gate 6 vovkulak boss: should it get a "boss" signal of its own? **Resolved (Roman, 07.11):** yes, like the old boss, a bit brighter: "BOSS BATTLE · ×11.50" banner before it enters, FIGHT highlighted, landing dust and shake. No MAX WIN wording (it is a normal win).
 - [ ] Dock FIGHT sub-label: Figma reference frames 756:6778 / 756:6539 / 748:6069 show "risk 12.00" (= AT RISK), the prototype shows "up to 19.50" (= IF WON). Which one? (Handled in block F.)
 
