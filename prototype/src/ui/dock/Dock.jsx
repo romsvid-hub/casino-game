@@ -126,8 +126,8 @@ function RoundContent({ variant, state, actions, derived }) {
         label="FIGHT"
         amount={hasNext ? `${derived.isFinal ? 'max win' : 'up to'} ${formatMoney(derived.ifWon)}` : '—'}
         disabled={!decision || !derived.canFight}
-        // Glow when FIGHT is the only move (before the first win, TAKE is locked).
-        highlight={decision && (!derived.canTake || derived.isFinal)}
+        // Glow when FIGHT is the only move (before the first win, TAKE is locked) and on boss gates (6, 7).
+        highlight={decision && (!derived.canTake || derived.isBoss)}
         onClick={actions.fight}
         className="absolute top-[24px] left-[434px]"
       />

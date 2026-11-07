@@ -87,8 +87,8 @@ export function sceneFor(state, derived) {
         }
       }
       const boss = E === BOSS
-      // Baba Yaga (final fight) waits for the "FINAL BATTLE" banner (HUD, config.timings.bossIntro).
-      const wait = derived.isFinal ? config.timings.bossIntro : 0
+      // Bosses (gate 6 and Baba Yaga) wait for the boss intro banner (HUD, config.timings.bossIntro).
+      const wait = derived.isBoss ? config.timings.bossIntro : 0
       return {
         hero: heroIdle,
         enemy: wait ? { ...enemyEnter, delay: wait } : enemyEnter,

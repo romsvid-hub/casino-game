@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { config } from '../../game/config.js'
 import { STATES } from '../../game/machine.js'
-import FinalBattleBanner from '../results/FinalBattleBanner.jsx'
+import BossIntroBanner from '../results/BossIntroBanner.jsx'
 import { PLATE_POS } from '../../scene/stage.js'
 import MultiplierPlate from '../MultiplierPlate.jsx'
 import CounterWin from './CounterWin.jsx'
@@ -15,10 +15,11 @@ import ProgressPath from './ProgressPath.jsx'
 const COUNTER_STATES = [STATES.ENTERING, STATES.DECISION, STATES.FIGHTING, STATES.RESOLVING]
 const COUNTER_MOUNTED = [...COUNTER_STATES, STATES.WIN_BANNER]
 
-// True for the first `bossIntro` ms of Baba Yaga's entrance (gate 7, the final
-// fight; the director delays her by the same time). SKIP leaves ENTERING, which ends it.
-function useBossIntro(phase, isFinal, passed) {
-  const active = phase === STATES.ENTERING && isFinal
+// True for the first `bossIntro` ms of a boss entrance (gate 6 vovkulak boss and
+// gate 7 Baba Yaga; the director delays the boss by the same time). SKIP leaves
+// ENTERING, which ends it.
+function useBossIntro(phase, isBoss, passed) {
+  const active = phase === STATES.ENTERING && isBoss
   const [shown, setShown] = useState(active)
   useEffect(() => {
     setShown(active)
@@ -34,7 +35,7 @@ function useBossIntro(phase, isFinal, passed) {
 export default function Hud({ state, derived, onRules, onMenu }) {
   const { phase } = state
   const inSetup = phase === STATES.SETUP
-  const bossIntro = useBossIntro(phase, derived.isFinal, state.passed)
+  const bossIntro = useBossIntro(phase, derived.isBoss, state.passed)
 
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -82,7 +83,13 @@ export default function Hud({ state, derived, onRules, onMenu }) {
           style={{ opacity: COUNTER_STATES.includes(phase) && !bossIntro ? 1 : 0 }}
         />
       )}
-      {bossIntro && <FinalBattleBanner multiplier={derived.finalMultiplier} className="absolute top-[150px] left-[560px]" />}
+      {bossIntro && (
+        <BossIntroBanner
+          final={derived.isFinal}
+          multiplier={derived.isFinal ? derived.finalMultiplier : derived.nextMultiplier}
+          className="absolute top-[150px] left-[560px]"
+        />
+      )}
 
       {/* Plate/Multiplier 554:4220: Decision state only, text only, over the head of the
           current enemy (position per enemy from the Figma reference frames). */}
