@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: prototype
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: prototype/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium firefox webkit
+      # Game logic and money (reducer + all demo seeds).
+      - run: npm run check:logic
+      # Visual states vs Figma, money consistency, Lottie mount cost (Chromium).
+      - run: npm run qa
+      # Chromium, Firefox, WebKit: window sizes, keyboard, skip, click spam, refresh.
+      - run: npm run qa:smoke
+      - name: Upload QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: docs/qa/
+          if-no-files-found: ignore
