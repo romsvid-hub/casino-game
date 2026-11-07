@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07T11:38:20.683Z",
+  "generated": "2026-11-07T12:47:18.747Z",
   "checks": [
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
@@ -282,6 +282,21 @@
       "detail": "5 moves, 0 jumps, y off 0.0 px"
     },
     {
+      "name": "Baba Yaga: cage light is on and follows her (same x as the enemy)",
+      "ok": true,
+      "detail": "{\"has\":true,\"follows\":true,\"src\":\"/sprites/cage-light.webp\"}"
+    },
+    {
+      "name": "DEFEAT by Baba Yaga: knight caged at home, she wins on her step 1180",
+      "ok": true,
+      "detail": "{\"hero\":\"caged\",\"enemyX\":\"1180\",\"red\":true,\"cage\":\"/sprites/cage-light-red.webp\"}"
+    },
+    {
+      "name": "DEFEAT by Baba Yaga: red defeat light on, cage light turns red",
+      "ok": true,
+      "detail": "{\"hero\":\"caged\",\"enemyX\":\"1180\",\"red\":true,\"cage\":\"/sprites/cage-light-red.webp\"}"
+    },
+    {
       "name": "Victory banner = AT RISK growth (19.50 − 12.00)",
       "ok": true,
       "detail": "+7.50"
@@ -368,6 +383,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 62, max 946 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 15, max 79 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }
