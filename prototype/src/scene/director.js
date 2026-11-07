@@ -33,6 +33,8 @@ const BOSS = {
   impact: 380,
 }
 
+const ENEMY_CLIPS = { vovkulak: ENEMY, vovkulakBoss: BOSS, babaYaga: BOSS }
+
 // Round start: the enemy enters 0.7 s after the hero (roadmap L8).
 const ENEMY_ENTER_DELAY = 700
 // A fight ends in three beats (Figma "Fight - … атакує" → "VICTORY / DEFEAT"):
@@ -58,9 +60,10 @@ const cue = (key, clip, extra = {}) => ({ key, src: clip.src, loop: clip.mode ==
 // (`beats`, ms after the state starts).
 export function sceneFor(state, derived) {
   const { phase, passed, outcome } = state
-  // The win banner and MAX WIN look back at the fight just won, so they pick the
-  // loser explicitly; elsewhere the current gate decides.
-  const E = derived.isBoss && phase !== STATES.WIN_BANNER && phase !== STATES.MAX_WIN ? BOSS : ENEMY
+  // Clips for the enemy on the scene (derived.enemy is the one just beaten on the
+  // win banner / MAX WIN). Baba Yaga uses the boss clips as a placeholder until
+  // her sprites arrive (block D).
+  const E = ENEMY_CLIPS[derived.enemy]
   const heroIdle = cue('hero-idle', HERO.idle)
   const enemyIdle = cue(`enemy-idle-${passed}`, E.idle)
   const fight = `fight-${passed}`
@@ -84,8 +87,8 @@ export function sceneFor(state, derived) {
         }
       }
       const boss = E === BOSS
-      // The boss waits for the "FINAL BATTLE" banner (HUD, config.timings.bossIntro).
-      const wait = boss ? config.timings.bossIntro : 0
+      // Baba Yaga (final fight) waits for the "FINAL BATTLE" banner (HUD, config.timings.bossIntro).
+      const wait = derived.isFinal ? config.timings.bossIntro : 0
       return {
         hero: heroIdle,
         enemy: wait ? { ...enemyEnter, delay: wait } : enemyEnter,
@@ -140,7 +143,7 @@ export function sceneFor(state, derived) {
       // then the next enemy enters.
       return {
         hero: cue('hero-victory', HERO.victory),
-        enemy: ash(downKey(passed - 1, 'enemy'), ENEMY.dead),
+        enemy: ash(downKey(passed - 1, 'enemy'), E.dead),
         focus: 'hero',
         beats: [{ at: Math.max(config.timings.resultBanner, ASH_DELAY + ms(ENEMY.dead)), action: 'animDone' }],
       }
@@ -150,10 +153,11 @@ export function sceneFor(state, derived) {
 
     case STATES.MAX_WIN:
       // Boss lies beaten under the victory banner (629:6879), then turns to ash.
-      return { hero: cue('hero-victory', HERO.victory), enemy: ash(downKey(passed - 1, 'enemy'), BOSS.dead), focus: 'hero', beats: [] }
+      return { hero: cue('hero-victory', HERO.victory), enemy: ash(downKey(passed - 1, 'enemy'), E.dead), focus: 'hero', beats: [] }
 
     case STATES.DEFEAT:
       // Enemy celebrates over the fallen hero (380:5864 / 640:7126), hero turns to ash.
+      // Against Baba Yaga he is caged instead (derived.heroDefeat); no sprite until block C+B.
       return {
         hero: ash(downKey(passed, 'hero'), HERO.dead),
         enemy: cue(`enemy-victory-${passed}`, E.victory),
@@ -178,8 +182,9 @@ export const CLIP_BATCHES = {
   ],
   boss: [L.bossEnter, L.bossLandShake, L.bossIdle, L.bossAttack, L.bossHit, L.bossDead, L.bossVictory, L.popupMaxWin],
 }
-// Start loading the boss batch this many gates before the boss.
+// Start loading the boss batch this many gates before the first boss gate.
 export const BOSS_PRELOAD_GATES = 3
+export const FIRST_BOSS_GATE = config.enemyByGate.findIndex((kind) => kind !== 'vovkulak')
 
 export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches

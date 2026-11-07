@@ -380,30 +380,6 @@
   }
 }
 
-/* ── Boss level signals (L12) ─────────────────────────────────────────────── */
-/* Lit Final gate on the boss level: one pulse when it lights up. */
-.gate-final-pulse {
-  animation: gate-final-pulse 900ms ease-out both;
-}
-@keyframes gate-final-pulse {
-  0% {
-    transform: scale(0.9);
-    filter: brightness(1.6);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-    filter: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .gate-final-pulse {
-    animation: none;
-  }
-}
-
 /* ── Dock variant crossfade (Setup ↔ round, 150 ms) ─────────────────────── */
 .dock-fade {
   animation: dock-fade 150ms ease-out both;

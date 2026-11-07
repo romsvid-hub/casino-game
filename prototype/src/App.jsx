@@ -99,7 +99,7 @@ function Game() {
       <Stage>
         {/* Whole stage content shakes when the boss lands. */}
         <div className={`absolute inset-0 ${shaking ? 'stage-shake' : ''}`}>
-          <Scene scene={scene} state={state} gateCount={derived.gates.length} />
+          <Scene scene={scene} state={state} />
           <Hud
             state={hudState}
             derived={derived}

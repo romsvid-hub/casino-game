@@ -55,7 +55,8 @@ export default function DebugPanel({ state, actions, derived, autoBeats, onAutoB
         <Row label="bet" value={formatMoney(state.bet)} />
         <Row label="difficulty" value={`${state.difficulty} (${derived.winChance * 100}%)`} />
         <Row label="level" value={`${derived.level} / ${derived.gates.length}`} />
-        <Row label="next" value={`${next}${derived.isBoss ? ' BOSS' : ''}`} />
+        <Row label="next" value={`${next}${derived.isFinal ? ' FINAL' : ''}`} />
+        <Row label="enemy" value={`${derived.enemy} · loses: ${derived.heroDefeat}`} />
         <Row label="atRisk" value={formatMoney(derived.atRisk)} />
         <Row label="ifWon" value={derived.ifWon == null ? '—' : formatMoney(derived.ifWon)} />
         <Row label="outcome" value={state.outcome ?? '—'} />

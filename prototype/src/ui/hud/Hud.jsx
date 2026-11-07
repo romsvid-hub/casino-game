@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { config } from '../../game/config.js'
 import { STATES } from '../../game/machine.js'
 import FinalBattleBanner from '../results/FinalBattleBanner.jsx'
+import { PLATE_POS } from '../../scene/stage.js'
 import MultiplierPlate from '../MultiplierPlate.jsx'
 import CounterWin from './CounterWin.jsx'
 import HudBalance from './HudBalance.jsx'
@@ -14,10 +15,10 @@ import ProgressPath from './ProgressPath.jsx'
 const COUNTER_STATES = [STATES.ENTERING, STATES.DECISION, STATES.FIGHTING, STATES.RESOLVING]
 const COUNTER_MOUNTED = [...COUNTER_STATES, STATES.WIN_BANNER]
 
-// True for the first `bossIntro` ms of the boss entrance (the director delays
-// the boss by the same time). SKIP leaves ENTERING, which ends it.
-function useBossIntro(phase, isBoss, passed) {
-  const active = phase === STATES.ENTERING && isBoss
+// True for the first `bossIntro` ms of Baba Yaga's entrance (gate 7, the final
+// fight; the director delays her by the same time). SKIP leaves ENTERING, which ends it.
+function useBossIntro(phase, isFinal, passed) {
+  const active = phase === STATES.ENTERING && isFinal
   const [shown, setShown] = useState(active)
   useEffect(() => {
     setShown(active)
@@ -33,7 +34,7 @@ function useBossIntro(phase, isBoss, passed) {
 export default function Hud({ state, derived, onRules, onMenu }) {
   const { phase } = state
   const inSetup = phase === STATES.SETUP
-  const bossIntro = useBossIntro(phase, derived.isBoss, state.passed)
+  const bossIntro = useBossIntro(phase, derived.isFinal, state.passed)
 
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -83,14 +84,13 @@ export default function Hud({ state, derived, onRules, onMenu }) {
       )}
       {bossIntro && <FinalBattleBanner multiplier={derived.finalMultiplier} className="absolute top-[150px] left-[560px]" />}
 
-      {/* Plate/Multiplier 554:4220: Decision state only, text only, x1217 as in every
-          Figma frame. 60 px below Counter/Win (bottom y270 → y330); on the boss level
-          30 px (y300) so the number sits above the boss's mane. */}
+      {/* Plate/Multiplier 554:4220: Decision state only, text only, over the head of the
+          current enemy (position per enemy from the Figma reference frames). */}
       {phase === STATES.DECISION && derived.nextMultiplier != null && (
         <MultiplierPlate
           multiplier={derived.nextMultiplier}
-          className="absolute left-[1217px]"
-          style={{ top: derived.isBoss ? 300 : 330 }}
+          className="absolute"
+          style={{ left: PLATE_POS[derived.enemy].x, top: PLATE_POS[derived.enemy].y }}
         />
       )}
     </div>
