@@ -25,6 +25,10 @@ export function layerStyle(layer) {
   if (layer.blur) style.filter = `blur(${layer.blur}px)`
   if (layer.rotate) style.transform = `rotate(${layer.rotate}deg)`
   if (layer.plx) style.transform = `translateX(var(--plx-${layer.plx}))`
+  if (layer.fadeLeft) {
+    style.maskImage = `linear-gradient(to right, transparent, black ${layer.fadeLeft}px)`
+    style.WebkitMaskImage = style.maskImage
+  }
   return style
 }
 
