@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07T12:52:34.696Z",
+  "generated": "2026-11-09T09:57:16.859Z",
   "results": [
     {
       "browser": "chromium",
@@ -123,7 +123,7 @@
     },
     {
       "browser": "chromium",
-      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "name": "Lobby shows the rules; Menu opens from the round end; Skip animations toggles",
       "ok": true,
       "detail": ""
     },
@@ -131,7 +131,7 @@
       "browser": "chromium",
       "name": "/kit renders components with no broken images",
       "ok": true,
-      "detail": "12 CTAs, 0 broken images"
+      "detail": "13 CTAs, 0 broken images"
     },
     {
       "browser": "chromium",
@@ -261,7 +261,7 @@
     },
     {
       "browser": "firefox",
-      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "name": "Lobby shows the rules; Menu opens from the round end; Skip animations toggles",
       "ok": true,
       "detail": ""
     },
@@ -269,7 +269,7 @@
       "browser": "firefox",
       "name": "/kit renders components with no broken images",
       "ok": true,
-      "detail": "12 CTAs, 0 broken images"
+      "detail": "13 CTAs, 0 broken images"
     },
     {
       "browser": "firefox",
@@ -399,7 +399,7 @@
     },
     {
       "browser": "webkit",
-      "name": "Rules opens and closes (Esc); Menu opens; Skip animations toggles",
+      "name": "Lobby shows the rules; Menu opens from the round end; Skip animations toggles",
       "ok": true,
       "detail": ""
     },
@@ -407,7 +407,7 @@
       "browser": "webkit",
       "name": "/kit renders components with no broken images",
       "ok": true,
-      "detail": "12 CTAs, 0 broken images"
+      "detail": "13 CTAs, 0 broken images"
     },
     {
       "browser": "webkit",

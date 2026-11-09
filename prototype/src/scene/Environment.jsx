@@ -28,10 +28,33 @@ export function layerStyle(layer) {
   return style
 }
 
+// Idle motion, same drift and pulse as the old background (bg_scene, 12 s loop).
+// Drift uses the CSS `translate` property, so it adds to the parallax `transform`.
+const MOTION = {
+  clouds: 'env-drift-clouds',
+  mist: 'env-drift-mist',
+  'ground-fog': 'env-drift-fog',
+  'moon-glow-core': 'env-pulse-moon-core',
+  'moon-glow-wide': 'env-pulse-moon-wide',
+  'torch-glow-core': 'env-flicker-core',
+  'torch-glow-wide': 'env-flicker-wide',
+  'torch-warm-pool': 'env-flicker-pool',
+}
+const EMBER = /^ember-(\d+)$/
+
+function layerMotion(name) {
+  const ember = EMBER.exec(name)
+  if (!ember) return { motion: MOTION[name] ?? '' }
+  const i = Number(ember[1])
+  return { motion: 'env-ember', delay: { animationDuration: `${3 + (i % 3)}s`, animationDelay: `${-i * 0.7}s` } }
+}
+
 export function EnvLayer({ layer }) {
-  const className = `absolute block max-w-none ${layer.plx ? 'env-parallax' : ''}`
-  if (layer.kind === 'rect') return <div aria-hidden className={className} style={layerStyle(layer)} />
-  return <img src={layer.src} alt="" aria-hidden draggable={false} className={className} style={layerStyle(layer)} />
+  const { motion, delay } = layerMotion(layer.name)
+  const className = `absolute block max-w-none ${layer.plx ? 'env-parallax' : ''} ${motion}`
+  const style = { ...layerStyle(layer), ...delay }
+  if (layer.kind === 'rect') return <div aria-hidden className={className} style={style} />
+  return <img src={layer.src} alt="" aria-hidden draggable={false} className={className} style={style} />
 }
 
 export const envImageUrls = (scene) =>
