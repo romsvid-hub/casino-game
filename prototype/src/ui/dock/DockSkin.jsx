@@ -1,9 +1,9 @@
 import { assets } from '../../assets.js'
 import SkinSide from '../SkinSide.jsx'
 
-// Dock/Decision panel 336:3939 (1500x168): towel caps, tiled fill, two dividers
-// at x396 / right 396 and the gem in the centre (hidden when PLAY or SKIP sit there).
-export default function DockSkin({ gem = true }) {
+// Dock/Shell 771:6134 (1500x168): towel caps and tiled fill, the one skin of every
+// dock state. No gem and no dividers.
+export default function DockSkin() {
   return (
     <div className="absolute inset-0" aria-hidden>
       <div className="absolute inset-0 isolate flex items-start">
@@ -15,7 +15,7 @@ export default function DockSkin({ gem = true }) {
           style={{
             backgroundImage: `url(${assets.dock.tile.src})`,
             backgroundRepeat: 'repeat-x',
-            backgroundSize: 'auto 100%',
+            backgroundSize: '50.488px 168.293px',
             // Figma fill-image overhangs the slot by 2 px on each side.
             margin: '0 -2px',
           }}
@@ -24,15 +24,6 @@ export default function DockSkin({ gem = true }) {
           <SkinSide styleName="towel" side="right" size="L" />
         </div>
       </div>
-      {gem && (
-        <img
-          src={assets.dock.gem.src}
-          alt=""
-          className="absolute top-0 left-1/2 block h-[168px] w-[125.85px] max-w-none -translate-x-1/2"
-        />
-      )}
-      <img src={assets.dock.divider.src} alt="" className="absolute top-0 left-[396px] block h-[168px] w-[30px]" />
-      <img src={assets.dock.divider.src} alt="" className="absolute top-0 right-[396px] block h-[168px] w-[30px]" />
     </div>
   )
 }

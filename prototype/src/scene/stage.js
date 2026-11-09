@@ -7,11 +7,11 @@ export { HOME, STEP }
 // Every character stands on its shadow centre; all shadows sit on one line.
 export const SHADOW_Y = 750
 
-// Plate/Multiplier top-left per enemy: it sits over that enemy's head (Figma 05.11).
+// Plate/Multiplier top-left per enemy: it sits over that enemy's head (756:6778, 756:6539, 843:6410).
 export const PLATE_POS = {
   vovkulak: { x: 1193, y: 360 },
   vovkulakBoss: { x: 1201, y: 327 },
-  babaYaga: { x: 1247, y: 306 },
+  babaYaga: { x: 1247, y: 276 },
 }
 
 // Location of each enemy's gate: forest (L1–5), open field (L6), hut (L7).

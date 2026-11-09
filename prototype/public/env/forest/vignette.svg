@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ENV / Vignette" style="mix-blend-mode:multiply">
+<path d="M0 0H1920V1080H0V0Z" fill="url(#paint0_radial_0_4)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(960 540) scale(960 540)">
+<stop stop-opacity="0"/>
+<stop offset="0.6" stop-opacity="0"/>
+<stop offset="1" stop-color="#05080F" stop-opacity="0.6"/>
+</radialGradient>
+</defs>
+</svg>

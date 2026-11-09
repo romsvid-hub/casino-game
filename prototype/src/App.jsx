@@ -8,6 +8,7 @@ const KitPage = lazy(() => import('./screens/KitPage.jsx'))
 import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
+import LobbyScreen from './ui/lobby/LobbyScreen.jsx'
 import Dock from './ui/dock/Dock.jsx'
 import ResultsLayer, { useResultStage } from './ui/results/ResultsLayer.jsx'
 import RulesModal from './ui/modals/RulesModal.jsx'
@@ -100,13 +101,15 @@ function Game() {
         {/* Whole stage content shakes when the boss lands. */}
         <div className={`absolute inset-0 ${shaking ? 'stage-shake' : ''}`}>
           <Scene scene={scene} state={state} />
-          <Hud
-            state={hudState}
+          <LobbyScreen visible={state.phase === STATES.SETUP} difficulty={state.difficulty} />
+          <Hud state={hudState} derived={derived} />
+          <Dock
+            state={state}
+            actions={actions}
             derived={derived}
-            onRules={() => setModal('rules')}
-            onMenu={() => setModal('menu')}
+            keysEnabled={!modal}
+            className={state.phase === STATES.SETUP ? 'top-[897px] left-[182px]' : 'top-[888px] left-[210px]'}
           />
-          <Dock state={state} actions={actions} derived={derived} keysEnabled={!modal} className="top-[888px] left-[210px]" />
           {showLowBalance && (
             <LowBalanceNotice
               balance={state.balance}

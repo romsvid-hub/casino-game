@@ -440,59 +440,235 @@
 }
 
 /* ── Boss landing shake: ±6 px, 0.35 s (docs/lottie.md) ─────────────────── */
-/* Scene environment (bg + focus light). Lobby 587:5125 shows the same scene
-   1.1332x closer: every ENV layer there is the battle layer (457:7471) scaled
-   by 1.1332 around (989px, -396px). bg_scene has no bleed above the stage, so
-   we scale around the top edge instead (scene ~53px higher than Figma, no gap).
-   Leaving the lobby zooms out to 1x. */
-.scene-env {
-  transform-origin: 989px 0;
-  transition: transform 1200ms cubic-bezier(0.45, 0, 0.25, 1);
-}
-.scene-env--lobby {
-  transform: scale(1.1332);
-}
-
-/* Lobby: soft light on the totem (totem 672..1308 x 251..675 in battle space)
-   and no fog band at its foot (bg_scene layer "fog at idol"). */
-.totem-light {
-  position: absolute;
-  left: 690px;
-  top: 150px;
-  width: 600px;
-  height: 640px;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in srgb, var(--color-accent-amber) 26%, transparent),
-    color-mix(in srgb, var(--color-accent-amber) 8%, transparent) 60%,
-    transparent
-  );
-  mix-blend-mode: screen;
+/* Locations (src/scene/Environment.jsx): crossfade between forest, field and hut;
+   the forest layers shift per level during the walk-in. */
+.env-scene {
   opacity: 0;
-  transition: opacity 600ms ease-out;
+  visibility: hidden;
+  transition:
+    opacity 600ms ease-in-out,
+    visibility 0s linear 600ms;
 }
-.scene-env--lobby .totem-light {
+.env-scene--active {
   opacity: 1;
-  animation: totem-breathe 4s ease-in-out infinite alternate;
+  visibility: visible;
+  transition: opacity 600ms ease-in-out;
 }
-@keyframes totem-breathe {
+.env-parallax {
+  transition: transform 600ms ease-in-out;
+}
+/* Idle motion from the old bg_scene: sine drift and pulse. A negative delay sets the phase. */
+.env-drift-clouds,
+.env-drift-mist,
+.env-drift-fog,
+.env-pulse-moon-core,
+.env-pulse-moon-wide {
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.env-drift-clouds {
+  animation-name: env-drift-clouds;
+  animation-duration: 6s;
+  animation-delay: -3s;
+}
+.env-drift-mist {
+  animation-name: env-drift-mist, env-pulse-mist;
+  animation-duration: 6s, 3s;
+  animation-delay: -11.4s, -1.5s;
+}
+.env-drift-fog {
+  animation-name: env-drift-fog, env-pulse-fog;
+  animation-duration: 6s, 3s;
+  animation-delay: 0s, -2.1s;
+}
+.env-pulse-moon-core {
+  animation-name: env-pulse-moon-core;
+  animation-duration: 2s;
+  animation-delay: -2.2s;
+}
+.env-pulse-moon-wide {
+  animation-name: env-pulse-moon-wide;
+  animation-duration: 3s;
+  animation-delay: -1.5s;
+}
+.env-flicker-core,
+.env-flicker-wide,
+.env-flicker-pool {
+  animation: env-flicker 3s linear infinite;
+}
+.env-flicker-core {
+  animation-duration: 2.3s;
+}
+.env-flicker-pool {
+  animation-duration: 3.7s;
+}
+.env-ember {
+  animation: env-ember 4s linear infinite;
+}
+@keyframes env-drift-clouds {
   from {
-    filter: brightness(0.85);
+    translate: -22px 0;
   }
   to {
-    filter: brightness(1.15);
+    translate: 22px 0;
   }
 }
-.scene-env .lottie-fog-idol {
-  transition: opacity 600ms ease-out;
+/* Mist has no spare width on the right in Figma, so it drifts left of its place. */
+@keyframes env-drift-mist {
+  from {
+    translate: -56px 0;
+  }
+  to {
+    translate: 0 0;
+  }
 }
-.scene-env--lobby .lottie-fog-idol {
-  opacity: 0 !important; /* beats lottie's own opacity on the layer group */
+@keyframes env-pulse-mist {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes env-drift-fog {
+  from {
+    translate: 40px 0;
+  }
+  to {
+    translate: -40px 0;
+  }
+}
+@keyframes env-pulse-fog {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes env-pulse-moon-core {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes env-pulse-moon-wide {
+  from {
+    opacity: 0.76;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes env-flicker {
+  0%,
+  100% {
+    opacity: 0.93;
+  }
+  8% {
+    opacity: 0.84;
+  }
+  16% {
+    opacity: 0.97;
+  }
+  25% {
+    opacity: 0.82;
+  }
+  33% {
+    opacity: 0.95;
+  }
+  42% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.85;
+  }
+  67% {
+    opacity: 0.96;
+  }
+  75% {
+    opacity: 0.81;
+  }
+  83% {
+    opacity: 0.94;
+  }
+  92% {
+    opacity: 0.86;
+  }
+}
+@keyframes env-ember {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    translate: 12px -90px;
+  }
+}
+.env-scene:not(.env-scene--active) * {
+  animation-play-state: paused;
+}
+.env-focus {
+  position: absolute;
+  inset: 0;
+  transition: opacity 350ms ease-in-out;
+}
+.env-defeat-darken {
+  background: var(--fx-defeat-darken);
+  animation: fade-in 300ms ease-out both;
+}
+
+/* Lobby 885:10856: covers the stage, fades out when the round starts. */
+.lobby {
+  background: var(--color-neutral-ink);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 400ms ease-out,
+    visibility 0s linear 400ms;
+}
+.lobby--visible {
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+.lobby-rule {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-number-s);
+  line-height: var(--font-line-height-number-s);
+}
+.lobby-fact {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-number-m);
+  line-height: var(--font-line-height-number-m);
 }
 @media (prefers-reduced-motion: reduce) {
-  .scene-env,
-  .totem-light {
+  .env-scene,
+  .env-scene--active,
+  .env-parallax,
+  .env-focus,
+  .lobby {
     transition: none;
+  }
+  .env-drift-clouds,
+  .env-drift-mist,
+  .env-drift-fog,
+  .env-pulse-moon-core,
+  .env-pulse-moon-wide,
+  .env-flicker-core,
+  .env-flicker-wide,
+  .env-flicker-pool,
+  .env-ember {
     animation: none;
   }
 }
