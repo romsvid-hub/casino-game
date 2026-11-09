@@ -33,7 +33,7 @@ export function scriptFor(state, derived) {
 // the end poses. Returns
 //   hero / enemy  { pose, x, move? }    sprite pose at a stage x (shadow centre)
 //   timeline      [{ t, hero?, enemy?, flash? }]  steps played over the state
-//   fx, shake, focus, beats             FX Lottie, boss shake, focus light, timed game events
+//   fx, shake, beats                    FX Lottie, boss shake, timed game events
 export function sceneFor(state, derived) {
   const { phase, passed } = state
   const kind = derived.enemy
@@ -45,8 +45,8 @@ export function sceneFor(state, derived) {
 
   switch (phase) {
     case STATES.SETUP:
-      // Lobby (587:5125): no characters, the totem is the focus (Scene lights it).
-      return { ...base, hero: null, enemy: null, focus: null }
+      // Lobby 885:10856 covers the stage: no characters behind it.
+      return { ...base, hero: null, enemy: null }
 
     case STATES.ENTERING: {
       if (passed === 0) {
@@ -56,7 +56,6 @@ export function sceneFor(state, derived) {
           ...base,
           hero: { pose: 'walk', x: WALK_IN_FROM },
           enemy: null,
-          focus: 'hero',
           timeline: [
             { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.walkIn } },
             { t: ENEMY_ENTER_DELAY, enemy: { pose: 'idle', x: ENEMY_IN_FROM, enter: true } },
@@ -78,7 +77,6 @@ export function sceneFor(state, derived) {
         fx: boss ? cue(`boss-land-${passed}`, L.bossLandShake, { delay: wait }) : null,
         shake: boss,
         shakeAt: wait + BOSS_SHAKE.at,
-        focus: 'enemy',
         timeline: [
           { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.home } },
           { t: MOVE.home.ms + 30, hero: idleHero },
@@ -90,7 +88,7 @@ export function sceneFor(state, derived) {
     }
 
     case STATES.DECISION:
-      return { ...base, hero: idleHero, enemy: idleEnemy, focus: 'hero' }
+      return { ...base, hero: idleHero, enemy: idleEnemy }
 
     case STATES.FIGHTING: {
       // The exchange of blows up to the decisive impact, then RESOLVING.
@@ -100,7 +98,6 @@ export function sceneFor(state, derived) {
         script,
         hero: idleHero,
         enemy: idleEnemy,
-        focus: 'clash',
         timeline: withMoves(script.steps.filter((s) => s.t < script.impactAt)),
         beats: [{ at: script.impactAt, action: 'animDone' }],
       }
@@ -117,7 +114,6 @@ export function sceneFor(state, derived) {
         hero: first.hero,
         enemy: first.enemy,
         flash: first.flash,
-        focus: 'clash',
         timeline: rest.slice(1),
         beats: [{ at: script.duration - script.impactAt, action: 'animDone' }],
       }
@@ -131,7 +127,6 @@ export function sceneFor(state, derived) {
         ...base,
         hero: end.hero,
         enemy: end.enemy,
-        focus: 'hero',
         beats: phase === STATES.WIN_BANNER ? [{ at: WIN_BANNER_MS, action: 'animDone' }] : [],
       }
     }
@@ -139,15 +134,15 @@ export function sceneFor(state, derived) {
     case STATES.DEFEAT: {
       // Enemy celebrates on its step; the knight lies dead (or caged by Baba Yaga) at home.
       const end = finalPoses(scriptFor({ ...state, outcome: 'lose' }, derived))
-      return { ...base, hero: end.hero, enemy: end.enemy, focus: 'enemy' }
+      return { ...base, hero: end.hero, enemy: end.enemy }
     }
 
     case STATES.CASHED_OUT:
       // TAKE: the knight stays home in Victory, the enemy leaves.
-      return { ...base, hero: { pose: 'victory', x: HOME.hero }, enemy: null, focus: 'hero' }
+      return { ...base, hero: { pose: 'victory', x: HOME.hero }, enemy: null }
 
     default:
-      return { ...base, hero: idleHero, enemy: null, focus: 'hero' }
+      return { ...base, hero: idleHero, enemy: null }
   }
 }
 
@@ -164,10 +159,10 @@ function withMoves(steps) {
   })
 }
 
-// Lottie is now only backgrounds and FX (characters are Figma sprites, block C+B):
-// the scene at start-up, and the boss landing + MAX WIN popup close to the bosses.
+// Lottie is now FX only (characters are sprites since C+B, locations are Figma layers
+// since E): the boss landing and the MAX WIN popup, loaded close to the bosses.
 export const CLIP_BATCHES = {
-  setup: [L.bgScene, L.focusHero, L.focusEnemy, L.focusClash],
+  setup: [],
   round: [],
   boss: [L.bossLandShake, L.popupMaxWin],
 }

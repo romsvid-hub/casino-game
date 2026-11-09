@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="647.991" height="661.95" viewBox="0 0 647.991 661.95" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="hut &#194;&#183; fog veil" filter="url(#filter0_f_0_4)">
+<ellipse cx="323.996" cy="330.975" rx="268.996" ry="275.975" fill="#6E7A8C" fill-opacity="0.4"/>
+</g>
+<defs>
+<filter id="filter0_f_0_4" x="0" y="0" width="647.991" height="661.95" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="27.5" result="effect1_foregroundBlur_0_4"/>
+</filter>
+</defs>
+</svg>

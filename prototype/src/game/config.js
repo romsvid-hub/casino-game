@@ -6,6 +6,7 @@ export const config = {
   defaultBet: 5, // PLACEHOLDER - pending client (Figma 587:5125)
   minBet: 1, // PLACEHOLDER - pending client
   maxBet: 20, // PLACEHOLDER - pending client (value of the "MAX" chip)
+  displayRtp: 96, // PLACEHOLDER - pending client (shown in the lobby, Figma 885:10856)
   // Chips from Figma 587:5125: 1 / 2 / 5 / 10 / MAX. 'max' = min(maxBet, balance).
   betOptions: [1, 2, 5, 10, 'max'], // PLACEHOLDER - pending client
   defaultDifficulty: 'medium',

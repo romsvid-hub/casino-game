@@ -186,18 +186,21 @@ async function spamAndRefresh(browser) {
 
 async function modalsAndKit(browser) {
   const errors = []
-  const page = await openPage(browser, '?seed=1&difficulty=medium', [1920, 1080], errors)
-  await page.getByRole('button', { name: 'Rules' }).click()
-  const rules = await page.getByRole('dialog', { name: 'HOW TO PLAY' }).isVisible()
-  await page.keyboard.press('Escape')
-  const rulesClosed = !(await page.getByRole('dialog').count())
-  await page.getByRole('button', { name: 'Menu' }).click()
+  const page = await openPage(browser, '?seed=13&difficulty=medium', [1920, 1080], errors)
+  // Lobby 885:10856 shows the rules on screen; Menu opens from the round-end popup.
+  const rules = await page.getByRole('region', { name: 'How to play' }).isVisible()
+  await page.locator('.cta', { hasText: 'PLAY' }).click()
+  await waitPhase(page, 'DECISION', 8000)
+  await page.locator('.cta', { hasText: 'FIGHT' }).click()
+  await waitPhase(page, 'DECISION', 15000)
+  await page.locator('.cta', { hasText: 'TAKE' }).click()
+  await page.locator('.cta', { hasText: 'MENU' }).click({ timeout: 8000 })
   const menu = await page.getByRole('dialog', { name: 'MENU' }).isVisible()
   await page.getByRole('switch').click()
   const switched = await page.getByRole('switch').getAttribute('aria-checked')
   await page.getByRole('switch').click()
   await page.keyboard.press('Escape')
-  check('Rules opens and closes (Esc); Menu opens; Skip animations toggles', rules && rulesClosed && menu && switched === 'true')
+  check('Lobby shows the rules; Menu opens from the round end; Skip animations toggles', rules && menu && switched === 'true')
   await page.goto(`${BASE}#/kit`)
   await page.waitForSelector('text=Components')
   await sleep(800)

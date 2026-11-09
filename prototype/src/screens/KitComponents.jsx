@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { assets } from '../assets.js'
 import { formatMoney } from '../game/money.js'
 import CtaButton from '../ui/CtaButton.jsx'
-import SkipButton from '../ui/SkipButton.jsx'
 import Stepper, { StepperArrow } from '../ui/Stepper.jsx'
 import BetChip from '../ui/BetChip.jsx'
 import DifficultySegment from '../ui/DifficultySegment.jsx'
@@ -158,8 +157,7 @@ export default function KitComponents() {
         w={262}
         h={169}
         items={[
-          { x: 24, y: 24, el: <SkipButton state="default" /> },
-          { x: 147, y: 24, el: <SkipButton state="hover" /> },
+          { x: 24, y: 24, el: <CtaButton variant="skip" label="SKIP" state="default" /> },
         ]}
       />
       <div className="flex flex-wrap gap-10">

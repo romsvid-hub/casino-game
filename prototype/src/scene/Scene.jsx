@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react'
-import { assets } from '../assets.js'
 import { STATES } from '../game/machine.js'
 import Character, { CharacterLight, DefeatRedLight, spriteUrls } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
 import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
-import LottieLayer, { preloadLottie } from './LottieLayer.jsx'
+import Environment, { envImageUrls, HeroLight } from './Environment.jsx'
+import { preloadLottie } from './LottieLayer.jsx'
 
-const FOCUS = {
-  hero: assets.lottie.focusHero.src,
-  enemy: assets.lottie.focusEnemy.src,
-  clash: assets.lottie.focusClash.src,
-}
+const VICTORY_PHASES = [STATES.WIN_BANNER, STATES.MAX_WIN, STATES.CASHED_OUT]
 
 // Boss landing shake: on at 0.9 s for 0.35 s after the boss starts entering.
 export function useBossShake(state, scene) {
@@ -30,9 +26,9 @@ export function useBossShake(state, scene) {
   return shaking
 }
 
-// Battle scene, bottom to top: bg_scene → focus light → hero → enemy → FX.
-// Background, focus light and FX are full 1920x1080 Lottie; the characters are
-// Figma sprites anchored at their shadow centre (Character.jsx, block C+B).
+// Battle scene, bottom to top: location layers with their lights (Environment.jsx,
+// from Figma) → hero → enemy → FX. The characters are Figma sprites anchored at
+// their shadow centre (Character.jsx, block C+B).
 const preload = (clips) => clips.forEach((c) => preloadLottie(c.src).catch(() => {}))
 const preloadImages = (urls) =>
   urls.forEach((u) => {
@@ -47,7 +43,7 @@ function useLazyClips(state) {
   const nearBoss = inRound && state.passed >= FIRST_BOSS_GATE - BOSS_PRELOAD_GATES
   useEffect(() => {
     preload(CLIP_BATCHES.setup)
-    preloadImages([...spriteUrls('hero'), ...spriteUrls('vovkulak')])
+    preloadImages([...spriteUrls('hero'), ...spriteUrls('vovkulak'), ...envImageUrls('forest')])
   }, [])
   useEffect(() => {
     if (inRound) preload(CLIP_BATCHES.round)
@@ -55,7 +51,7 @@ function useLazyClips(state) {
   useEffect(() => {
     if (!nearBoss) return
     preload(CLIP_BATCHES.boss)
-    preloadImages([...spriteUrls('vovkulakBoss'), ...spriteUrls('babaYaga')])
+    preloadImages([...spriteUrls('vovkulakBoss'), ...spriteUrls('babaYaga'), ...envImageUrls('field'), ...envImageUrls('hut')])
   }, [nearBoss])
 }
 
@@ -97,36 +93,29 @@ function useStageFrame(scene) {
 export default function Scene({ scene, state }) {
   useLazyClips(state)
   const frame = useStageFrame(scene)
-  const lobby = state.phase === STATES.SETUP
+  // On a win the game state has already moved to the next gate: stay on the beaten one.
+  const onBeatenGate = state.phase === STATES.WIN_BANNER || state.phase === STATES.MAX_WIN
+  const gate = onBeatenGate ? state.passed - 1 : state.passed
+  const defeat = state.phase === STATES.DEFEAT
 
   return (
     <div className="pointer-events-none absolute inset-0">
-      {/* Environment: zoomed in on the totem in the lobby (587:5125), zooms out to
-          the battle framing (457:7471) when a round starts. */}
-      <div className={`scene-env absolute inset-0 ${lobby ? 'scene-env--lobby' : ''}`}>
-        <LottieLayer src={assets.lottie.bgScene.src} loop />
-        <div className="totem-light" />
-        {/* Focus light: all three loop; the active one crossfades in over 350 ms. */}
-        {Object.entries(FOCUS).map(([name, src]) => (
-          <div
-            key={name}
-            className="absolute inset-0 transition-opacity duration-[350ms] ease-in-out"
-            style={{ opacity: scene.focus === name ? 1 : 0 }}
-          >
-            <LottieLayer src={src} loop />
-          </div>
-        ))}
-      </div>
-      {/* Lights behind both characters: the enemy's own light (Baba Yaga's cage), the red defeat light. */}
-      {frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
-      {state.phase === STATES.DEFEAT && frame.enemy && <DefeatRedLight x={frame.enemy.x} />}
+      <Environment scene={scene.scene} gate={gate} focus={Boolean(frame.enemy)} />
+      {/* Baba Yaga's cage light sits behind both characters. */}
+      {frame.enemy && !defeat && <CharacterLight set={scene.set} {...frame.enemy} />}
+      {frame.hero && VICTORY_PHASES.includes(state.phase) && <HeroLight x={frame.hero.x} />}
       {frame.hero && (
         <Character set="hero" qa="char-hero" scene={scene.scene} {...frame.hero} flash={frame.flash.hero} />
       )}
+      {/* FX / Defeat darken 460:2016 covers the fallen knight, then the enemy's lights.
+          Baba Yaga's defeat frame 843:6912 has no darken: the caged knight stays readable. */}
+      {defeat && scene.set !== 'babaYaga' && <div data-qa="defeat-darken" className="env-defeat-darken absolute inset-0" />}
+      {defeat && frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
+      {defeat && frame.enemy && <DefeatRedLight x={frame.enemy.x} />}
       {frame.enemy && (
         <Character
           // A new enemy remounts (it fades in on its gate).
-          key={`${scene.set}-${state.phase === STATES.WIN_BANNER || state.phase === STATES.MAX_WIN ? state.passed - 1 : state.passed}`}
+          key={`${scene.set}-${onBeatenGate ? state.passed - 1 : state.passed}`}
           set={scene.set}
           qa="char-enemy"
           {...frame.enemy}

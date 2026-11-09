@@ -14,6 +14,12 @@ const SKINS = {
     hover: assets.cta.skinTake.src,
     disabled: assets.cta.skinTake.src,
   },
+  // State=Skip 769:6112: the same plate with an empty medallion and the skip icon on it.
+  skip: {
+    default: assets.cta.skinSkip.src,
+    hover: assets.cta.skinSkip.src,
+    disabled: assets.cta.skinSkip.src,
+  },
 }
 
 export default function CtaButton({
@@ -27,7 +33,7 @@ export default function CtaButton({
   className = '',
   ...rest
 }) {
-  const skins = SKINS[variant === 'take' ? 'take' : 'fight']
+  const skins = SKINS[variant] ?? SKINS.fight
   const isDisabled = disabled || state === 'disabled'
 
   return (
@@ -49,6 +55,9 @@ export default function CtaButton({
       <span className="cta__halo" aria-hidden />
       <span className="cta__plate" aria-hidden />
       <span className="cta__shade" aria-hidden />
+      {variant === 'skip' && (
+        <img src={assets.cta.iconSkip.src} alt="" aria-hidden draggable={false} className="absolute top-[27px] left-[27px] block size-[66px] max-w-none" />
+      )}
       <span className="cta__content">
         <span className="cta__label type-button-l">{label}</span>
         {amount != null && <span className="cta__amount type-number-s">{amount}</span>}

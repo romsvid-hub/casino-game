@@ -22,6 +22,8 @@ export const assets = {
     skinFightHover: ui('cta/skin-fight-hover.png', 616, 240, 'CTA / Fight · Hover, Highlight, Play'),
     skinFightDisabled: ui('cta/skin-fight-disabled.png', 616, 240, 'CTA / Fight · Disabled'),
     skinTake: ui('cta/skin-take.png', 616, 240, 'CTA / Take · all states'),
+    skinSkip: ui('cta/skin-skip.png', 616, 240, 'CTA / Fight · State=Skip 769:6112'),
+    iconSkip: ui('cta/icon-skip.svg', 66, 66, 'CTA / Fight · State=Skip · icon/skip'),
     // Older full-plate renders from _ui-kit-cta (with glow margin), kept for reference.
     fightDefault: ui('cta/fight-default.webp', 708, 276, '_ui-kit-cta'),
     fightHover: ui('cta/fight-hover.webp', 708, 276, '_ui-kit-cta'),
@@ -126,13 +128,9 @@ export const assets = {
   },
 
   // 1920x1080, transparent, 30 fps. Durations and modes from docs/lottie.md.
-  // Backgrounds and FX only: since block C+B the characters are Figma sprites
+  // FX only: locations are Figma layers (public/env). Since block C+B the characters are Figma sprites
   // (public/sprites, src/scene/sprites.json); the old character Lottie were removed.
   lottie: {
-    bgScene: lottie('bg_scene', 12, 'loop'),
-    focusHero: lottie('fx_focus_hero', 3, 'loop'),
-    focusEnemy: lottie('fx_focus_enemy', 3, 'loop'),
-    focusClash: lottie('fx_focus_clash', 3, 'loop'),
     bossLandShake: lottie('fx_boss_land_shake', 1.8, 'once'),
     popupMaxWin: lottie('popup_maxwin', 3, 'markers: intro, loop'),
     popupCashedOut: lottie('popup_cashed_out', 0.5, 'once, hold last frame'),

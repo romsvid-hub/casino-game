@@ -5,8 +5,6 @@ import { formatMoney, formatMultiplier } from '../../game/money.js'
 import BetChip from '../BetChip.jsx'
 import CtaButton from '../CtaButton.jsx'
 import DifficultySegment from '../DifficultySegment.jsx'
-import ModeBadge from '../ModeBadge.jsx'
-import SkipButton from '../SkipButton.jsx'
 import Stepper from '../Stepper.jsx'
 import { useCountUp } from '../useCountUp.js'
 import DockSkin from './DockSkin.jsx'
@@ -39,10 +37,10 @@ function SetupContent({ state, actions, derived }) {
 
   return (
     <>
-      {/* setup/bet 587:5015 */}
-      <div className="absolute top-[62px] left-[134px] flex flex-col items-start gap-[4px]">
+      {/* setup/bet 774:7658: one row at x132 y78 */}
+      <div className="absolute top-[78px] left-[132px] flex items-center gap-[4px]">
         <div className="flex items-center gap-[10px]">
-          <span className="font-display text-[12px] tracking-[0.12em] text-text-muted">BET</span>
+          <span className="w-[28px] font-display text-[12px] tracking-[0.12em] text-text-muted">BET</span>
           <span className="font-number text-[28px] text-text-parchment" style={{ textShadow: 'var(--fx-text-shadow)' }}>
             {formatMoney(state.bet)}
           </span>
@@ -79,22 +77,21 @@ function SetupContent({ state, actions, derived }) {
         className="absolute top-[24px] left-[596px]"
       />
 
-      {/* setup/difficulty 587:5046 */}
-      <div className="absolute top-[63px] left-[1130px] flex w-[270px] flex-col items-start gap-[4px]">
-        <div className="flex w-full items-center justify-between">
-          <span className="font-display text-[12px] tracking-[0.12em] text-text-muted">DIFFICULTY</span>
-          <span className="font-number text-[14px] text-text-parchment">win ~{Math.round(derived.winChance * 100)}%</span>
-        </div>
-        <div className="flex gap-[6px]">
-          {DIFFICULTY_KEYS.map((key) => (
-            <DifficultySegment
-              key={key}
-              level={key}
-              selected={state.difficulty === key}
-              onClick={() => actions.setDifficulty(key)}
-            />
-          ))}
-        </div>
+      {/* setup/difficulty 774:7677 + 774:7680 */}
+      <div className="absolute top-[87px] left-[926px] flex w-[161px] items-center justify-between whitespace-nowrap">
+        <span className="font-display text-[12px] tracking-[0.12em] text-text-muted">DIFFICULTY</span>
+        <span className="font-number text-[14px] text-text-parchment">win ~{Math.round(derived.winChance * 100)}%</span>
+      </div>
+      <div className="absolute top-[75px] left-[1103px] flex gap-[6px]">
+        {DIFFICULTY_KEYS.map((key) => (
+          <DifficultySegment
+            key={key}
+            level={key}
+            pips={false}
+            selected={state.difficulty === key}
+            onClick={() => actions.setDifficulty(key)}
+          />
+        ))}
       </div>
     </>
   )
@@ -108,7 +105,6 @@ function RoundContent({ variant, state, actions, derived }) {
 
   return (
     <>
-      <ModeBadge level={state.difficulty} className="absolute top-[23px] left-[194px]" />
       <DockSlot label="BET" value={formatMoney(state.bet)} color="parchment" className="left-[124px]" />
       <DockSlot label="AT RISK" value={formatMoney(atRisk)} color="blood" className="left-[278px]" />
       <DockSlot
@@ -117,32 +113,37 @@ function RoundContent({ variant, state, actions, derived }) {
         color="teal"
         className="right-[289px]"
       />
-      {/* Final fight (Baba Yaga, gate 7): IF WON reads MAX WIN, FIGHT says "max win" and glows.
-          To confirm with Artem (open-questions.md). */}
-      <DockSlot label={derived.isFinal && hasNext ? 'MAX WIN' : 'IF WON'} qa="IF WON" value={hasNext ? formatMoney(ifWon) : '—'} color="amber" className="right-[121px]" />
+      <DockSlot label="IF WON" value={hasNext ? formatMoney(ifWon) : '—'} color="amber" className="right-[121px]" />
 
-      <CtaButton
-        variant="fight"
-        label="FIGHT"
-        amount={hasNext ? `${derived.isFinal ? 'max win' : 'up to'} ${formatMoney(derived.ifWon)}` : '—'}
-        disabled={!decision || !derived.canFight}
-        // Glow when FIGHT is the only move (before the first win, TAKE is locked) and on boss gates (6, 7).
-        highlight={decision && (!derived.canTake || derived.isBoss)}
-        onClick={actions.fight}
-        className="absolute top-[24px] left-[434px]"
-      />
+      {/* While the fight plays, SKIP takes FIGHT's place (State=Skip 769:6112). */}
+      {variant === 'animation' ? (
+        <CtaButton
+          variant="skip"
+          label="SKIP"
+          aria-label="Skip animation"
+          onClick={actions.skip}
+          className="absolute top-[24px] left-[434px]"
+        />
+      ) : (
+        <CtaButton
+          variant="fight"
+          label="FIGHT"
+          amount={hasNext ? `risk ${formatMoney(derived.atRisk)}` : '—'}
+          disabled={!decision || !derived.canFight}
+          // Glow when FIGHT is the only move (before the first win, TAKE is locked) and on boss gates (6, 7).
+          highlight={decision && (!derived.canTake || derived.isBoss)}
+          onClick={actions.fight}
+          className="absolute top-[24px] left-[434px]"
+        />
+      )}
       <CtaButton
         variant="take"
         label="TAKE"
-        amount={derived.atRisk > 0 ? formatMoney(derived.atRisk) : '—'}
+        amount={state.phase === STATES.MAX_WIN ? formatMoney(0) : derived.atRisk > 0 ? formatMoney(derived.atRisk) : '—'}
         disabled={!decision || !derived.canTake}
         onClick={actions.take}
         className="absolute top-[24px] left-[758px]"
       />
-
-      {variant === 'animation' && (
-        <SkipButton onClick={actions.skip} className="dock-fade absolute -top-[46px] left-[705px]" />
-      )}
     </>
   )
 }
@@ -169,14 +170,14 @@ function useDockKeys(state, actions, derived, enabled) {
   }, [state.phase, actions, derived, enabled])
 }
 
-// Bottom dock (1500x168 at x210 y888), driven by the game state.
+// Bottom dock (1500x168), driven by the game state. Position comes from the screen.
 export default function Dock({ state, actions, derived, keysEnabled = true, className = '' }) {
   const variant = VARIANT[state.phase]
   useDockKeys(state, actions, derived, keysEnabled)
 
   return (
     <div className={`absolute h-[168px] w-[1500px] ${className}`} data-variant={variant}>
-      <DockSkin gem={variant === 'battle' || variant === 'result'} />
+      <DockSkin />
       {/* Switching variants crossfades 150 ms (each variant remounts and fades in). */}
       <div key={variant === 'setup' ? 'setup' : 'round'} className="dock-fade absolute inset-0">
         {variant === 'setup' ? (

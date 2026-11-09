@@ -21,4 +21,5 @@
 - [ ] Next enemy entrance (block C+B): with sprites the next vovkulak slides in from the right and fades in (500 ms); the old Lottie had a jump-in. Is a slide-in fine until there is entrance art? — *to confirm with Roman*
 - [ ] Dead pose timing: the body darkens at the blow, then fades out from 0.9 s to 1.8 s (placeholder for the ash FX). OK as a stand-in? — *to confirm with Roman*
 - [ ] Baba Yaga entrance: she slides in from the right with her Idle pose (as briefed, "walk-in uses Idle"), plus the boss landing dust and shake. Should she fly in on the mortar instead (splash art), or no landing shake for her? — *to confirm with Roman*
-
+- [ ] Lobby 885:10856 has no balance and no Rules/Menu buttons. The prototype follows the frame, so the player does not see the balance while choosing a bet. Keep it? — *to confirm with Roman*
+- [ ] Lobby facts (RTP 96.00%, BET range, MAX MULTIPLIER): the frame shows them in brackets as placeholders and BET up to 10.00, config has max bet 20. — *to confirm with Artem*

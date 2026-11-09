@@ -18,7 +18,7 @@ const BASE = `http://localhost:${PORT}/`
 
 // State → Figma frame (file LXMHPQWUYxLjZiYVTfbx5X), saved in docs/qa/figma/.
 const SHOTS = [
-  ['01-setup', 'SETUP', '587:5125'],
+  ['01-setup', 'SETUP (lobby)', '885:10856'],
   ['02-decision-l1', 'DECISION level 1', '472:7862'],
   ['03-decision-l2', 'DECISION level 2', '473:1037'],
   ['04-decision-l3', 'DECISION level 3', '473:1127'],
@@ -31,7 +31,7 @@ const SHOTS = [
   ['11-cashed-out', 'Cashed out at level 3', '474:2175'],
   ['12-boss-entrance', 'Baba Yaga entrance (gate 7)', '843:6304'],
   ['13-max-win', 'Big Boss final MAX WIN popup', '819:6677'],
-  ['14-boss-decision', 'Baba Yaga (gate 7) before FIGHT (L7 reference)', '748:6069'],
+  ['14-boss-decision', 'Baba Yaga (gate 7) before FIGHT (L7 reference)', '843:6410'],
   ['15-yaga-hero-attacks', 'Knight attacks Baba Yaga (her Hit)', '843:6550'],
   ['16-yaga-attacks', 'Baba Yaga attacks (knight Hit)', '843:6674'],
   ['17-yaga-defeat', 'DEFEAT by Baba Yaga: knight caged, red light', '843:6912'],
@@ -82,7 +82,12 @@ const cta = (page, label) =>
     const b = [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === l)
     return b ? { amount: b.querySelector('.cta__amount')?.textContent ?? '', disabled: b.disabled } : null
   }, label)
-const balance = (page) => page.evaluate(() => document.querySelector('[aria-label^="Balance"]').getAttribute('aria-label').replace('Balance ', ''))
+// The lobby has no HUD (885:10856): there the balance comes from the game state.
+const balance = (page) =>
+  page.evaluate(() => {
+    const el = document.querySelector('[aria-label^="Balance"]')
+    return el ? el.getAttribute('aria-label').replace('Balance ', '') : window.__casino.state.balance.toFixed(2)
+  })
 const derived = (page) => page.evaluate(() => window.__casino.derived)
 const toNum = (s) => Number(String(s).replace(/[^0-9.\-]/g, ''))
 
@@ -173,7 +178,7 @@ async function decisionMoney(page, level) {
   check(`L${level}: AT RISK = game value`, toNum(atRisk) === d.atRisk, `${atRisk} vs ${d.atRisk}`)
   if (level > 0) check(`L${level}: TAKE amount = AT RISK`, take.amount === atRisk, `${take.amount} vs ${atRisk}`)
   else check('L0: TAKE disabled before the first win', take.disabled && take.amount === '—')
-  check(`L${level}: IF WON = FIGHT amount`, fight.amount === `up to ${ifWon}`, `${fight.amount} vs ${ifWon}`)
+  check(`L${level}: FIGHT shows AT RISK`, fight.amount === `risk ${atRisk}`, `${fight.amount}`)
   for (const [n, v] of [['AT RISK', atRisk], ['IF WON', ifWon], ['WIN', counter]]) check(`L${level}: ${n} has 2 decimals`, MONEY.test(v), v)
 }
 
@@ -352,7 +357,7 @@ async function run() {
     // real animations and no screenshots, observing long tasks (> 50 ms).
     page = await open(browser)
     // Wait until the setup scene (bg + focus lights) has mounted before measuring.
-    await page.waitForFunction(() => performance.getEntriesByType('measure').some((m) => m.name.includes('bg_scene')), null, { timeout: 15000 })
+    await page.waitForSelector('[data-qa="lobby"] img')
     await page.evaluate(() => {
       window.__long = []
       new PerformanceObserver((l) => l.getEntries().forEach((e) => window.__long.push(e.duration))).observe({ type: 'longtask' })
@@ -460,11 +465,11 @@ async function run() {
     const bossPlate = await text(page, '[data-qa="plate-multiplier"]')
     const bossPlateBox = await page.evaluate(() => { const el = document.querySelector('[data-qa="plate-multiplier"]'); return { x: el.offsetLeft, y: el.offsetTop } })
     const fightGlows = await page.evaluate(() => [...document.querySelectorAll('.cta')].find((x) => x.querySelector('.cta__label')?.textContent === 'FIGHT')?.hasAttribute('data-highlight'))
-    check('Baba Yaga: dock label reads MAX WIN', bossLabel === 'MAX WIN', bossLabel)
-    check('Baba Yaga: FIGHT reads "max win" = MAX WIN slot', bossFight.amount === `max win ${ifWonBoss}`, `${bossFight.amount} vs ${ifWonBoss}`)
+    check('Baba Yaga: dock label reads IF WON (Figma 843:6410)', bossLabel === 'IF WON', bossLabel)
+    check('Baba Yaga: FIGHT reads risk = AT RISK', bossFight.amount === `risk ${await slot(page, 'AT RISK')}`, bossFight.amount)
     check('Baba Yaga: FIGHT uses Highlight', fightGlows === true)
     check('Baba Yaga: plate shows only the final multiplier', bossPlate === `×${bossDerived.finalMultiplier.toFixed(2)}`, bossPlate)
-    check('Baba Yaga: plate over her head at 1247,306 (Figma 748:6069)', bossPlateBox.x === 1247 && bossPlateBox.y === 306, `${bossPlateBox.x},${bossPlateBox.y}`)
+    check('Baba Yaga: plate over her head at 1247,276 (Figma 843:6410)', bossPlateBox.x === 1247 && bossPlateBox.y === 276, `${bossPlateBox.x},${bossPlateBox.y}`)
     check('Baba Yaga: gate 7 enemy is final', bossDerived.enemy === 'babaYaga' && bossDerived.isFinal === true, `${bossDerived.enemy} final=${bossDerived.isFinal}`)
     await act(page, 'forceNext', 'win')
     await act(page, 'fight')

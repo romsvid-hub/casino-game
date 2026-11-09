@@ -61,6 +61,7 @@
 :root {
   --font-family-display: 'Ruslan Display', serif;
   --font-family-number: 'Kurale', serif;
+  --font-family-body: 'Roboto', sans-serif; /* lobby rules, 885:10856 */
 
   --font-size-label-xs: 12px;
   --font-line-height-label-xs: 18px;
@@ -265,6 +266,11 @@
   --fx-banner-amount-glow: 0 0 12px rgb(63 224 208 / 0.7); /* Popup/Result amount */
   --fx-popup-shadow: 0 12px 40px rgb(0 0 0 / 0.7); /* Popup/Round end body */
   --fx-popup-text: 0 2px 6px rgb(0 0 0 / 0.85); /* Popup/Round end texts */
+  --fx-counter-shadow: 0 2px 6px rgb(0 0 0 / 0.85), 0 0 18px rgb(0 0 0 / 0.6); /* Counter/Win 349:4258 */
+  --fx-env-haze: rgb(95 107 124 / 0.4); /* fx / horizon haze */
+  --fx-moon-shaft: rgb(215 228 245 / 0.06); /* field moon shafts 801:5902 */
+  --fx-hero-beam: rgb(255 226 160 / 0.16); /* FX / Hero light · beam 843:7069 */
+  --fx-defeat-darken: rgb(0 0 0 / 0.6); /* FX / Defeat darken 460:2016 */
   --fx-modal-shadow: 0 12px 32px rgb(0 0 0 / 0.6); /* lobby modal body 555:4999 */
 }
 
