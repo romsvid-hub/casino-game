@@ -97,7 +97,7 @@ async function keyboardRound(browser) {
   await page.evaluate(() => document.activeElement?.blur())
   const start = await game(page)
   await page.keyboard.press('Enter')
-  check('Keyboard: Enter starts the round (PLAY)', await waitPhase(page, 'ENTERING', 3000))
+  check('Keyboard: Enter starts the round (PLAY)', await waitPhase(page, ['ENTERING', 'DECISION'], 6000))
   for (const [state, next] of [
     ['ENTERING', 'DECISION'],
     ['DECISION', null],

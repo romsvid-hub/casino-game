@@ -8,12 +8,13 @@ const POSES = {
   hero: ['walk', 'idle', 'attack', 'hit', 'dead', 'caged', 'victory'],
   vovkulak: ['idle', 'attack', 'hit', 'dead', 'victory'],
   vovkulakBoss: ['idle', 'attack', 'hit', 'dead', 'victory'],
+  babaYaga: ['idle', 'attack', 'hit', 'dead', 'victory'],
 }
 
 export function spriteUrls(set) {
   return POSES[set].flatMap((p) => {
     const s = SPRITES[`${set}.${p}`]
-    return [s.src, s.rim?.src].filter(Boolean)
+    return [s.src, s.rim?.src, s.light?.src].filter(Boolean)
   })
 }
 
@@ -31,7 +32,7 @@ const FLASH = [
 // Every pose is mounted once and only the current one is visible, so a pose swap
 // is instant and in place (no reload, no jump). The wrapper slides between x
 // positions with a CSS transition (`move`).
-//   set    'hero' | 'vovkulak' | 'vovkulakBoss'    pose   see POSES
+//   set    'hero' | 'vovkulak' | 'vovkulakBoss' | 'babaYaga'    pose   see POSES
 //   flash  a new value → hit flash on the pose     scene  'forest' | 'field' | 'hut' (hero rim light)
 //   enter  fade in on mount (next enemy)
 export default function Character({ set, pose, x, move, flash, scene, enter = false, qa }) {
@@ -60,8 +61,9 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
     >
       {/* Dead: the body darkens, then fades out with its shadow (ash FX comes later). */}
       <div className={down ? 'char-down' : ''}>
-        {/* Shadow under the feet: multiply, density from Figma (0.55–0.75). */}
-        <div
+        {/* Shadow under the feet: multiply, density from Figma (0.55–0.75). Baba Yaga's
+            shadows are baked into her sprites (several feet / broom shadows per pose). */}
+        {current.shadow && <div
           className="char-shadow absolute rounded-[50%] mix-blend-multiply"
           style={{
             left: -current.shadow.w / 2,
@@ -73,7 +75,7 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
             filter: `blur(${current.shadow.blur}px)`,
           }}
           aria-hidden
-        />
+        />}
         {POSES[set].map((p) => {
           const s = SPRITES[`${set}.${p}`]
           const active = p === pose
@@ -118,3 +120,45 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
     </div>
   )
 }
+
+// Light that belongs to a character and follows it, drawn behind both characters
+// (Figma "FX / Scene light"): Baba Yaga's cage light (group `cage light`, one
+// offset per pose so it stays on the cage; red outer light when she wins).
+export function CharacterLight({ set, pose, x, move }) {
+  const light = SPRITES[`${set}.${pose}`]?.light
+  if (!light) return null
+  return (
+    <div
+      className="absolute top-0 left-0"
+      style={{ transform: `translateX(${x}px)`, transition: move ? `transform ${move.ms}ms ${move.ease}` : 'none' }}
+      data-qa="char-light"
+      aria-hidden
+    >
+      <img
+        src={light.src}
+        alt=""
+        className="absolute block max-w-none mix-blend-screen"
+        style={{ left: light.x, top: SHADOW_Y + light.y, width: light.w, height: light.h }}
+        draggable={false}
+      />
+    </div>
+  )
+}
+
+// FX / Enemy red light (847:6304): red halo and ground pool under the winning
+// enemy on its step, in every DEFEAT (changelog item 36).
+export function DefeatRedLight({ x }) {
+  const red = SPRITES['fx.redLight']
+  return (
+    <img
+      src={red.src}
+      alt=""
+      aria-hidden
+      data-qa="red-light"
+      className="pointer-events-none absolute block max-w-none"
+      style={{ left: x + red.x, top: SHADOW_Y + red.y, width: red.w, height: red.h, animation: 'fade-in 300ms ease-out both' }}
+      draggable={false}
+    />
+  )
+}
+

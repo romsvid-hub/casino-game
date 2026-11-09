@@ -20,4 +20,5 @@
 - [ ] Dock FIGHT sub-label: Figma reference frames 756:6778 / 756:6539 / 748:6069 show "risk 12.00" (= AT RISK), the prototype shows "up to 19.50" (= IF WON). Which one? (Handled in block F.)
 - [ ] Next enemy entrance (block C+B): with sprites the next vovkulak slides in from the right and fades in (500 ms); the old Lottie had a jump-in. Is a slide-in fine until there is entrance art? — *to confirm with Roman*
 - [ ] Dead pose timing: the body darkens at the blow, then fades out from 0.9 s to 1.8 s (placeholder for the ash FX). OK as a stand-in? — *to confirm with Roman*
+- [ ] Baba Yaga entrance: she slides in from the right with her Idle pose (as briefed, "walk-in uses Idle"), plus the boss landing dust and shake. Should she fly in on the mortar instead (splash art), or no landing shake for her? — *to confirm with Roman*
 

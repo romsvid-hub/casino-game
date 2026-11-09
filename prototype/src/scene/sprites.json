@@ -285,5 +285,98 @@
       "blur": 14,
       "a": 0.65
     }
+  },
+  "babaYaga.idle": {
+    "src": "/sprites/babaYaga-idle.webp",
+    "src2x": "/sprites/babaYaga-idle@2x.webp",
+    "figma": "843:6510",
+    "w": 505,
+    "h": 422,
+    "ax": 283,
+    "ay": 383,
+    "shadow": null,
+    "light": {
+      "src": "/sprites/cage-light.webp",
+      "x": -518,
+      "y": -574,
+      "w": 1074,
+      "h": 830
+    }
+  },
+  "babaYaga.hit": {
+    "src": "/sprites/babaYaga-hit.webp",
+    "src2x": "/sprites/babaYaga-hit@2x.webp",
+    "figma": "843:6624",
+    "w": 632,
+    "h": 441,
+    "ax": 142,
+    "ay": 383,
+    "shadow": null,
+    "light": {
+      "src": "/sprites/cage-light.webp",
+      "x": -229,
+      "y": -434,
+      "w": 1074,
+      "h": 830
+    }
+  },
+  "babaYaga.attack": {
+    "src": "/sprites/babaYaga-attack.webp",
+    "src2x": "/sprites/babaYaga-attack@2x.webp",
+    "figma": "843:6758",
+    "w": 808,
+    "h": 414,
+    "ax": 464,
+    "ay": 378,
+    "shadow": null,
+    "light": {
+      "src": "/sprites/cage-light.webp",
+      "x": -355,
+      "y": -583,
+      "w": 1074,
+      "h": 830
+    }
+  },
+  "babaYaga.dead": {
+    "src": "/sprites/babaYaga-dead.webp",
+    "src2x": "/sprites/babaYaga-dead@2x.webp",
+    "figma": "843:6856",
+    "w": 628,
+    "h": 346,
+    "ax": 314.4,
+    "ay": 296,
+    "shadow": null,
+    "light": {
+      "src": "/sprites/cage-light.webp",
+      "x": -653,
+      "y": -510,
+      "w": 1074,
+      "h": 830
+    }
+  },
+  "babaYaga.victory": {
+    "src": "/sprites/babaYaga-victory.webp",
+    "src2x": "/sprites/babaYaga-victory@2x.webp",
+    "figma": "843:6986",
+    "w": 498,
+    "h": 564,
+    "ax": 409,
+    "ay": 528.4,
+    "shadow": null,
+    "light": {
+      "src": "/sprites/cage-light-red.webp",
+      "x": -640,
+      "y": -599,
+      "w": 1074,
+      "h": 830
+    }
+  },
+  "fx.redLight": {
+    "src": "/sprites/red-light.webp",
+    "figma": "847:6304",
+    "w": 818,
+    "h": 638,
+    "x": -409.5,
+    "y": -526.8
   }
 }

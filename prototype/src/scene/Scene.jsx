@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { assets } from '../assets.js'
 import { STATES } from '../game/machine.js'
-import Character, { spriteUrls } from './Character.jsx'
+import Character, { CharacterLight, DefeatRedLight, spriteUrls } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
 import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
 import LottieLayer, { preloadLottie } from './LottieLayer.jsx'
@@ -55,7 +55,7 @@ function useLazyClips(state) {
   useEffect(() => {
     if (!nearBoss) return
     preload(CLIP_BATCHES.boss)
-    preloadImages(spriteUrls('vovkulakBoss'))
+    preloadImages([...spriteUrls('vovkulakBoss'), ...spriteUrls('babaYaga')])
   }, [nearBoss])
 }
 
@@ -117,6 +117,9 @@ export default function Scene({ scene, state }) {
           </div>
         ))}
       </div>
+      {/* Lights behind both characters: the enemy's own light (Baba Yaga's cage), the red defeat light. */}
+      {frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
+      {state.phase === STATES.DEFEAT && frame.enemy && <DefeatRedLight x={frame.enemy.x} />}
       {frame.hero && (
         <Character set="hero" qa="char-hero" scene={scene.scene} {...frame.hero} flash={frame.flash.hero} />
       )}

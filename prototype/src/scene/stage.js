@@ -25,9 +25,8 @@ export const RIM = {
   hut: { color: 'var(--color-rim-hut)', x: 4, y: -2 },
 }
 
-// Sprite set per enemy kind. Baba Yaga uses the vovkulak boss art until her
-// sprites arrive (block D).
-export const ENEMY_SPRITES = { vovkulak: 'vovkulak', vovkulakBoss: 'vovkulakBoss', babaYaga: 'vovkulakBoss' }
+// Sprite set per enemy kind.
+export const ENEMY_SPRITES = { vovkulak: 'vovkulak', vovkulakBoss: 'vovkulakBoss', babaYaga: 'babaYaga' }
 
 // Motion (CSS transitions). Only the minimal motion for now (07.11 brief).
 export const MOVE = {

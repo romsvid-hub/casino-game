@@ -32,6 +32,9 @@ const SHOTS = [
   ['12-boss-entrance', 'Baba Yaga entrance (gate 7)', '843:6304'],
   ['13-max-win', 'Big Boss final MAX WIN popup', '819:6677'],
   ['14-boss-decision', 'Baba Yaga (gate 7) before FIGHT (L7 reference)', '748:6069'],
+  ['15-yaga-hero-attacks', 'Knight attacks Baba Yaga (her Hit)', '843:6550'],
+  ['16-yaga-attacks', 'Baba Yaga attacks (knight Hit)', '843:6674'],
+  ['17-yaga-defeat', 'DEFEAT by Baba Yaga: knight caged, red light', '843:6912'],
 ]
 
 const checks = []
@@ -293,6 +296,45 @@ async function run() {
       allErrors.push(...page.qaErrors)
       await page.close()
     }
+
+    // Block D: Baba Yaga (gate 7). Her sprites, the cage light that follows the cage,
+    // and the caged knight + red light when she wins.
+    page = await open(browser)
+    await playToLevel(page, 6)
+    await act(page, 'forceNext', 'win')
+    await slow(page)
+    await act(page, 'fight')
+    await waitPoses(page, 'attack', 'hit')
+    await shot(page, '15-yaga-hero-attacks')
+    const light = await page.evaluate(() => {
+      const l = document.querySelector('[data-qa="char-light"]'), e = document.querySelector('[data-qa="char-enemy"]')
+      return { has: !!l, follows: !!l && l.style.transform === e.style.transform, src: l?.querySelector('img').getAttribute('src') }
+    })
+    check('Baba Yaga: cage light is on and follows her (same x as the enemy)', light.has && light.follows && light.src.endsWith('cage-light.webp'), JSON.stringify(light))
+    allErrors.push(...page.qaErrors)
+    await page.close()
+
+    page = await open(browser)
+    await playToLevel(page, 6)
+    await act(page, 'forceNext', 'lose')
+    await slow(page)
+    await act(page, 'fight')
+    await waitPoses(page, 'hit', 'attack')
+    await shot(page, '16-yaga-attacks')
+    await waitPhase(page, 'DEFEAT', 60000)
+    await waitPoses(page, 'caged', 'victory')
+    await sleep(600)
+    await shot(page, '17-yaga-defeat')
+    const defeat = await page.evaluate(() => ({
+      hero: document.querySelector('[data-qa="char-hero"]').dataset.pose,
+      enemyX: document.querySelector('[data-qa="char-enemy"]').dataset.x,
+      red: !!document.querySelector('[data-qa="red-light"]'),
+      cage: document.querySelector('[data-qa="char-light"] img')?.getAttribute('src'),
+    }))
+    check('DEFEAT by Baba Yaga: knight caged at home, she wins on her step 1180', defeat.hero === 'caged' && defeat.enemyX === '1180', JSON.stringify(defeat))
+    check('DEFEAT by Baba Yaga: red defeat light on, cage light turns red', defeat.red && (defeat.cage ?? '').endsWith('cage-light-red.webp'), JSON.stringify(defeat))
+    allErrors.push(...page.qaErrors)
+    await page.close()
 
     // 07: hero attacks at level 3 (real animation), with long-task observer.
     page = await open(browser)
