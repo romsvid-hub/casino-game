@@ -467,10 +467,14 @@
   animation-iteration-count: infinite;
   animation-direction: alternate;
 }
+/* Clouds float: a slow drift and a slower zoom, never in step (26 s and 22 s cycles).
+   Kept slightly enlarged, so with drift and parallax no edge reaches the stage. */
 .env-drift-clouds {
-  animation-name: env-drift-clouds;
-  animation-duration: 6s;
-  animation-delay: -3s;
+  scale: 1.065;
+  transform-origin: 30% 50%;
+  animation-name: env-drift-clouds, env-zoom-clouds;
+  animation-duration: 13s, 11s;
+  animation-delay: -6.5s, -4s;
 }
 .env-drift-mist {
   animation-name: env-drift-mist, env-pulse-mist;
@@ -508,10 +512,18 @@
 }
 @keyframes env-drift-clouds {
   from {
-    translate: -22px 0;
+    translate: -18px 0;
   }
   to {
-    translate: 22px 0;
+    translate: 18px 0;
+  }
+}
+@keyframes env-zoom-clouds {
+  from {
+    scale: 1.05;
+  }
+  to {
+    scale: 1.08;
   }
 }
 /* Mist has no spare width on the right in Figma, so it drifts left of its place. */
