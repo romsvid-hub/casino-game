@@ -124,7 +124,8 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
 // Light that belongs to a character and follows it, drawn behind both characters
 // (Figma "FX / Scene light"): Baba Yaga's cage light (group `cage light`, one
 // offset per pose so it stays on the cage; red outer light when she wins).
-export function CharacterLight({ set, pose, x, move }) {
+// The cage holds the village's stolen light; `released` fades it out on MAX WIN.
+export function CharacterLight({ set, pose, x, move, released = false }) {
   const light = SPRITES[`${set}.${pose}`]?.light
   if (!light) return null
   return (
@@ -137,10 +138,38 @@ export function CharacterLight({ set, pose, x, move }) {
       <img
         src={light.src}
         alt=""
-        className="absolute block max-w-none mix-blend-screen"
+        className={`absolute block max-w-none mix-blend-screen ${released ? 'cage-light--released' : ''}`}
         style={{ left: light.x, top: SHADOW_Y + light.y, width: light.w, height: light.h }}
         draggable={false}
       />
+    </div>
+  )
+}
+
+// MAX WIN over Baba Yaga: the cage opens and the light it held goes free: a burst
+// from the cage, sparks rising, the scene brightening. The cage core of the Dead
+// pose sits 5 px left of her anchor at y580 (cage light offset of that pose).
+const RELEASE_SPARKS = 12
+
+export function CageLightRelease({ x }) {
+  return (
+    <div className="cage-release pointer-events-none absolute inset-0" data-qa="cage-light-release" aria-hidden>
+      <div className="cage-release__brighten absolute inset-0" style={{ '--cx': `${x - 5}px`, '--cy': '580px' }} />
+      <div className="absolute" style={{ left: x - 5, top: 580 }}>
+        <span className="cage-release__burst absolute" />
+        {Array.from({ length: RELEASE_SPARKS }, (_, i) => (
+          <span
+            key={i}
+            className="cage-release__spark absolute"
+            style={{
+              '--dx': `${((i * 37) % 160) - 80}px`,
+              '--rise': `${-260 - ((i * 53) % 180)}px`,
+              animationDelay: `${300 + i * 170}ms`,
+              animationDuration: `${1800 + ((i * 131) % 900)}ms`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   )
 }

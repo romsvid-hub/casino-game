@@ -640,6 +640,105 @@
   animation: fade-in 300ms ease-out both;
 }
 
+/* MAX WIN over Baba Yaga: the light leaves the cage (Character.jsx, CageLightRelease). */
+.cage-light--released {
+  animation: cage-light-out 1200ms ease-out 300ms both;
+}
+@keyframes cage-light-out {
+  to {
+    opacity: 0;
+  }
+}
+.cage-release__brighten {
+  background: radial-gradient(
+    circle at var(--cx) var(--cy),
+    color-mix(in srgb, var(--color-accent-amber) 45%, transparent),
+    color-mix(in srgb, var(--color-accent-amber) 12%, transparent) 45%,
+    transparent 80%
+  );
+  mix-blend-mode: screen;
+  animation: cage-release-brighten 2400ms ease-out both;
+}
+@keyframes cage-release-brighten {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+.cage-release__burst {
+  left: -300px;
+  top: -300px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-accent-amber) 90%, white),
+    color-mix(in srgb, var(--color-accent-amber) 40%, transparent) 45%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  animation: cage-release-burst 1400ms ease-out both;
+}
+@keyframes cage-release-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+.cage-release__spark {
+  left: -3px;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent-amber) 60%, white);
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--color-accent-amber) 70%, transparent);
+  mix-blend-mode: screen;
+  animation: cage-release-spark 2200ms ease-out infinite both;
+}
+@keyframes cage-release-spark {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: var(--dx) var(--rise);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cage-release__burst,
+  .cage-release__spark {
+    display: none;
+  }
+  .cage-release__brighten,
+  .cage-light--released {
+    animation: none;
+  }
+  .cage-release__brighten {
+    opacity: 0.45;
+  }
+  .cage-light--released {
+    opacity: 0;
+  }
+}
+
 /* Lobby 885:10856: covers the stage, fades out when the round starts. */
 .lobby {
   background: var(--color-neutral-ink);
