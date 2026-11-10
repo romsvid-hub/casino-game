@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { STATES } from '../game/machine.js'
-import Character, { CharacterLight, DefeatRedLight, spriteUrls } from './Character.jsx'
+import Character, { CageLightRelease, CharacterLight, DefeatRedLight, spriteUrls } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
 import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
 import Environment, { envImageUrls, HeroLight } from './Environment.jsx'
@@ -102,7 +102,9 @@ export default function Scene({ scene, state }) {
     <div className="pointer-events-none absolute inset-0">
       <Environment scene={scene.scene} gate={gate} focus={Boolean(frame.enemy)} />
       {/* Baba Yaga's cage light sits behind both characters. */}
-      {frame.enemy && !defeat && <CharacterLight set={scene.set} {...frame.enemy} />}
+      {frame.enemy && !defeat && (
+        <CharacterLight set={scene.set} {...frame.enemy} released={state.phase === STATES.MAX_WIN} />
+      )}
       {frame.hero && VICTORY_PHASES.includes(state.phase) && <HeroLight x={frame.hero.x} />}
       {frame.hero && (
         <Character set="hero" qa="char-hero" scene={scene.scene} {...frame.hero} flash={frame.flash.hero} />
@@ -112,6 +114,7 @@ export default function Scene({ scene, state }) {
       {defeat && scene.set !== 'babaYaga' && <div data-qa="defeat-darken" className="env-defeat-darken absolute inset-0" />}
       {defeat && frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
       {defeat && frame.enemy && <DefeatRedLight x={frame.enemy.x} />}
+      {state.phase === STATES.MAX_WIN && scene.set === 'babaYaga' && frame.enemy && <CageLightRelease x={frame.enemy.x} />}
       {frame.enemy && (
         <Character
           // A new enemy remounts (it fades in on its gate).
