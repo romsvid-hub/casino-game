@@ -23,3 +23,13 @@
 - [ ] Baba Yaga entrance: she slides in from the right with her Idle pose (as briefed, "walk-in uses Idle"), plus the boss landing dust and shake. Should she fly in on the mortar instead (splash art), or no landing shake for her? — *to confirm with Roman*
 - [ ] Lobby 885:10856 has no balance and no Rules/Menu buttons. The prototype follows the frame, so the player does not see the balance while choosing a bet. Keep it? — *to confirm with Roman*
 - [ ] Lobby facts (RTP 96.00%, BET range, MAX MULTIPLIER): the frame shows them in brackets as placeholders and BET up to 10.00, config has max bet 20. — *to confirm with Artem*
+
+### From the 11.11 sync (don't decide here)
+- [ ] CHANCE 65 % in the lobby dock: the chance of one fight or of the whole round? The label may change once Artem sends the math. The prototype shows the per-fight win chance from `config.js`. — *to confirm with Artem*
+- [ ] Light orb on Baba Yaga: Figma 11.11 places `FX/Light orb` on her Idle, Hit, Attack and Victory poses, but the brief says "Baba Yaga has no orb: her light is the cage". The prototype follows Figma. Keep it or remove it? Figma's entrance frame 843:6370 also has a 64 px orb inside the cage. — *to confirm with Roman*
+- [ ] Yaga entrance: walks in from the right (now) or flies in by mortar. — *to confirm with Roman*
+- [ ] How the next enemy appears after a win (now: slides in from the right). — *to confirm with Roman*
+- [ ] TAKE outcome scene (idea, not briefed): the knight returns and the village lights up in proportion to the gates passed. — *Roman*
+- [ ] Ash animation for the caged knight: still darken + fade. — *Roman will brief*
+- [ ] Sound: postponed to the very end (client, 09.11). None added.
+- [ ] Counter/Win size: the 11.11 Yaga frames draw WIN smaller than the prototype's Number XL. Not in the brief, left as is. — *to confirm with Roman*

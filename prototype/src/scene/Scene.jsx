@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { STATES } from '../game/machine.js'
-import Character, { CageLightRelease, CharacterLight, DefeatRedLight, spriteUrls } from './Character.jsx'
+import Character, { CageLightRelease, CharacterLight, DefeatRedLight, LightOrbFlight, spriteUrls } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
 import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
 import Environment, { envImageUrls, HeroLight } from './Environment.jsx'
@@ -124,6 +124,9 @@ export default function Scene({ scene, state }) {
           {...frame.enemy}
           flash={frame.flash.enemy}
         />
+      )}
+      {state.phase === STATES.WIN_BANNER && frame.enemy && (
+        <LightOrbFlight key={`orb-${state.passed}`} set={scene.set} x={frame.enemy.x} />
       )}
       <ClipSlot cue={scene.fx ?? null} />
     </div>
