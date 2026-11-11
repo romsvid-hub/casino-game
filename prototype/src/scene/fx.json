@@ -1,0 +1,222 @@
+{
+ "cageLight": {
+  "figma": "843:7754 (idle), 843:7762 (defeat)",
+  "layers": [
+   {
+    "name": "ground-pool",
+    "src": "/fx/cage-ground-pool.svg",
+    "x": -129.96,
+    "y": 199.98,
+    "w": 1159.92,
+    "h": 580.03,
+    "blend": "overlay"
+   },
+   {
+    "name": "glow",
+    "src": "/fx/cage-glow.svg",
+    "x": 395.0,
+    "y": 90.0,
+    "w": 330.0,
+    "h": 330.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "core",
+    "src": "/fx/cage-core.svg",
+    "x": 497.0,
+    "y": 197.0,
+    "w": 126.0,
+    "h": 126.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-1",
+    "src": "/fx/cage-spark-1.svg",
+    "x": 517.5,
+    "y": 147.5,
+    "w": 5.0,
+    "h": 5.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-2",
+    "src": "/fx/cage-spark-2.svg",
+    "x": 578.0,
+    "y": 188.0,
+    "w": 4.0,
+    "h": 4.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-3",
+    "src": "/fx/cage-spark-2.svg",
+    "x": 608.0,
+    "y": 128.0,
+    "w": 4.0,
+    "h": 4.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-4",
+    "src": "/fx/cage-spark-4.svg",
+    "x": 498.5,
+    "y": 218.5,
+    "w": 3.0,
+    "h": 3.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-5",
+    "src": "/fx/cage-spark-2.svg",
+    "x": 638.0,
+    "y": 238.0,
+    "w": 4.0,
+    "h": 4.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "spark-6",
+    "src": "/fx/cage-spark-6.svg",
+    "x": 368.5,
+    "y": 48.5,
+    "w": 3.0,
+    "h": 3.0,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "aura",
+    "src": "/fx/cage-aura.svg",
+    "x": 180.02,
+    "y": -110.02,
+    "w": 739.96,
+    "h": 700.03,
+    "blend": "plus-lighter"
+   },
+   {
+    "name": "on-yaga",
+    "src": "/fx/cage-on-yaga.svg",
+    "x": 180.0,
+    "y": -60.01,
+    "w": 540.0,
+    "h": 600.01,
+    "blend": "overlay"
+   },
+   {
+    "name": "on-ground",
+    "src": "/fx/cage-on-ground.svg",
+    "x": 199.99,
+    "y": 355.0,
+    "w": 640.02,
+    "h": 270.0,
+    "blend": "overlay"
+   },
+   {
+    "name": "light-sparks",
+    "src": "/fx/cage-sparks-light.svg",
+    "x": 520.0,
+    "y": 231.0,
+    "w": 80.0,
+    "h": 74.0,
+    "blend": "plus-lighter"
+   }
+  ],
+  "poses": {
+   "idle": [
+    -430,
+    -496
+   ],
+   "hit": [
+    -141,
+    -356
+   ],
+   "attack": [
+    -267,
+    -505
+   ],
+   "dead": [
+    -565,
+    -432
+   ],
+   "victory": [
+    -536,
+    -544
+   ]
+  }
+ },
+ "redLight": {
+  "vovkulak": {
+   "src": "/fx/red-light.svg",
+   "figma": "460:2019"
+  },
+  "babaYaga": {
+   "src": "/fx/red-light-supporting.svg",
+   "figma": "847:6304"
+  },
+  "x": -421.45,
+  "y": -544.8,
+  "w": 841.9,
+  "h": 669.6
+ },
+ "lightOrb": {
+  "src": "/fx/light-orb.svg",
+  "figma": "947:6377",
+  "w": 44,
+  "h": 45,
+  "poses": {
+   "vovkulak": {
+    "idle": [
+     -18,
+     -123.5
+    ],
+    "attack": [
+     -1.5,
+     -116.5
+    ],
+    "hit": [
+     3.5,
+     -133.5
+    ],
+    "victory": [
+     -14,
+     -151.5
+    ]
+   },
+   "vovkulakBoss": {
+    "idle": [
+     40,
+     -144
+    ],
+    "attack": [
+     113.5,
+     -169.5
+    ],
+    "hit": [
+     21,
+     -156.5
+    ],
+    "victory": [
+     -15,
+     -237.5
+    ]
+   },
+   "babaYaga": {
+    "idle": [
+     21,
+     -190.6
+    ],
+    "hit": [
+     133,
+     -192.5
+    ],
+    "attack": [
+     136,
+     -167.5
+    ],
+    "victory": [
+     -158,
+     -224.5
+    ]
+   }
+  }
+ }
+}

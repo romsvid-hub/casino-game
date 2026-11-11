@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="841.9" height="669.6" viewBox="0 0 841.9 669.6" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="FX / Enemy red light">
+<g id="red &#194;&#183; halo" filter="url(#filter0_f_0_4)">
+<ellipse cx="420.949" cy="334.8" rx="300.75" ry="244.8" fill="#A3121A" fill-opacity="0.42"/>
+</g>
+<g id="red &#194;&#183; ground pool" filter="url(#filter1_f_0_4)">
+<ellipse cx="420.95" cy="532.801" rx="380.95" ry="65" fill="#A3121A" fill-opacity="0.38"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_4" x="30.1992" y="0" width="781.5" height="669.6" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="45" result="effect1_foregroundBlur_0_4"/>
+</filter>
+<filter id="filter1_f_0_4" x="0" y="427.801" width="841.9" height="210" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="20" result="effect1_foregroundBlur_0_4"/>
+</filter>
+</defs>
+</svg>

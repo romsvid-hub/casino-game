@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import FX from './fx.json'
 import SPRITES from './sprites.json'
 import { SHADOW_Y } from './stage.js'
 
@@ -14,7 +15,7 @@ const POSES = {
 export function spriteUrls(set) {
   return POSES[set].flatMap((p) => {
     const s = SPRITES[`${set}.${p}`]
-    return [s.src, s.light?.src].filter(Boolean)
+    return [s.src]
   })
 }
 
@@ -103,13 +104,14 @@ export default function Character({ set, pose, x, move, flash, enter = false, qa
   )
 }
 
-// Light that belongs to a character and follows it, drawn behind both characters
-// (Figma "FX / Scene light"): Baba Yaga's cage light (group `cage light`, one
-// offset per pose so it stays on the cage; red outer light when she wins).
-// The cage holds the village's stolen light; `released` fades it out on MAX WIN.
+// Baba Yaga's cage light (group `cage light`, 843:7754 / 843:7762), drawn behind
+// both characters as the Figma layers with their own blend modes. The group sits
+// on the cage: one offset per pose (fx.json). It is gold in every frame, including
+// her win (DEFEAT). The cage holds the village's stolen light; `released` fades it
+// out on MAX WIN.
 export function CharacterLight({ set, pose, x, move, released = false }) {
-  const light = SPRITES[`${set}.${pose}`]?.light
-  if (!light) return null
+  const offset = set === 'babaYaga' ? FX.cageLight.poses[pose] : null
+  if (!offset) return null
   return (
     <div
       className="absolute top-0 left-0"
@@ -117,13 +119,18 @@ export function CharacterLight({ set, pose, x, move, released = false }) {
       data-qa="char-light"
       aria-hidden
     >
-      <img
-        src={light.src}
-        alt=""
-        className={`absolute block max-w-none mix-blend-screen ${released ? 'cage-light--released' : ''}`}
-        style={{ left: light.x, top: SHADOW_Y + light.y, width: light.w, height: light.h }}
-        draggable={false}
-      />
+      <div className={released ? 'cage-light--released' : ''}>
+        {FX.cageLight.layers.map((l) => (
+          <img
+            key={l.name}
+            src={l.src}
+            alt=""
+            className="absolute block max-w-none"
+            style={{ left: offset[0] + l.x, top: SHADOW_Y + offset[1] + l.y, width: l.w, height: l.h, mixBlendMode: l.blend }}
+            draggable={false}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -156,13 +163,15 @@ export function CageLightRelease({ x }) {
   )
 }
 
-// FX / Enemy red light (847:6304): red halo and ground pool under the winning
-// enemy on its step, in every DEFEAT (changelog item 36).
-export function DefeatRedLight({ x }) {
-  const red = SPRITES['fx.redLight']
+// FX / Enemy red light: red halo and ground pool under the winning enemy on its
+// step, in every DEFEAT (460:2019). Against Baba Yaga it only supports her gold
+// cage light (847:6304: halo 0.18, ground pool 0.20).
+export function DefeatRedLight({ x, set }) {
+  const red = FX.redLight
+  const src = (red[set] ?? red.vovkulak).src
   return (
     <img
-      src={red.src}
+      src={src}
       alt=""
       aria-hidden
       data-qa="red-light"
@@ -172,4 +181,3 @@ export function DefeatRedLight({ x }) {
     />
   )
 }
-
