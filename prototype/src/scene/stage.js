@@ -17,14 +17,6 @@ export const PLATE_POS = {
 // Location of each enemy's gate: forest (L1–5), open field (L6), hut (L7).
 export const SCENE_OF = { vovkulak: 'forest', vovkulakBoss: 'field', babaYaga: 'hut' }
 
-// Hero rim light on the upper body, coloured by the scene light (changelog item 23,
-// group "rim light (upper body)": 2 px drop shadow). Colours are tokens.
-export const RIM = {
-  forest: { color: 'var(--color-rim-forest)', x: -3, y: -3 },
-  field: { color: 'var(--color-rim-field)', x: 3, y: -3 },
-  hut: { color: 'var(--color-rim-hut)', x: 4, y: -2 },
-}
-
 // Sprite set per enemy kind.
 export const ENEMY_SPRITES = { vovkulak: 'vovkulak', vovkulakBoss: 'vovkulakBoss', babaYaga: 'babaYaga' }
 

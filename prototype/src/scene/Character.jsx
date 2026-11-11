@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import SPRITES from './sprites.json'
-import { RIM, SHADOW_Y } from './stage.js'
+import { SHADOW_Y } from './stage.js'
 
 // Poses each character has (Figma sprites, exported with the shadow removed;
 // ax/ay = shadow centre inside the trimmed image, in 1x px).
@@ -14,7 +14,7 @@ const POSES = {
 export function spriteUrls(set) {
   return POSES[set].flatMap((p) => {
     const s = SPRITES[`${set}.${p}`]
-    return [s.src, s.rim?.src, s.light?.src].filter(Boolean)
+    return [s.src, s.light?.src].filter(Boolean)
   })
 }
 
@@ -33,9 +33,9 @@ const FLASH = [
 // is instant and in place (no reload, no jump). The wrapper slides between x
 // positions with a CSS transition (`move`).
 //   set    'hero' | 'vovkulak' | 'vovkulakBoss' | 'babaYaga'    pose   see POSES
-//   flash  a new value → hit flash on the pose     scene  'forest' | 'field' | 'hut' (hero rim light)
+//   flash  a new value → hit flash on the pose
 //   enter  fade in on mount (next enemy)
-export default function Character({ set, pose, x, move, flash, scene, enter = false, qa }) {
+export default function Character({ set, pose, x, move, flash, enter = false, qa }) {
   const imgs = useRef({})
   // Fade-in on mount is a CSS animation (rAF-based state would not run in a hidden tab).
   const fadeIn = useRef(enter).current
@@ -44,7 +44,6 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
     // only a new flash value plays the flash
   }, [flash])
 
-  const rim = set === 'hero' && scene ? RIM[scene] : null
   const current = SPRITES[`${set}.${pose}`]
   const down = pose === 'dead'
 
@@ -87,23 +86,6 @@ export default function Character({ set, pose, x, move, flash, scene, enter = fa
               aria-hidden
             >
               <div className={`absolute inset-0 ${active && p === 'idle' ? 'char-breathe' : ''}`}>
-                {rim && s.rim && (
-                  // Upper-body copy under the art; only its coloured offset shadow peeks out.
-                  <img
-                    src={s.rim.src}
-                    srcSet={`${s.rim.src} 1x, ${s.rim.src2x} 2x`}
-                    alt=""
-                    className="absolute block max-w-none"
-                    style={{
-                      left: s.rim.x,
-                      top: s.rim.y,
-                      width: s.rim.w,
-                      height: s.rim.h,
-                      filter: `drop-shadow(${rim.x}px ${rim.y}px 1px ${rim.color}) drop-shadow(${rim.x}px ${rim.y}px 2px ${rim.color})`,
-                    }}
-                    draggable={false}
-                  />
-                )}
                 <img
                   ref={(el) => (imgs.current[p] = el)}
                   src={s.src}

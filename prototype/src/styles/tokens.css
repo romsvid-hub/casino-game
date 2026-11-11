@@ -42,9 +42,6 @@
   --color-scrim: rgb(13 12 11 / 0.5); /* Overlay/Modal scrim */
   /* Characters (block C+B): shadow ellipse (multiply) and hero rim light per scene. */
   --color-shadow: #000000;
-  --color-rim-forest: rgb(255 176 90 / 0.95); /* #FFB05A, torch on the left */
-  --color-rim-field: rgb(205 220 245 / 0.95); /* #CDDCF5, cold moon on the right */
-  --color-rim-hut: rgb(242 179 61 / 0.95); /* #F2B33D, gold cage light on the right */
   --color-popup-body: rgb(13 12 11 / 0.92);
   --color-popup-border-gold: rgb(242 179 61 / 0.7);
   --color-popup-border-blood: rgb(138 31 31 / 0.9);
