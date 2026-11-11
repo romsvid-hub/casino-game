@@ -1,22 +1,23 @@
-import Digits from '../Digits.jsx'
-
 const COLORS = {
   parchment: 'text-text-parchment',
-  blood: 'text-accent-blood',
+  risk: 'text-accent-risk',
   teal: 'text-accent-teal',
   amber: 'text-accent-amber',
+  leaf: 'text-accent-leaf',
 }
 
-// Dock slot (BET / AT RISK / NEXT / IF WON): label 12 px above a Kurale 30 value,
-// centred in a 140 px column so long values never clip; label at y73, value at y91 (336:3939).
-// `qa` keeps a stable test id when the label changes (IF WON → MAX WIN on the boss).
-export default function DockSlot({ label, value, color = 'parchment', qa = label, className = '', style }) {
+// Dock/Main value column (941:6560 …): Inter label 13 Semi Bold above a 22 px value,
+// centred in a 72 px column. Left-side columns align right, right-side ones align
+// left (mirrored around the CTAs). `qa` keeps a stable test id.
+export default function DockSlot({ label, value, color = 'parchment', align = 'left', width = 120, weight = 'semibold', qa = label, className = '' }) {
   return (
-    <div className={`absolute top-[73px] flex w-[140px] flex-col items-center whitespace-nowrap ${className}`} style={style} data-qa={`slot-${qa}`}>
-      <span className="type-label-xs text-text-muted">{label}</span>
-      <span className={`type-number-l ${COLORS[color]}`} style={{ textShadow: 'var(--fx-text-shadow)' }}>
-        <Digits text={value} />
-      </span>
+    <div
+      className={`flex h-[72px] shrink-0 flex-col justify-center font-ui whitespace-nowrap ${align === 'right' ? 'items-end text-right' : 'items-start text-left'} ${className}`}
+      style={{ width }}
+      data-qa={`slot-${qa}`}
+    >
+      <span className="dock-label text-text-muted">{label}</span>
+      <span className={`dock-value ${weight === 'regular' ? 'font-normal' : 'font-semibold'} ${COLORS[color]}`}>{value}</span>
     </div>
   )
 }

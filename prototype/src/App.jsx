@@ -108,7 +108,7 @@ function Game() {
             actions={actions}
             derived={derived}
             keysEnabled={!modal}
-            className={state.phase === STATES.SETUP ? 'top-[897px] left-[182px]' : 'top-[888px] left-[210px]'}
+            className={state.phase === STATES.SETUP ? 'top-[896px] left-[186px]' : 'top-[888px] left-[210px]'}
           />
           {showLowBalance && (
             <LowBalanceNotice
