@@ -10,40 +10,28 @@ import { useCountUp } from '../useCountUp.js'
 import DockSkin from './DockSkin.jsx'
 import DockSlot from './DockSlot.jsx'
 
-// Which Dock/Decision variant (466:2088) each game state shows.
+// Which Dock/Main variant (941:6656) each game state shows.
 const VARIANT = {
-  [STATES.SETUP]: 'setup', // 587:4973
-  [STATES.ENTERING]: 'animation', // 466:2114
-  [STATES.FIGHTING]: 'animation',
-  [STATES.RESOLVING]: 'animation',
-  [STATES.DECISION]: 'battle', // 336:3939 + Badge/Mode as in 587:5070
-  [STATES.WIN_BANNER]: 'result', // 466:2139
+  [STATES.SETUP]: 'lobby', // 937:6313
+  [STATES.ENTERING]: 'fight', // 941:6589: FIGHT is SKIP, TAKE disabled
+  [STATES.FIGHTING]: 'fight',
+  [STATES.RESOLVING]: 'fight',
+  [STATES.DECISION]: 'waiting', // 941:6512
+  [STATES.WIN_BANNER]: 'result', // waiting with both CTAs disabled
   [STATES.DEFEAT]: 'result',
   [STATES.CASHED_OUT]: 'result',
   [STATES.MAX_WIN]: 'result',
 }
 
-export const INSUFFICIENT_BALANCE_HINT = 'Not enough balance'
+const chipLabel = (chip) => (chip.label === 'MAX' ? `MAX ${chip.value}` : chip.label)
 
-function SetupContent({ state, actions, derived }) {
-  const difficulty = config.difficulties[state.difficulty]
-  // Below the minimum bet PLAY reads "min bet 1.00" (555:5220) and the
-  // low-balance notice above the dock offers ADD.
-  const playAmount = derived.canPlay
-    ? `bet ${formatMoney(state.bet)} · ${difficulty.label}`
-    : derived.belowMinBet
-      ? `min bet ${formatMoney(derived.minBet)}`
-      : INSUFFICIENT_BALANCE_HINT
-
+function LobbyContent({ state, actions, derived }) {
   return (
     <>
-      {/* setup/bet 774:7658: one row at x132 y78 */}
-      <div className="absolute top-[78px] left-[132px] flex items-center gap-[4px]">
-        <div className="flex items-center gap-[10px]">
-          <span className="w-[28px] font-display text-[12px] tracking-[0.12em] text-text-muted">BET</span>
-          <span className="font-number text-[28px] text-text-parchment" style={{ textShadow: 'var(--fx-text-shadow)' }}>
-            {formatMoney(state.bet)}
-          </span>
+      {/* setup/bet 937:6288: BET column + stepper, then the chips */}
+      <div className="absolute top-[48px] left-[104px] flex h-[70px] items-center gap-[12px]">
+        <div className="flex items-center gap-[8px]">
+          <DockSlot label="BET" value={formatMoney(state.bet)} align="right" width={104} />
           {/* Stepper instance is scaled to 80% in the dock (25.6x38.4). */}
           <div className="h-[38.4px] w-[25.6px]">
             <Stepper
@@ -55,11 +43,12 @@ function SetupContent({ state, actions, derived }) {
             />
           </div>
         </div>
-        <div className="flex gap-[5px]">
+        <div className="flex gap-[4px]">
           {derived.chips.map((chip) => (
             <BetChip
               key={chip.label}
-              value={chip.label}
+              value={chipLabel(chip)}
+              wide={chip.label === 'MAX'}
               selected={state.bet === chip.value}
               disabled={chip.disabled}
               onClick={() => actions.setBet(chip.value)}
@@ -68,30 +57,30 @@ function SetupContent({ state, actions, derived }) {
         </div>
       </div>
 
+      {/* CTA / Play 937:6300: 364 wide, centred on the dock, no subtitle */}
       <CtaButton
         variant="play"
         label="PLAY"
-        amount={playAmount}
+        wide
         disabled={!derived.canPlay}
         onClick={actions.play}
-        className="absolute top-[24px] left-[596px]"
+        className="absolute top-[24px] left-[568px]"
       />
 
-      {/* setup/difficulty 774:7677 + 774:7680 */}
-      <div className="absolute top-[87px] left-[926px] flex w-[161px] items-center justify-between whitespace-nowrap">
-        <span className="font-display text-[12px] tracking-[0.12em] text-text-muted">DIFFICULTY</span>
-        <span className="font-number text-[14px] text-text-parchment">win ~{Math.round(derived.winChance * 100)}%</span>
-      </div>
-      <div className="absolute top-[75px] left-[1103px] flex gap-[6px]">
-        {DIFFICULTY_KEYS.map((key) => (
-          <DifficultySegment
-            key={key}
-            level={key}
-            pips={false}
-            selected={state.difficulty === key}
-            onClick={() => actions.setDifficulty(key)}
-          />
-        ))}
+      {/* difficulty 937:6344: segments, then CHANCE */}
+      <div className="absolute top-[48px] left-[972px] flex h-[70px] w-[424px] items-center gap-[16px]">
+        <div className="flex gap-[4px]">
+          {DIFFICULTY_KEYS.map((key) => (
+            <DifficultySegment
+              key={key}
+              level={key}
+              pips={false}
+              selected={state.difficulty === key}
+              onClick={() => actions.setDifficulty(key)}
+            />
+          ))}
+        </div>
+        <DockSlot label="CHANCE" value={`${Math.round(derived.winChance * 100)}%`} color="leaf" width={64} weight="regular" />
       </div>
     </>
   )
@@ -100,23 +89,26 @@ function SetupContent({ state, actions, derived }) {
 function RoundContent({ variant, state, actions, derived }) {
   const atRisk = useCountUp(derived.atRisk, config.timings.countUp)
   const ifWon = useCountUp(derived.ifWon ?? 0, config.timings.countUp)
-  const decision = variant === 'battle'
+  const decision = variant === 'waiting'
   const hasNext = derived.nextMultiplier != null
+  // Defeat and MAX WIN end the round: 0.00 / — / — (Figma result frames).
+  const ended = state.phase === STATES.DEFEAT || state.phase === STATES.MAX_WIN
 
   return (
     <>
-      <DockSlot label="BET" value={formatMoney(state.bet)} color="parchment" className="left-[124px]" />
-      <DockSlot label="AT RISK" value={formatMoney(atRisk)} color="blood" className="left-[278px]" />
-      <DockSlot
-        label="NEXT"
-        value={hasNext ? formatMultiplier(derived.nextMultiplier) : '—'}
-        color="teal"
-        className="right-[289px]"
-      />
-      <DockSlot label="IF WON" value={hasNext ? formatMoney(ifWon) : '—'} color="amber" className="right-[121px]" />
+      {/* battle/left 941:6559 */}
+      <div className="absolute top-[47px] left-[104px] flex items-center gap-[32px]">
+        <DockSlot label="BET" value={formatMoney(state.bet)} align="right" />
+        <DockSlot label="AT RISK" value={formatMoney(ended ? 0 : atRisk)} color="risk" align="right" />
+      </div>
+      {/* battle/right 941:6566 */}
+      <div className="absolute top-[47px] left-[1124px] flex items-center gap-[32px]">
+        <DockSlot label="NEXT" value={hasNext && !ended ? formatMultiplier(derived.nextMultiplier) : '—'} color="teal" />
+        <DockSlot label="IF WON" value={hasNext && !ended ? formatMoney(ifWon) : '—'} color="amber" />
+      </div>
 
       {/* While the fight plays, SKIP takes FIGHT's place (State=Skip 769:6112). */}
-      {variant === 'animation' ? (
+      {variant === 'fight' ? (
         <CtaButton
           variant="skip"
           label="SKIP"
@@ -128,7 +120,7 @@ function RoundContent({ variant, state, actions, derived }) {
         <CtaButton
           variant="fight"
           label="FIGHT"
-          amount={hasNext ? `risk ${formatMoney(derived.atRisk)}` : '—'}
+          amount={hasNext && !ended ? `risk ${formatMoney(derived.atRisk)}` : '—'}
           disabled={!decision || !derived.canFight}
           // Glow when FIGHT is the only move (before the first win, TAKE is locked) and on boss gates (6, 7).
           highlight={decision && (!derived.canTake || derived.isBoss)}
@@ -139,7 +131,7 @@ function RoundContent({ variant, state, actions, derived }) {
       <CtaButton
         variant="take"
         label="TAKE"
-        amount={state.phase === STATES.MAX_WIN ? formatMoney(0) : derived.atRisk > 0 ? formatMoney(derived.atRisk) : '—'}
+        amount={ended ? formatMoney(0) : derived.atRisk > 0 ? formatMoney(derived.atRisk) : '—'}
         disabled={!decision || !derived.canTake}
         onClick={actions.take}
         className="absolute top-[24px] left-[758px]"
@@ -179,9 +171,9 @@ export default function Dock({ state, actions, derived, keysEnabled = true, clas
     <div className={`absolute h-[168px] w-[1500px] ${className}`} data-variant={variant}>
       <DockSkin />
       {/* Switching variants crossfades 150 ms (each variant remounts and fades in). */}
-      <div key={variant === 'setup' ? 'setup' : 'round'} className="dock-fade absolute inset-0">
-        {variant === 'setup' ? (
-          <SetupContent state={state} actions={actions} derived={derived} />
+      <div key={variant === 'lobby' ? 'lobby' : 'round'} className="dock-fade absolute inset-0">
+        {variant === 'lobby' ? (
+          <LobbyContent state={state} actions={actions} derived={derived} />
         ) : (
           <RoundContent variant={variant} state={state} actions={actions} derived={derived} />
         )}

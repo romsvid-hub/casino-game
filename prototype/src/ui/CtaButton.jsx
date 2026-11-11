@@ -28,6 +28,7 @@ export default function CtaButton({
   amount,
   state, // 'default' | 'hover' | 'pressed' | 'disabled' | 'highlight' (forced, for /kit)
   highlight = false,
+  wide = false, // CTA / Play in Dock/Main 937:6300: 364 wide, bigger label, no amount
   disabled = false,
   onClick,
   className = '',
@@ -39,7 +40,7 @@ export default function CtaButton({
   return (
     <button
       type="button"
-      className={`cta ${variant === 'take' ? 'cta--take' : ''} ${className}`}
+      className={`cta ${variant === 'take' ? 'cta--take' : ''} ${wide ? 'cta--wide' : ''} ${className}`}
       data-state={state}
       data-forced={state ? '' : undefined}
       data-highlight={highlight || variant === 'play' ? '' : undefined}

@@ -15,6 +15,8 @@
   --color-accent-teal: #3fe0d0;
   --color-accent-amber: #f2b33d;
   --color-accent-blood: #c4202a;
+  --color-accent-risk: #e85a50; /* AT RISK value, Dock/Main 11.11 (AA on the dock) */
+  --color-accent-leaf: #a9d98c; /* CHANCE value, Dock/Main 11.11 */
 
   --color-neutral-ink: #0d0c0b;
   --color-neutral-char: #1c1916;
@@ -61,6 +63,7 @@
 :root {
   --font-family-display: 'Ruslan Display', serif;
   --font-family-number: 'Kurale', serif;
+  --font-family-ui: 'Inter', sans-serif; /* functional dock text, Dock/Main 11.11 */
   --font-family-body: 'Roboto', sans-serif; /* lobby rules, 885:10856 */
 
   --font-size-label-xs: 12px;
@@ -105,6 +108,7 @@
   --font-*: initial;
   --font-display: var(--font-family-display);
   --font-number: var(--font-family-number);
+  --font-ui: var(--font-family-ui);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --text-label-xs: var(--font-size-label-xs);

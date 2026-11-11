@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10T17:07:34.848Z",
+  "generated": "2026-11-11T16:59:53.612Z",
   "checks": [
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
@@ -383,6 +383,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 1, max 70 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 2, max 62 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

@@ -148,7 +148,7 @@ export default function KitComponents() {
         refName="cta-play"
         w={364}
         h={176}
-        items={[{ x: 28, y: 28, el: <CtaButton variant="play" label="PLAY" amount="bet 5.00 · Medium" state="highlight" /> }]}
+        items={[{ x: 28, y: 28, el: <CtaButton variant="play" label="PLAY" wide state="highlight" /> }]}
       />
       <Compare
         title="CTA / Skip"

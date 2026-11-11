@@ -25,7 +25,34 @@
   --cta-glow: var(--fx-cta-glow-amber);
 }
 .cta:disabled {
-  cursor: default;
+  cursor: not-allowed;
+}
+/* CTA / Play in Dock/Main (937:6300): 364 wide, label Title L, no amount. */
+.cta--wide {
+  width: 364px;
+}
+.cta--wide .cta__content {
+  right: 55px;
+}
+.cta.cta--wide .cta__label {
+  font-size: var(--font-size-title-l);
+  line-height: var(--font-line-height-title-l);
+  letter-spacing: 0.04em;
+}
+
+/* Dock/Main text: Inter, tabular figures (labels 13 Semi Bold caps, values 22). */
+.dock-label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dock-value {
+  font-size: 22px;
+  line-height: normal;
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--fx-text-shadow);
 }
 
 /* 3-slice plate: one 616x240 image, left 140 / stretch / right 40 (stage px).
@@ -185,7 +212,8 @@
 .stepper-arrow:disabled,
 .stepper-arrow[data-state='disabled'] {
   background-image: var(--arrow-disabled);
-  cursor: default;
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ── Dock tile background for chips / segments (Figma crop of dock_tile) ── */
@@ -206,13 +234,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 26px;
+  width: 48px;
+  height: 36px;
   padding: 0;
   border: 1.5px solid var(--color-neutral-iron);
   border-radius: 5px;
-  font-family: var(--font-family-number);
-  font-size: 15px;
+  font-family: var(--font-family-ui);
+  font-size: 16px;
+  font-weight: 500;
   line-height: normal;
   font-variant-numeric: tabular-nums;
   color: var(--color-text-parchment);
@@ -230,9 +259,14 @@
   color: var(--color-accent-amber);
   filter: drop-shadow(var(--fx-select-amber));
 }
+.chip--wide {
+  width: 72px;
+  font-weight: 600;
+}
 .chip:disabled {
   color: var(--color-text-disabled);
-  cursor: default;
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ── Segment/Difficulty 585:4757 ────────────────────────────────────────── */
@@ -244,8 +278,8 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  width: 86px;
-  height: 44px;
+  width: 104px;
+  height: 36px;
   padding: 0;
   border: 1.5px solid var(--color-neutral-iron);
   border-radius: 6px;
@@ -263,10 +297,12 @@
   --level-glow: var(--fx-select-blood);
 }
 .segment__label {
-  font-family: var(--font-family-display);
-  font-size: 11px;
+  font-family: var(--font-family-ui);
+  font-size: 15px;
+  font-weight: 600;
   line-height: normal;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
   text-shadow: var(--fx-text-shadow-soft);
 }
@@ -274,14 +310,15 @@
   border-color: var(--color-text-muted);
 }
 .segment[aria-pressed='true'] {
-  border: 2px solid var(--level-color);
-  filter: drop-shadow(var(--level-glow));
+  border: 2px solid var(--color-accent-amber);
+  filter: drop-shadow(var(--fx-select-amber));
 }
 .segment[aria-pressed='true'] .segment__label {
-  color: var(--level-color);
+  color: var(--color-accent-amber);
 }
 .segment:disabled {
-  cursor: default;
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 .segment:disabled .segment__label {
   color: var(--color-text-disabled);
