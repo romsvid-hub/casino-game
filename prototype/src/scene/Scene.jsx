@@ -107,7 +107,7 @@ export default function Scene({ scene, state }) {
       )}
       {frame.hero && VICTORY_PHASES.includes(state.phase) && <HeroLight x={frame.hero.x} />}
       {frame.hero && (
-        <Character set="hero" qa="char-hero" scene={scene.scene} {...frame.hero} flash={frame.flash.hero} />
+        <Character set="hero" qa="char-hero" {...frame.hero} flash={frame.flash.hero} />
       )}
       {/* FX / Defeat darken 460:2016 covers the fallen knight, then the enemy's lights.
           Baba Yaga's defeat frame 843:6912 has no darken: the caged knight stays readable. */}
