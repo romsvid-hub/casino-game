@@ -313,9 +313,9 @@ async function run() {
     await shot(page, '15-yaga-hero-attacks')
     const light = await page.evaluate(() => {
       const l = document.querySelector('[data-qa="char-light"]'), e = document.querySelector('[data-qa="char-enemy"]')
-      return { has: !!l, follows: !!l && l.style.transform === e.style.transform, src: l?.querySelector('img').getAttribute('src') }
+      return { has: !!l, follows: !!l && l.style.transform === e.style.transform, src: l?.querySelector('img[src$="cage-core.svg"]')?.getAttribute('src') }
     })
-    check('Baba Yaga: cage light is on and follows her (same x as the enemy)', light.has && light.follows && light.src.endsWith('cage-light.webp'), JSON.stringify(light))
+    check('Baba Yaga: cage light is on and follows her (same x as the enemy)', light.has && light.follows && light.src.endsWith('cage-core.svg'), JSON.stringify(light))
     allErrors.push(...page.qaErrors)
     await page.close()
 
@@ -334,10 +334,11 @@ async function run() {
       hero: document.querySelector('[data-qa="char-hero"]').dataset.pose,
       enemyX: document.querySelector('[data-qa="char-enemy"]').dataset.x,
       red: !!document.querySelector('[data-qa="red-light"]'),
-      cage: document.querySelector('[data-qa="char-light"] img')?.getAttribute('src'),
+      redSrc: document.querySelector('[data-qa="red-light"]')?.getAttribute('src') ?? '',
+      cage: document.querySelector('[data-qa="char-light"] img[src$="cage-core.svg"]')?.getAttribute('src'),
     }))
     check('DEFEAT by Baba Yaga: knight caged at home, she wins on her step 1180', defeat.hero === 'caged' && defeat.enemyX === '1180', JSON.stringify(defeat))
-    check('DEFEAT by Baba Yaga: red defeat light on, cage light turns red', defeat.red && (defeat.cage ?? '').endsWith('cage-light-red.webp'), JSON.stringify(defeat))
+    check('DEFEAT by Baba Yaga: gold cage light is the focus, red light only supports (847:6304)', defeat.red && (defeat.cage ?? '').endsWith('cage-core.svg') && defeat.redSrc.endsWith('red-light-supporting.svg'), JSON.stringify(defeat))
     allErrors.push(...page.qaErrors)
     await page.close()
 

@@ -113,7 +113,7 @@ export default function Scene({ scene, state }) {
           Baba Yaga's defeat frame 843:6912 has no darken: the caged knight stays readable. */}
       {defeat && scene.set !== 'babaYaga' && <div data-qa="defeat-darken" className="env-defeat-darken absolute inset-0" />}
       {defeat && frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
-      {defeat && frame.enemy && <DefeatRedLight x={frame.enemy.x} />}
+      {defeat && frame.enemy && <DefeatRedLight x={frame.enemy.x} set={scene.set} />}
       {state.phase === STATES.MAX_WIN && scene.set === 'babaYaga' && frame.enemy && <CageLightRelease x={frame.enemy.x} />}
       {frame.enemy && (
         <Character
