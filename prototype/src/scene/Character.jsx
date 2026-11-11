@@ -47,6 +47,7 @@ export default function Character({ set, pose, x, move, flash, enter = false, qa
 
   const current = SPRITES[`${set}.${pose}`]
   const down = pose === 'dead'
+  const orb = FX.lightOrb.poses[set]?.[pose]
 
   return (
     <div
@@ -99,6 +100,18 @@ export default function Character({ set, pose, x, move, flash, enter = false, qa
             </div>
           )
         })}
+        {/* FX/Light orb 947:6377: the light amulet each enemy wears, on its pose anchor. */}
+        {orb && (
+          <img
+            src={FX.lightOrb.src}
+            alt=""
+            aria-hidden
+            data-qa="light-orb"
+            className="absolute block max-w-none"
+            style={{ left: orb[0] - FX.lightOrb.w / 2, top: SHADOW_Y + orb[1] - FX.lightOrb.h / 2, width: FX.lightOrb.w, height: FX.lightOrb.h }}
+            draggable={false}
+          />
+        )}
       </div>
     </div>
   )
@@ -179,5 +192,34 @@ export function DefeatRedLight({ x, set }) {
       style={{ left: x + red.x, top: SHADOW_Y + red.y, width: red.w, height: red.h, animation: 'fade-in 300ms ease-out both' }}
       draggable={false}
     />
+  )
+}
+
+// Victory over a vovkulak or the boss: the beaten enemy's light orb leaves its body
+// and flies to the win amount in the result banner (x960, y219), then fades into it.
+// The two axes ease differently, so the path curves; two faint copies trail it.
+export const ORB_TARGET = { x: 960, y: 219 }
+
+export function LightOrbFlight({ set, x }) {
+  const start = FX.lightOrb.poses[set]?.hit
+  if (!start) return null
+  const from = { x: x + start[0], y: SHADOW_Y + start[1] }
+  const style = { '--dx': `${ORB_TARGET.x - from.x}px`, '--dy': `${ORB_TARGET.y - from.y}px` }
+  return (
+    <div className="pointer-events-none absolute" style={{ left: from.x, top: from.y }} data-qa="light-orb-flight" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="orb-fly-x absolute" style={{ ...style, animationDelay: `${200 + i * 45}ms` }}>
+          <div className="orb-fly-y" style={{ ...style, animationDelay: `${200 + i * 45}ms`, opacity: i ? 0.45 / i : 1 }}>
+            <img
+              src={FX.lightOrb.src}
+              alt=""
+              className="absolute block max-w-none"
+              style={{ left: -FX.lightOrb.w / 2, top: -FX.lightOrb.h / 2, width: FX.lightOrb.w, height: FX.lightOrb.h }}
+              draggable={false}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }

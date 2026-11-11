@@ -677,6 +677,43 @@
   animation: fade-in 300ms ease-out both;
 }
 
+/* Light orb flight (Character.jsx, LightOrbFlight): 700 ms to the win amount. */
+.orb-fly-x {
+  animation: orb-fly-x 700ms ease-in-out both;
+}
+.orb-fly-y {
+  animation: orb-fly-y 700ms cubic-bezier(0.35, 0, 0.2, 1) both;
+}
+@keyframes orb-fly-x {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--dx) 0;
+  }
+}
+@keyframes orb-fly-y {
+  0% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 var(--dy);
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-fly-x,
+  .orb-fly-y {
+    display: none;
+  }
+}
+
 /* MAX WIN over Baba Yaga: the light leaves the cage (Character.jsx, CageLightRelease). */
 .cage-light--released {
   animation: cage-light-out 1200ms ease-out 300ms both;
