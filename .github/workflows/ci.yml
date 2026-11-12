@@ -29,6 +29,7 @@ jobs:
       - run: npm run qa
       # Chromium, Firefox, WebKit: window sizes, keyboard, skip, click spam, refresh.
       - run: npm run qa:smoke
+      - run: npm run qa:intro
       - name: Upload QA report
         if: always()
         uses: actions/upload-artifact@v4

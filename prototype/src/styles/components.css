@@ -834,6 +834,138 @@
   }
 }
 
+/* Lobby ambient loop (12.11 splash brief): sky drifts, forest parallax, three fog
+   bands drift sideways at different speeds and breathe ±10 % in opacity. */
+.lobby-amb-sky {
+  animation: lobby-drift-sky 20s ease-in-out infinite alternate;
+}
+.lobby-amb-forest {
+  animation: lobby-drift-forest 20s ease-in-out infinite alternate;
+}
+.lobby-amb-fog--far {
+  animation: lobby-fog-far 30s ease-in-out infinite alternate, lobby-fog-breathe 7s ease-in-out infinite alternate;
+}
+.lobby-amb-fog--mid {
+  animation: lobby-fog-mid 20s ease-in-out infinite alternate, lobby-fog-breathe 5.5s ease-in-out infinite alternate;
+}
+.lobby-amb-fog--near {
+  animation: lobby-fog-near 13s ease-in-out infinite alternate, lobby-fog-breathe 4.5s ease-in-out infinite alternate;
+}
+@keyframes lobby-drift-sky {
+  to {
+    translate: -16px 0;
+  }
+}
+@keyframes lobby-drift-forest {
+  to {
+    translate: -6px 0;
+  }
+}
+@keyframes lobby-fog-far {
+  from {
+    translate: -25px 0;
+  }
+  to {
+    translate: 25px 0;
+  }
+}
+@keyframes lobby-fog-mid {
+  from {
+    translate: 40px 0;
+  }
+  to {
+    translate: -40px 0;
+  }
+}
+@keyframes lobby-fog-near {
+  from {
+    translate: -60px 0;
+  }
+  to {
+    translate: 60px 0;
+  }
+}
+@keyframes lobby-fog-breathe {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Window lights before the theft: own period and phase per light. */
+.intro-orb {
+  animation: intro-flicker var(--flicker) ease-in-out infinite alternate;
+}
+@keyframes intro-flicker {
+  from {
+    opacity: 0.75;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+.intro-logo-glow {
+  left: 610px;
+  top: 40px;
+  width: 700px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-accent-amber) 55%, transparent), transparent);
+  mix-blend-mode: screen;
+}
+/* Lobby loops once settled: pitchfork swing, breathing of the two villagers. */
+.lobby--settled .lobby-pitchfork {
+  transform-origin: 35% 72%;
+  animation: lobby-pitchfork 2.4s ease-in-out infinite alternate;
+}
+@keyframes lobby-pitchfork {
+  from {
+    rotate: -3.5deg;
+  }
+  to {
+    rotate: 3.5deg;
+  }
+}
+.lobby--settled .lobby-breathe {
+  transform-origin: 50% 88%;
+  animation: lobby-breathe 3.2s ease-in-out infinite alternate;
+}
+.lobby--settled .lobby-breathe--b {
+  animation-duration: 3.8s;
+}
+@keyframes lobby-breathe {
+  to {
+    scale: 1 1.012;
+  }
+}
+/* Return visit: the crowd just fades in. */
+.lobby--settled.lobby--visible .lobby-crowd {
+  animation: fade-in 500ms ease-out both;
+}
+/* PLAY hover: the knight rises 3 px into a soft warm light (no face change yet). */
+.lobby-hero {
+  transition:
+    translate 200ms ease-out,
+    filter 200ms ease-out;
+}
+body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
+  translate: 0 -3px;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent-amber) 45%, transparent));
+}
+@media (prefers-reduced-motion: reduce) {
+  .lobby-amb-sky,
+  .lobby-amb-forest,
+  .lobby-amb-fog,
+  .intro-orb,
+  .lobby--settled .lobby-pitchfork,
+  .lobby--settled .lobby-breathe {
+    animation: none;
+  }
+}
+
 /* Lobby 885:10856: covers the stage, fades out when the round starts. */
 .lobby {
   background: var(--color-neutral-ink);

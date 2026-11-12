@@ -117,7 +117,7 @@ async function open(browser, params = '') {
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
-  await page.goto(`${BASE}?debug=1&difficulty=medium&seed=7${params}`)
+  await page.goto(`${BASE}?debug=1&difficulty=medium&seed=7&intro=0${params}`)
   await page.waitForFunction(() => window.__casino && document.fonts.status === 'loaded')
   // Hide the debug panel in screenshots.
   await page.addStyleTag({ content: '.fixed.top-3{display:none!important}' })

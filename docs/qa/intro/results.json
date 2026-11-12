@@ -1,0 +1,55 @@
+{
+  "generated": "2026-11-12T12:55:56.305Z",
+  "checks": [
+    {
+      "name": "First launch plays the splash",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "PLAY is not clickable during the splash",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Full splash ends in the lobby (≈7 s)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Rules card shows on the first lobby entry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Return visit opens the lobby directly (no splash)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "After a round the rules card is hidden; \"?\" reopens it",
+      "ok": true,
+      "detail": "hidden true, reopened true"
+    },
+    {
+      "name": "No page errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "SKIP plays the splash ×4 (lobby in < 2.4 s)",
+      "ok": true,
+      "detail": "2331 ms"
+    },
+    {
+      "name": "A second press jumps straight to the lobby",
+      "ok": true,
+      "detail": "62 ms"
+    },
+    {
+      "name": "?intro=1 forces the splash",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
