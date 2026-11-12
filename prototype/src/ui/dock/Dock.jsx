@@ -163,12 +163,13 @@ function useDockKeys(state, actions, derived, enabled) {
 }
 
 // Bottom dock (1500x168), driven by the game state. Position comes from the screen.
-export default function Dock({ state, actions, derived, keysEnabled = true, className = '' }) {
+export default function Dock({ state, actions, derived, keysEnabled = true, locked = false, className = '' }) {
   const variant = VARIANT[state.phase]
   useDockKeys(state, actions, derived, keysEnabled)
 
   return (
-    <div className={`absolute h-[168px] w-[1500px] ${className}`} data-variant={variant}>
+    // `locked`: during the intro splash the dock is not clickable (it fades in at the end).
+    <div className={`absolute h-[168px] w-[1500px] ${locked ? 'pointer-events-none' : ''} ${className}`} data-variant={variant} data-dock>
       <DockSkin />
       {/* Switching variants crossfades 150 ms (each variant remounts and fades in). */}
       <div key={variant === 'lobby' ? 'lobby' : 'round'} className="dock-fade absolute inset-0">

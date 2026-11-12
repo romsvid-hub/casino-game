@@ -40,3 +40,10 @@
 - [ ] Missing joints: hero Walk has one arm (`arm`) plus the shield; hero Attack has no torso (head and the sword arm hang on the hips); hero Idle has no left lower leg (only `thigh L`). — *Roman*
 - [ ] Pivots I am unsure of (no overlap with the parent, set at the nearest edge): hero Idle `cape front`, hero Attack `head`, hero Hit `head` and `shield shards`, Vovkulak Attack `arm L`. Check with `?rig=1`; Figma `pivot / <part>` markers override them. — *Roman*
 - [ ] Walk back home after a win: Figma has no mirrored walk pose, so the knight steps back while facing right. Mirror him, or keep it? — *Roman*
+
+### Splash and lobby (12.11)
+- [ ] Knight's hover emotion: PLAY hover only lifts the knight 3 px into a warm light. A `Hero — емоція 1` layer would go in the same slot. — *Roman*
+- [ ] Should the crowd's emotion sequence repeat later in the lobby, or stay once per intro? — *Roman*
+- [ ] Lobby village: Figma's lobby 885:10856 shows lit windows, but after the theft the story leaves the village dark. The prototype keeps it dark (and on return visits too). Keep it dark? — *Roman*
+- [ ] Hidden layers come from the source art, not Figma's API (it does not serve hidden layers): the lit village is the lobby's `будівлі` layer moved to the splash position, the six crowd emotions come from `Assets_illustrations/Натовп`. The middle villager has no separate body file there; his Figma body is used. — *Roman*
+- [ ] SKIP becomes PLAY by a crossfade in place (SKIP 308 px, PLAY 364 px wide), not by morphing one plate. — *Roman*

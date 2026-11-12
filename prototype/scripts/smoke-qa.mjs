@@ -66,7 +66,9 @@ async function openPage(browser, params, size = [1920, 1080], errors = []) {
   const page = await browser.newPage({ viewport: { width: size[0], height: size[1] } })
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
-  await page.goto(`${BASE}${params}`)
+  // intro=0: the splash has its own test (scripts/intro-qa.mjs).
+  const [path, hash = ''] = params.split('#')
+  await page.goto(`${BASE}${path.includes('?') ? `${path}&intro=0` : `${path}?intro=0`}${hash ? `#${hash}` : ''}`)
   await page.waitForFunction(() => document.querySelector('[style*="scale("]'))
   await sleep(800)
   return page

@@ -10,6 +10,7 @@
     "qa": "node scripts/visual-qa.mjs",
     "check:logic": "node scripts/logic-check.mjs",
     "qa:smoke": "node scripts/smoke-qa.mjs",
+    "qa:intro": "node scripts/intro-qa.mjs",
     "lint": "eslint .",
     "assets:weight": "node scripts/asset-weight.mjs"
   },

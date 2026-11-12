@@ -10,6 +10,8 @@ import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
 import LobbyScreen from './ui/lobby/LobbyScreen.jsx'
+import { markIntroSeen, markRulesSeen, shouldPlayIntro, shouldShowRules } from './ui/lobby/introState.js'
+import HudMedallion from './ui/hud/HudMedallion.jsx'
 import Dock from './ui/dock/Dock.jsx'
 import ResultsLayer, { useResultStage } from './ui/results/ResultsLayer.jsx'
 import RulesModal from './ui/modals/RulesModal.jsx'
@@ -80,6 +82,17 @@ function Game() {
   const [autoBeats, setAutoBeats] = useState(true)
   const [skipAnimations, setSkipAnimations] = useSkipAnimations()
   const [modal, setModal] = useState(null) // null | 'rules' | 'menu'
+  // Splash → lobby intro (first launch in a session, or ?intro=1) and the rules card
+  // (first lobby entry; later behind "?").
+  const [intro, setIntro] = useState(shouldPlayIntro)
+  const [rulesOpen, setRulesOpen] = useState(shouldShowRules)
+  const inLobby = state.phase === STATES.SETUP
+  useEffect(() => {
+    if (!inLobby && rulesOpen) {
+      markRulesSeen()
+      setRulesOpen(false)
+    }
+  }, [inLobby])
   const scene = useDirector(state, actions, derived, { enabled: autoBeats, reduceMotion: skipAnimations })
   const shaking = useBossShake(state, scene)
   const resultStage = useResultStage(state.phase)
@@ -109,13 +122,30 @@ function Game() {
         {/* Whole stage content shakes when the boss lands. */}
         <div className={`absolute inset-0 ${shaking ? 'stage-shake' : ''}`}>
           <Scene scene={scene} state={state} />
-          <LobbyScreen visible={state.phase === STATES.SETUP} difficulty={state.difficulty} />
+          <LobbyScreen
+            visible={inLobby}
+            difficulty={state.difficulty}
+            intro={intro}
+            showRules={rulesOpen}
+            onIntroDone={() => {
+              markIntroSeen()
+              setIntro(false)
+            }}
+          />
+          {inLobby && !intro && (
+            <HudMedallion
+              icon="rules"
+              onClick={() => setRulesOpen((v) => !v)}
+              className="pointer-events-auto absolute top-[28px] left-[1810px]"
+            />
+          )}
           <Hud state={hudState} derived={derived} />
           <Dock
             state={state}
             actions={actions}
             derived={derived}
-            keysEnabled={!modal}
+            keysEnabled={!modal && !intro}
+            locked={intro}
             className={state.phase === STATES.SETUP ? 'top-[896px] left-[186px]' : 'top-[888px] left-[210px]'}
           />
           {showLowBalance && (
