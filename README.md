@@ -37,6 +37,7 @@ The QA suites use Playwright. Install the browsers once with `npx playwright ins
 | `?difficulty=easy\|medium\|high` | Preselect the difficulty |
 | `?debug=1` | Debug panel: game state, forced win / lose, effective RTP per gate |
 | `?intro=1` | Plays the splash and shows the rules card on every load (client demos). `?intro=0` skips the splash (used by the test suites) |
+| `?go=<scenario>` | Opens one exact moment for review: `lobby`, `g<N>-enter`, `g<N>-wait`, `g<N>-win`, `g<N>-lose`, `g<N>-take` (gate N = 1–7; take from gate 2). `&rules=0` hides the rules card |
 | `?rig=1` | Character rig view: every part outline, its pivot (dot) and the bone to its parent; `#/rig` lists every pose at rest |
 | `#/kit` | UI Kit page: every component in every state, next to its Figma reference |
 

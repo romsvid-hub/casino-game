@@ -23,7 +23,11 @@ function write(key) {
   }
 }
 
+const go = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('go'))
+const rules = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('rules'))
+
 export function shouldPlayIntro() {
+  if (go()) return false // review links open straight at their moment
   const p = param()
   if (p === '1') return true
   if (p === '0') return false
@@ -32,6 +36,8 @@ export function shouldPlayIntro() {
 export const markIntroSeen = () => write(KEY_SPLASH)
 
 export function shouldShowRules() {
+  if (rules() === '0') return false
+  if (rules() === '1') return true
   const p = param()
   if (p === '1' || p === '0') return true
   return !read(KEY_RULES)

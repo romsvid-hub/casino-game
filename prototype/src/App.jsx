@@ -11,6 +11,7 @@ import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
 import LobbyScreen from './ui/lobby/LobbyScreen.jsx'
 import { markIntroSeen, markRulesSeen, shouldPlayIntro, shouldShowRules } from './ui/lobby/introState.js'
+import { GO, runScenario } from './game/scenario.js'
 import HudMedallion from './ui/hud/HudMedallion.jsx'
 import Dock from './ui/dock/Dock.jsx'
 import ResultsLayer, { useResultStage } from './ui/results/ResultsLayer.jsx'
@@ -87,6 +88,8 @@ function Game() {
   const [intro, setIntro] = useState(shouldPlayIntro)
   const [rulesOpen, setRulesOpen] = useState(shouldShowRules)
   const inLobby = state.phase === STATES.SETUP
+  // ?go=<scenario>: open at one exact moment (review links, game/scenario.js).
+  useEffect(() => runScenario(GO, actions), [])
   useEffect(() => {
     if (!inLobby && rulesOpen) {
       markRulesSeen()
