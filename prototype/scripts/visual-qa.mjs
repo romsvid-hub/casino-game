@@ -5,7 +5,7 @@
 // checks money consistency and long tasks, and writes docs/qa/report.html with
 // the matching Figma frame (docs/qa/figma/) next to every app screenshot.
 import { spawn, execSync } from 'node:child_process'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
@@ -168,6 +168,14 @@ async function winOne(page) {
 // Money checks on a DECISION screen (after count-ups settle).
 async function decisionMoney(page, level) {
   await sleep(900)
+  // Both numbers count up over 400 ms; under load they can land a frame apart.
+  await page
+    .waitForFunction(
+      () => document.querySelector('[data-qa="slot-AT RISK"] > span:last-child')?.textContent.trim() === document.querySelector('[data-qa="counter-win"]')?.textContent.trim(),
+      null,
+      { timeout: 3000 },
+    )
+    .catch(() => {})
   const d = await derived(page)
   const atRisk = await slot(page, 'AT RISK')
   const ifWon = await slot(page, 'IF WON')
@@ -182,10 +190,53 @@ async function decisionMoney(page, level) {
   for (const [n, v] of [['AT RISK', atRisk], ['IF WON', ifWon], ['WIN', counter]]) check(`L${level}: ${n} has 2 decimals`, MONEY.test(v), v)
 }
 
+
+// Block A (12.11): every pose rig at rest must look like the flat sprite it replaced.
+// Each #/rig box is screenshotted and compared in the page with docs/qa/rig-ref/<pose>.png
+// drawn on the same background: mean channel difference and share of pixels off by > 48.
+async function rigRestCheck(browser) {
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })
+  await page.goto(`${BASE}#/rig`)
+  await page.waitForSelector('[data-rig-check]')
+  await page.waitForFunction(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0))
+  const keys = await page.$$eval('[data-rig-check]', (els) => els.map((e) => e.dataset.rigCheck))
+  const bg = await page.$eval('[data-rig-check]', (e) => getComputedStyle(e).backgroundColor)
+  let worst = { key: '', mean: 0, off: 0 }
+  for (const key of keys) {
+    const shot = (await page.locator(`[data-rig-check="${key}"]`).screenshot()).toString('base64')
+    const ref = readFileSync(join(DOCS_QA, 'rig-ref', `${key}.webp`)).toString('base64')
+    const r = await page.evaluate(
+      async ({ shot, ref, bg }) => {
+        const load = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src })
+        const [a, b] = await Promise.all([load(`data:image/png;base64,${shot}`), load(`data:image/webp;base64,${ref}`)])
+        // Compared at half size: sub-pixel placement and edge anti-aliasing of the
+        // re-cut parts average out, a misplaced or missing part does not.
+        const c = document.createElement('canvas'); c.width = Math.round(a.width / 2); c.height = Math.round(a.height / 2)
+        const x = c.getContext('2d')
+        x.drawImage(a, 0, 0, c.width, c.height); const da = x.getImageData(0, 0, c.width, c.height).data
+        x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); x.drawImage(b, 0, 0, c.width, c.height); const db = x.getImageData(0, 0, c.width, c.height).data
+        let sum = 0, off = 0
+        for (let i = 0; i < da.length; i += 4) {
+          const d = (Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2])) / 3
+          sum += d; if (d > 48) off++
+        }
+        const n = da.length / 4
+        return { mean: sum / n, off: off / n }
+      },
+      { shot, ref, bg },
+    )
+    if (r.mean > worst.mean) worst = { key, ...r }
+    if (r.mean > 8 || r.off > 0.01) check(`Rig at rest = sprite: ${key}`, false, `mean ${r.mean.toFixed(2)}, ${(r.off * 100).toFixed(2)} % off`)
+  }
+  check(`Rig at rest matches the flat sprites (${keys.length} poses, mean diff ≤ 8, ≤ 1 % pixels off at half size)`, worst.mean <= 8 && worst.off <= 0.01, `worst ${worst.key}: mean ${worst.mean.toFixed(2)}, ${(worst.off * 100).toFixed(2)} % off`)
+  await page.close()
+}
+
 async function run() {
   mkdirSync(APP_DIR, { recursive: true })
   const server = await startServer()
   const browser = await chromium.launch()
+  await rigRestCheck(browser)
   helper = await browser.newPage()
   const longTasks = []
   const mounts = []
@@ -313,7 +364,7 @@ async function run() {
     await shot(page, '15-yaga-hero-attacks')
     const light = await page.evaluate(() => {
       const l = document.querySelector('[data-qa="char-light"]'), e = document.querySelector('[data-qa="char-enemy"]')
-      return { has: !!l, follows: !!l && l.style.transform === e.style.transform, src: l?.querySelector('img[src$="cage-core.svg"]')?.getAttribute('src') }
+      return { has: !!l, follows: !!l && !!e && e.contains(l), src: l?.querySelector('img[src$="cage-core.svg"]')?.getAttribute('src') }
     })
     check('Baba Yaga: cage light is on and follows her (same x as the enemy)', light.has && light.follows && light.src.endsWith('cage-core.svg'), JSON.stringify(light))
     allErrors.push(...page.qaErrors)

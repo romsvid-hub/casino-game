@@ -1,7 +1,5 @@
 {
   "hero.walk": {
-    "src": "/sprites/hero-walk.webp",
-    "src2x": "/sprites/hero-walk@2x.webp",
     "figma": "843:7794",
     "w": 294,
     "h": 341,
@@ -15,8 +13,6 @@
     }
   },
   "hero.idle": {
-    "src": "/sprites/hero-idle.webp",
-    "src2x": "/sprites/hero-idle@2x.webp",
     "figma": "843:8125",
     "w": 270,
     "h": 365,
@@ -30,8 +26,6 @@
     }
   },
   "hero.attack": {
-    "src": "/sprites/hero-attack.webp",
-    "src2x": "/sprites/hero-attack@2x.webp",
     "figma": "843:7816",
     "w": 668,
     "h": 310,
@@ -45,8 +39,6 @@
     }
   },
   "hero.hit": {
-    "src": "/sprites/hero-hit.webp",
-    "src2x": "/sprites/hero-hit@2x.webp",
     "figma": "843:7806",
     "w": 336,
     "h": 321,
@@ -60,8 +52,6 @@
     }
   },
   "hero.dead": {
-    "src": "/sprites/hero-dead.webp",
-    "src2x": "/sprites/hero-dead@2x.webp",
     "figma": "843:7824",
     "w": 411,
     "h": 208,
@@ -75,8 +65,6 @@
     }
   },
   "hero.caged": {
-    "src": "/sprites/hero-caged.webp",
-    "src2x": "/sprites/hero-caged@2x.webp",
     "figma": "838:9219",
     "w": 239,
     "h": 361,
@@ -90,8 +78,6 @@
     }
   },
   "hero.victory": {
-    "src": "/sprites/hero-victory.webp",
-    "src2x": "/sprites/hero-victory@2x.webp",
     "figma": "838:9878",
     "w": 282,
     "h": 516,
@@ -105,8 +91,6 @@
     }
   },
   "vovkulak.idle": {
-    "src": "/sprites/vovkulak-idle.webp",
-    "src2x": "/sprites/vovkulak-idle@2x.webp",
     "figma": "756:6827",
     "w": 428,
     "h": 319,
@@ -120,8 +104,6 @@
     }
   },
   "vovkulak.hit": {
-    "src": "/sprites/vovkulak-hit.webp",
-    "src2x": "/sprites/vovkulak-hit@2x.webp",
     "figma": "457:7316",
     "w": 448,
     "h": 374,
@@ -135,8 +117,6 @@
     }
   },
   "vovkulak.attack": {
-    "src": "/sprites/vovkulak-attack.webp",
-    "src2x": "/sprites/vovkulak-attack@2x.webp",
     "figma": "457:7417",
     "w": 589,
     "h": 334,
@@ -150,8 +130,6 @@
     }
   },
   "vovkulak.dead": {
-    "src": "/sprites/vovkulak-dead.webp",
-    "src2x": "/sprites/vovkulak-dead@2x.webp",
     "figma": "457:7656",
     "w": 447,
     "h": 125,
@@ -165,8 +143,6 @@
     }
   },
   "vovkulak.victory": {
-    "src": "/sprites/vovkulak-victory.webp",
-    "src2x": "/sprites/vovkulak-victory@2x.webp",
     "figma": "457:7447",
     "w": 407,
     "h": 415,
@@ -180,8 +156,6 @@
     }
   },
   "vovkulakBoss.idle": {
-    "src": "/sprites/vovkulakBoss-idle.webp",
-    "src2x": "/sprites/vovkulakBoss-idle@2x.webp",
     "figma": "756:6588",
     "w": 614,
     "h": 394,
@@ -195,8 +169,6 @@
     }
   },
   "vovkulakBoss.hit": {
-    "src": "/sprites/vovkulakBoss-hit.webp",
-    "src2x": "/sprites/vovkulakBoss-hit@2x.webp",
     "figma": "629:6661",
     "w": 603,
     "h": 508,
@@ -210,8 +182,6 @@
     }
   },
   "vovkulakBoss.attack": {
-    "src": "/sprites/vovkulakBoss-attack.webp",
-    "src2x": "/sprites/vovkulakBoss-attack@2x.webp",
     "figma": "621:6382",
     "w": 709,
     "h": 487,
@@ -225,8 +195,6 @@
     }
   },
   "vovkulakBoss.dead": {
-    "src": "/sprites/vovkulakBoss-dead.webp",
-    "src2x": "/sprites/vovkulakBoss-dead@2x.webp",
     "figma": "629:6917",
     "w": 692,
     "h": 349,
@@ -240,8 +208,6 @@
     }
   },
   "vovkulakBoss.victory": {
-    "src": "/sprites/vovkulakBoss-victory.webp",
-    "src2x": "/sprites/vovkulakBoss-victory@2x.webp",
     "figma": "640:7171",
     "w": 680,
     "h": 556,
@@ -255,8 +221,6 @@
     }
   },
   "babaYaga.idle": {
-    "src": "/sprites/babaYaga-idle.webp",
-    "src2x": "/sprites/babaYaga-idle@2x.webp",
     "figma": "843:6510",
     "w": 505,
     "h": 422,
@@ -265,8 +229,6 @@
     "shadow": null
   },
   "babaYaga.hit": {
-    "src": "/sprites/babaYaga-hit.webp",
-    "src2x": "/sprites/babaYaga-hit@2x.webp",
     "figma": "843:6624",
     "w": 632,
     "h": 441,
@@ -275,8 +237,6 @@
     "shadow": null
   },
   "babaYaga.attack": {
-    "src": "/sprites/babaYaga-attack.webp",
-    "src2x": "/sprites/babaYaga-attack@2x.webp",
     "figma": "843:6758",
     "w": 808,
     "h": 414,
@@ -285,8 +245,6 @@
     "shadow": null
   },
   "babaYaga.dead": {
-    "src": "/sprites/babaYaga-dead.webp",
-    "src2x": "/sprites/babaYaga-dead@2x.webp",
     "figma": "843:6856",
     "w": 628,
     "h": 346,
@@ -295,8 +253,6 @@
     "shadow": null
   },
   "babaYaga.victory": {
-    "src": "/sprites/babaYaga-victory.webp",
-    "src2x": "/sprites/babaYaga-victory@2x.webp",
     "figma": "843:6986",
     "w": 498,
     "h": 564,

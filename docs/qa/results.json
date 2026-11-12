@@ -1,6 +1,11 @@
 {
-  "generated": "2026-11-11T17:26:30.614Z",
+  "generated": "2026-11-12T12:44:47.481Z",
   "checks": [
+    {
+      "name": "Rig at rest matches the flat sprites (22 poses, mean diff ≤ 8, ≤ 1 % pixels off at half size)",
+      "ok": true,
+      "detail": "worst hero.caged: mean 6.76, 0.02 % off"
+    },
     {
       "name": "Debug panel: effective RTP for all 7 gates (g1 = 78.0 %)",
       "ok": true,
@@ -383,6 +388,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 1, max 85 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 1, max 91 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }

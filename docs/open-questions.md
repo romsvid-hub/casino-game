@@ -33,3 +33,10 @@
 - [ ] Ash animation for the caged knight: still darken + fade. — *Roman will brief*
 - [ ] Sound: postponed to the very end (client, 09.11). None added.
 - [ ] Counter/Win size: the 11.11 Yaga frames draw WIN smaller than the prototype's Number XL. Not in the brief, left as is. — *to confirm with Roman*
+
+### Character rig (12.11)
+- [ ] Five poses stay one flat part, because Figma's API serves their part images as empty placeholders: Vovkulak Victory, Vovkulak Boss Hit, Attack, Dead, Victory. They still get whole-body motion (breathing, jolt, raise). Re-export once Figma serves them, or check those layers in the file. — *Roman*
+- [ ] Merged parts (one image for several limbs): knight Dead and Caged; Vovkulak and Boss Dead; Vovkulak Hit and Boss Hit `таз та ноги`; Yaga Attack `Руки з мітлою`, Hit `ноги таз`, Dead body. The cage is drawn on Yaga's arm (`права рука з кліткою`), so the pendulum swings the arm from the shoulder, not the cage from the hand. — *Roman*
+- [ ] Missing joints: hero Walk has one arm (`arm`) plus the shield; hero Attack has no torso (head and the sword arm hang on the hips); hero Idle has no left lower leg (only `thigh L`). — *Roman*
+- [ ] Pivots I am unsure of (no overlap with the parent, set at the nearest edge): hero Idle `cape front`, hero Attack `head`, hero Hit `head` and `shield shards`, Vovkulak Attack `arm L`. Check with `?rig=1`; Figma `pivot / <part>` markers override them. — *Roman*
+- [ ] Walk back home after a win: Figma has no mirrored walk pose, so the knight steps back while facing right. Mirror him, or keep it? — *Roman*
