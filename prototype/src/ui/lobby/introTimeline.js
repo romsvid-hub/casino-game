@@ -135,9 +135,8 @@ export function playIntro(root, dock, { orbs, reduced }) {
   // knight and crowd come in, SKIP gives way to PLAY, then the crowd's faces.
   function lobbyIn(at) {
     // The big logo already sits where the card's logo is: it hands over when the card has landed.
-    const card = q('card-logo')
     add(q('logo-move'), [{ opacity: 1 }, { opacity: 1, offset: 0.99 }, { opacity: 0 }], { duration: T.lobbyIn, delay: at, easing: 'linear' })
-    add(q('card'), [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
+    add(q('card'), [{ opacity: 0 }, { opacity: 1 }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('hero'), [{ opacity: 0, transform: 'translateX(-24px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('crowd'), [{ opacity: 0, transform: 'translate(24px, 12px)' }, { opacity: 1, transform: 'translate(0, 0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('skip'), [{ opacity: 1 }, { opacity: 0 }], { duration: T.lobbyIn / 2, delay: at, easing: EASE.softInOut })

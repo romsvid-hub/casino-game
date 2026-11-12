@@ -210,9 +210,7 @@ export default function LobbyScreen({ visible, difficulty, intro = false, onIntr
               style={{ ...layerStyle(INTRO['logo-big']), opacity: 0 }}
             />
           </div>
-          <div data-i="cover" className="absolute inset-0 bg-neutral-ink" aria-hidden>
-            <span className="intro-loader type-label-xs absolute top-[520px] left-0 w-full text-center text-text-muted">LOADING…</span>
-          </div>
+          <div data-i="cover" className="absolute inset-0 bg-neutral-ink" aria-hidden />
           {/* CTA / Skip (intro) 885:10854, where PLAY will be. */}
           <div data-i="skip" className="absolute top-[921px] left-[778px]">
             <CtaButton

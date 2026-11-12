@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { STATES } from '../game/machine.js'
-import Character, { CageLightRelease, DefeatRedLight, LightOrbFlight, spriteUrls } from './Character.jsx'
+import Character, { CageLightRelease, DefeatRedLight, LightOrbFlight } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
-import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
-import Environment, { envImageUrls, HeroLight } from './Environment.jsx'
-import { preloadLottie } from './LottieLayer.jsx'
+import { BOSS_SHAKE } from './director.js'
+import Environment, { HeroLight } from './Environment.jsx'
 
 const VICTORY_PHASES = [STATES.WIN_BANNER, STATES.MAX_WIN, STATES.CASHED_OUT]
 
@@ -29,32 +28,8 @@ export function useBossShake(state, scene) {
 // Battle scene, bottom to top: location layers with their lights (Environment.jsx,
 // from Figma) → hero → enemy → FX. The characters are Figma sprites anchored at
 // their shadow centre (Character.jsx, block C+B).
-const preload = (clips) => clips.forEach((c) => preloadLottie(c.src).catch(() => {}))
-const preloadImages = (urls) =>
-  urls.forEach((u) => {
-    const img = new Image()
-    img.src = u
-  })
-
-// Loads Lottie per round (L11): setup clips at once, round clips when a round
-// starts, boss clips when the boss is a few gates away.
-function useLazyClips(state) {
-  const inRound = state.phase !== STATES.SETUP
-  const nearBoss = inRound && state.passed >= FIRST_BOSS_GATE - BOSS_PRELOAD_GATES
-  useEffect(() => {
-    preload(CLIP_BATCHES.setup)
-    preloadImages([...spriteUrls('hero'), ...spriteUrls('vovkulak'), ...envImageUrls('forest')])
-  }, [])
-  useEffect(() => {
-    if (inRound) preload(CLIP_BATCHES.round)
-  }, [inRound])
-  useEffect(() => {
-    if (!nearBoss) return
-    preload(CLIP_BATCHES.boss)
-    preloadImages([...spriteUrls('vovkulakBoss'), ...spriteUrls('babaYaga'), ...envImageUrls('field'), ...envImageUrls('hut')])
-  }, [nearBoss])
-}
-
+// Every image and FX clip is loaded by src/preload.js (the start set before the game
+// mounts, the bosses in the background right after); nothing loads lazily here.
 // Plays the scene's timeline: starts from the state's poses, then applies each
 // step at its time. Restarts when the game state changes (scene.beatKey).
 // A step's `flash` ('hero' | 'enemy') bumps that side's flash counter.
@@ -91,7 +66,6 @@ function useStageFrame(scene) {
 }
 
 export default function Scene({ scene, state }) {
-  useLazyClips(state)
   const frame = useStageFrame(scene)
   // On a win the game state has already moved to the next gate: stay on the beaten one.
   const onBeatenGate = state.phase === STATES.WIN_BANNER || state.phase === STATES.MAX_WIN

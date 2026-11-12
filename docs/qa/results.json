@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-12T14:09:02.315Z",
+  "generated": "2026-11-12T18:43:52.747Z",
   "checks": [
     {
       "name": "Rig at rest matches the flat sprites (22 poses, mean diff ≤ 8, ≤ 1 % pixels off at half size)",
@@ -388,6 +388,6 @@
     }
   ],
   "info": [
-    "Headless (software GL) long tasks during the perf round: 1, max 60 ms. Not a gate; see checklist for real-GPU numbers."
+    "Headless (software GL) long tasks during the perf round: 2, max 76 ms. Not a gate; see checklist for real-GPU numbers."
   ]
 }
