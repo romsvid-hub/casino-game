@@ -1,5 +1,5 @@
 // Intro splash → lobby checks (12.11 splash brief): the full run, SKIP ×4 and a
-// second press, the return visit without a splash, ?intro=1, the rules card behind "?".
+// second press, the return visit without a splash, ?intro=1, the rules card always shown.
 // Saves frames of each run to docs/qa/intro/ (for the recordings in the report).
 import { spawn, execSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -76,7 +76,7 @@ async function run() {
     await p.waitForSelector('[data-qa="lobby"]')
     check('Return visit opens the lobby directly (no splash)', !(await intro(p)))
     await frames(p, 'return', [100, 400, 800])
-    // 3. Rules card: after a round it waits behind "?".
+    // 3. Rules card: always part of the lobby, also after a round.
     const phase = () => p.evaluate(() => window.__casino.state.phase)
     const until = async (ph) => {
       for (let i = 0; i < 200 && (await phase()) !== ph; i++) await sleep(50)
@@ -92,10 +92,9 @@ async function run() {
     await p.evaluate(() => window.__casino.actions.newRound())
     await until('SETUP')
     await sleep(400)
-    const hidden = !(await p.getByRole('region', { name: 'How to play' }).count())
-    await p.getByRole('button', { name: 'Rules' }).click()
-    const reopened = await p.getByRole('region', { name: 'How to play' }).isVisible()
-    check('After a round the rules card is hidden; "?" reopens it', hidden && reopened, `hidden ${hidden}, reopened ${reopened}`)
+    const shown = await p.getByRole('region', { name: 'How to play' }).isVisible()
+    const noToggle = !(await p.getByRole('button', { name: 'Rules' }).count())
+    check('After a round the rules card is still shown (no "?" toggle)', shown && noToggle, `shown ${shown}, no toggle ${noToggle}`)
     check('No page errors', errors.length === 0, errors[0] ?? '')
     await ctx.close()
 

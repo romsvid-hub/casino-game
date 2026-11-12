@@ -3,7 +3,6 @@ import { config } from '../../game/config.js'
 import { formatMoney, formatMultiplier } from '../../game/money.js'
 import { EnvLayer, layerStyle } from '../../scene/Environment.jsx'
 import env from '../../scene/env.json'
-import FX from '../../scene/fx.json'
 import CtaButton from '../CtaButton.jsx'
 import INTRO from './intro.json'
 import { playIntro, SKIP_RATE } from './introTimeline.js'
@@ -21,11 +20,13 @@ const RULES = [
   'The result of every fight is random. Skill does not change the odds.',
 ]
 
-// The 12 `FX/Light orb` instances in the splash windows (964:8731 …), stage px.
+// The 12 `FX/Light orb` instances in the splash windows (964:8731 …): stage px and
+// instance opacity, read from Figma.
 const ORBS = [
-  [36, 615, 31, 32], [190, 630, 28, 35], [499, 629, 28, 35], [573, 635, 25, 35], [668, 647, 19, 32], [801, 689, 19, 32],
-  [1065, 683, 17, 25], [1245, 662, 17, 24], [1527, 637, 25, 35], [1649, 621, 27, 38], [385, 648, 24, 32], [322, 640, 25, 36],
-].map(([x, y, w, h]) => ({ x, y, w, h }))
+  [36, 615, 31, 32, 0.98], [190, 630, 28, 35, 0.98], [499, 629, 28, 35, 0.98], [573, 635, 25, 35, 0.98], [668, 647, 19, 32, 0.98],
+  [801, 689, 19, 32, 0.98], [1065, 683, 17, 25, 0.98], [1245, 662, 17, 24, 0.98], [1527, 637, 25, 35, 0.98], [1649, 621, 27, 38, 0.98],
+  [385, 648, 24, 32, 1], [322, 640, 25, 36, 1],
+].map(([x, y, w, h, a]) => ({ x, y, w, h, a }))
 
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
@@ -56,7 +57,7 @@ function Villager({ who, body, arm, className }) {
   )
 }
 
-export default function LobbyScreen({ visible, difficulty, intro = false, showRules = true, onIntroDone }) {
+export default function LobbyScreen({ visible, difficulty, intro = false, onIntroDone }) {
   const d = config.difficulties[difficulty]
   const maxMultiplier = d.gates[d.gates.length - 1]
   const { logo, hero } = env.lobby
@@ -64,20 +65,38 @@ export default function LobbyScreen({ visible, difficulty, intro = false, showRu
   const anims = useRef([])
   const pressed = useRef(0)
 
-  // The intro timeline runs once, from the first paint of the lobby.
+  // The intro waits behind the black cover until every image (and the fonts) is
+  // decoded, then the timeline runs once. SKIP works while loading too.
   useLayoutEffect(() => {
     if (!intro || !root.current) return
+    const el = root.current
     const dock = document.querySelector('[data-dock]')
-    const list = playIntro(root.current, dock, { orbs: ORBS, reduced: reduceMotion() })
-    anims.current = list
-    let done = false
-    const finish = () => {
-      if (done) return
-      done = true
-      onIntroDone?.()
-    }
-    Promise.all(list.map((a) => a.finished)).then(finish, finish)
+    const hold = dock?.animate([{ opacity: 0 }, { opacity: 0 }], { duration: 1, fill: 'forwards' })
+    let cancelled = false
+    let list = []
+    const images = [...el.querySelectorAll('img')].map((img) => img.decode().catch(() => {}))
+    const fonts = document.fonts?.ready ?? Promise.resolve()
+    const ready = Promise.all([...images, fonts])
+    // Never wait forever on a slow network: start after 6 s whatever is loaded.
+    Promise.race([ready, new Promise((r) => setTimeout(r, 6000))]).then(() => {
+      if (cancelled) return
+      hold?.cancel()
+      el.setAttribute('data-ready', '')
+      list = playIntro(el, dock, { orbs: ORBS, reduced: reduceMotion() })
+      anims.current = list
+      if (pressed.current === 1) list.forEach((a) => a.updatePlaybackRate(SKIP_RATE))
+      else if (pressed.current > 1) list.forEach((a) => a.finish())
+      let done = false
+      const finish = () => {
+        if (done) return
+        done = true
+        onIntroDone?.()
+      }
+      Promise.all(list.map((a) => a.finished)).then(finish, finish)
+    })
     return () => {
+      cancelled = true
+      hold?.cancel()
       list.forEach((a) => a.cancel())
       if (dock) dock.getAnimations().forEach((a) => a.cancel())
     }
@@ -118,12 +137,24 @@ export default function LobbyScreen({ visible, difficulty, intro = false, showRu
       <Img layer={INTRO['fog-far']} className="lobby-amb-fog lobby-amb-fog--far" />
       <Img layer={INTRO['village-dark']} />
       {intro && <Img layer={INTRO['village-lit']} data-i="lit" />}
+      {/* The 12 window lights sit in the background stack as in Figma (over the
+          village, under the fog, ground and fence), and fly from there to her mortar. */}
+      {intro &&
+        ORBS.map((o, i) => (
+          <div key={i} data-i="orb" data-index={i} className="absolute" style={{ left: o.x, top: o.y, width: o.w, height: o.h, opacity: o.a }} aria-hidden>
+            <div className="size-full">
+              <div className="intro-orb size-full rounded-full" style={{ '--flicker': `${600 + ((i * 337) % 800)}ms`, animationDelay: `${-((i * 211) % 900)}ms` }} />
+            </div>
+          </div>
+        ))}
       <Img layer={INTRO['fog-mid']} className="lobby-amb-fog lobby-amb-fog--mid" />
+      {/* A gust of fog while Baba Yaga blows the lights out. */}
+      {intro && <Img layer={INTRO['fog-mid']} data-i="gust" style={{ ...layerStyle(INTRO['fog-mid']), opacity: 0 }} />}
       <Img layer={L('ground')} />
       <Img layer={INTRO['fog-near']} className="lobby-amb-fog lobby-amb-fog--near" />
       <Img layer={L('fence')} />
 
-      {(showRules || intro) && (
+      {(
         <section
           aria-label="How to play"
           data-i="card"
@@ -165,20 +196,6 @@ export default function LobbyScreen({ visible, difficulty, intro = false, showRu
 
       {intro && (
         <>
-          {/* The stolen lights fly under Baba Yaga's layer. */}
-          {ORBS.map((o, i) => (
-            <div key={i} data-i="orb" data-index={i} className="absolute" style={{ left: o.x, top: o.y, width: o.w, height: o.h }} aria-hidden>
-              <div className="size-full">
-                <img
-                  src={FX.lightOrb.src}
-                  alt=""
-                  className="intro-orb absolute block max-w-none"
-                  style={{ inset: '-100% -107%', '--flicker': `${600 + ((i * 337) % 800)}ms`, animationDelay: `${-((i * 211) % 900)}ms` }}
-                  draggable={false}
-                />
-              </div>
-            </div>
-          ))}
           <div data-i="yaga" className="absolute top-0 left-0" style={{ opacity: 0 }} aria-hidden>
             <img src={INTRO['yaga-mortar'].src} alt="" draggable={false} className="block max-w-none" style={{ width: INTRO['yaga-mortar'].w, height: INTRO['yaga-mortar'].h }} />
           </div>
@@ -193,7 +210,9 @@ export default function LobbyScreen({ visible, difficulty, intro = false, showRu
               style={{ ...layerStyle(INTRO['logo-big']), opacity: 0 }}
             />
           </div>
-          <div data-i="cover" className="absolute inset-0 bg-neutral-ink" aria-hidden />
+          <div data-i="cover" className="absolute inset-0 bg-neutral-ink" aria-hidden>
+            <span className="intro-loader type-label-xs absolute top-[520px] left-0 w-full text-center text-text-muted">LOADING…</span>
+          </div>
           {/* CTA / Skip (intro) 885:10854, where PLAY will be. */}
           <div data-i="skip" className="absolute top-[921px] left-[778px]">
             <CtaButton

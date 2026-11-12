@@ -108,13 +108,20 @@ export function playIntro(root, dock, { orbs, reduced }) {
     add(el, frames, { duration: dur, delay: start, easing: 'linear' })
     add(el?.firstElementChild, [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.2)' }], { duration: 300, delay: end, easing: EASE.quickOut })
   })
-  // One global darkening of the village, in step with the lights already gone.
-  arrivals.sort((a, b) => a - b)
+  // One global darkening of the village, smooth over the whole theft, with a gust
+  // of fog sweeping across (as if the wind blew the lights out).
+  arrivals.sort((x, y) => x - y)
   const first = T.theftFrom, last = arrivals[arrivals.length - 1]
+  add(q('lit'), [{ opacity: 1 }, { opacity: 0 }], { duration: last - first, delay: first, easing: EASE.softInOut })
   add(
-    q('lit'),
-    [{ opacity: 1, offset: 0 }, ...arrivals.map((t, k) => ({ opacity: 1 - (k + 1) / arrivals.length, offset: (t - first) / (last - first) }))],
-    { duration: last - first, delay: first, easing: 'linear' },
+    q('gust'),
+    [
+      { opacity: 0, transform: 'translateX(-420px) scaleY(0.9)' },
+      { opacity: 0.85, transform: 'translateX(-60px) scaleY(1.05)', offset: 0.45 },
+      { opacity: 0.55, transform: 'translateX(200px) scaleY(1)', offset: 0.7 },
+      { opacity: 0, transform: 'translateX(460px) scaleY(0.95)' },
+    ],
+    { duration: last - first + 600, delay: first - 200, easing: EASE.softInOut },
   )
 
   // The logo rises with a short warm pulse behind it (the stolen light).
@@ -127,16 +134,9 @@ export function playIntro(root, dock, { orbs, reduced }) {
   // Splash → lobby (800 ms): the big logo moves into the rules card, the card,
   // knight and crowd come in, SKIP gives way to PLAY, then the crowd's faces.
   function lobbyIn(at) {
+    // The big logo already sits where the card's logo is: it hands over when the card has landed.
     const card = q('card-logo')
-    const big = q('logo-big')
-    if (big && card) {
-      const a = big.getBoundingClientRect(), b = card.getBoundingClientRect()
-      const k = root.getBoundingClientRect().width / 1920
-      const to = `translate(${(b.left - a.left) / k}px, ${(b.top - a.top) / k}px)`
-      // Shared element: the big logo lands on the card's logo, then hands over to it.
-      add(q('logo-move'), [{ transform: 'translate(0, 0)', opacity: 1 }, { transform: to, opacity: 1, offset: 0.99 }, { transform: to, opacity: 0 }], { duration: T.lobbyIn, delay: at, easing: EASE.softInOut })
-    }
-    add(card, [{ opacity: 0 }, { opacity: 1 }], { duration: 1, delay: at + T.lobbyIn })
+    add(q('logo-move'), [{ opacity: 1 }, { opacity: 1, offset: 0.99 }, { opacity: 0 }], { duration: T.lobbyIn, delay: at, easing: 'linear' })
     add(q('card'), [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('hero'), [{ opacity: 0, transform: 'translateX(-24px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('crowd'), [{ opacity: 0, transform: 'translate(24px, 12px)' }, { opacity: 1, transform: 'translate(0, 0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })

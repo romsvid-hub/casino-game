@@ -237,6 +237,9 @@
   --fx-glow-teal-soft: 0 0 10px rgb(63 224 208 / 0.45);
   --fx-glow-amber: 0 0 12px rgb(242 179 61 / 0.45);
   --fx-glow-amber-strong: 0 0 10px rgb(242 179 61 / 0.55);
+  /* FX/Light orb 964:8731: radial fill + two screen glows (radius 14 spread 1, radius 5). */
+  --fx-orb-fill: radial-gradient(closest-side, rgb(255 255 242) 0%, rgb(255 230 153) 45%, rgb(255 194 77 / 0.85) 80%, rgb(250 179 61 / 0.2) 100%);
+  --fx-orb-glow: 0 0 14px 1px rgb(255 189 71 / 0.7), 0 0 5px 0 rgb(255 235 179 / 0.6);
   --fx-backdrop-blur: blur(4px); /* Figma background blur radius 8 ≈ CSS blur 4px */
 
   /* Component effects (raw in Figma) */

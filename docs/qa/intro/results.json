@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-12T12:55:56.305Z",
+  "generated": "2026-11-12T14:12:51.622Z",
   "checks": [
     {
       "name": "First launch plays the splash",
@@ -27,9 +27,9 @@
       "detail": ""
     },
     {
-      "name": "After a round the rules card is hidden; \"?\" reopens it",
+      "name": "After a round the rules card is still shown (no \"?\" toggle)",
       "ok": true,
-      "detail": "hidden true, reopened true"
+      "detail": "shown true, no toggle true"
     },
     {
       "name": "No page errors",
@@ -39,12 +39,12 @@
     {
       "name": "SKIP plays the splash ×4 (lobby in < 2.4 s)",
       "ok": true,
-      "detail": "2331 ms"
+      "detail": "2119 ms"
     },
     {
       "name": "A second press jumps straight to the lobby",
       "ok": true,
-      "detail": "62 ms"
+      "detail": "12 ms"
     },
     {
       "name": "?intro=1 forces the splash",

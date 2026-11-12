@@ -529,7 +529,9 @@
    Kept slightly enlarged, so with drift and parallax no edge reaches the stage. */
 .env-drift-clouds {
   scale: 1.065;
-  transform-origin: 30% 50%;
+  /* Clouds 818:5870 sit under the mountains and reach x1860 at rest; zooming from
+     the left edge keeps their right edge past the stage while they drift. */
+  transform-origin: 0% 50%;
   animation-name: env-drift-clouds, env-zoom-clouds;
   animation-duration: 13s, 11s;
   animation-delay: -6.5s, -4s;
@@ -895,6 +897,8 @@
 }
 /* Window lights before the theft: own period and phase per light. */
 .intro-orb {
+  background: var(--fx-orb-fill);
+  box-shadow: var(--fx-orb-glow);
   animation: intro-flicker var(--flicker) ease-in-out infinite alternate;
 }
 @keyframes intro-flicker {
@@ -908,8 +912,8 @@
   }
 }
 .intro-logo-glow {
-  left: 610px;
-  top: 40px;
+  left: 580px;
+  top: 45px;
   width: 700px;
   height: 440px;
   border-radius: 50%;
@@ -1097,5 +1101,21 @@ body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
   .banner-shake,
   .popup-in {
     animation: fade-in 150ms ease-out both;
+  }
+}
+
+/* Splash loader: shown on the black cover until every image is decoded. */
+.intro-loader {
+  animation: intro-loader 1.2s ease-in-out infinite alternate;
+}
+.lobby[data-ready] .intro-loader {
+  display: none;
+}
+@keyframes intro-loader {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
   }
 }
