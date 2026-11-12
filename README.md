@@ -36,6 +36,7 @@ The QA suites use Playwright. Install the browsers once with `npx playwright ins
 | `?seed=13` | Fixed random seed: the first round after page load replays the same fights. Ready-made stories are in [`docs/demo-seeds.md`](docs/demo-seeds.md). |
 | `?difficulty=easy\|medium\|high` | Preselect the difficulty |
 | `?debug=1` | Debug panel: game state, forced win / lose, effective RTP per gate |
+| `?rig=1` | Character rig view: every part outline, its pivot (dot) and the bone to its parent; `#/rig` lists every pose at rest |
 | `#/kit` | UI Kit page: every component in every state, next to its Figma reference |
 
 Example: https://casino-game-bice.vercel.app/?seed=13&difficulty=medium

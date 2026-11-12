@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { STATES } from '../game/machine.js'
-import Character, { CageLightRelease, CharacterLight, DefeatRedLight, LightOrbFlight, spriteUrls } from './Character.jsx'
+import Character, { CageLightRelease, DefeatRedLight, LightOrbFlight, spriteUrls } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
 import { BOSS_PRELOAD_GATES, BOSS_SHAKE, CLIP_BATCHES, FIRST_BOSS_GATE } from './director.js'
 import Environment, { envImageUrls, HeroLight } from './Environment.jsx'
@@ -101,10 +101,6 @@ export default function Scene({ scene, state }) {
   return (
     <div className="pointer-events-none absolute inset-0">
       <Environment scene={scene.scene} gate={gate} focus={Boolean(frame.enemy)} />
-      {/* Baba Yaga's cage light sits behind both characters. */}
-      {frame.enemy && !defeat && (
-        <CharacterLight set={scene.set} {...frame.enemy} released={state.phase === STATES.MAX_WIN} />
-      )}
       {frame.hero && VICTORY_PHASES.includes(state.phase) && <HeroLight x={frame.hero.x} />}
       {frame.hero && (
         <Character set="hero" qa="char-hero" {...frame.hero} flash={frame.flash.hero} />
@@ -112,7 +108,6 @@ export default function Scene({ scene, state }) {
       {/* FX / Defeat darken 460:2016 covers the fallen knight, then the enemy's lights.
           Baba Yaga's defeat frame 843:6912 has no darken: the caged knight stays readable. */}
       {defeat && scene.set !== 'babaYaga' && <div data-qa="defeat-darken" className="env-defeat-darken absolute inset-0" />}
-      {defeat && frame.enemy && <CharacterLight set={scene.set} {...frame.enemy} />}
       {defeat && frame.enemy && <DefeatRedLight x={frame.enemy.x} set={scene.set} />}
       {state.phase === STATES.MAX_WIN && scene.set === 'babaYaga' && frame.enemy && <CageLightRelease x={frame.enemy.x} />}
       {frame.enemy && (
@@ -121,6 +116,7 @@ export default function Scene({ scene, state }) {
           key={`${scene.set}-${onBeatenGate ? state.passed - 1 : state.passed}`}
           set={scene.set}
           qa="char-enemy"
+          released={state.phase === STATES.MAX_WIN}
           {...frame.enemy}
           flash={frame.flash.enemy}
         />

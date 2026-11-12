@@ -423,19 +423,6 @@
   animation: fade-in 400ms ease-out both;
 }
 /* Idle: subtle 2 px breathing. */
-.char-breathe {
-  animation: char-breathe 2.4s ease-in-out infinite;
-  transform-origin: 50% 100%;
-}
-@keyframes char-breathe {
-  0%,
-  100% {
-    transform: translateY(0) scaleY(1);
-  }
-  50% {
-    transform: translateY(-2px) scaleY(1.006);
-  }
-}
 /* Dead: darken, then fade out with the shadow (the ash FX comes later). */
 .char-dead {
   animation: char-dead 600ms ease-out both;
@@ -454,13 +441,47 @@
   }
 }
 /* Caged by Baba Yaga: dimmed and desaturated (Figma 843:6912), no ash yet. */
+/* ?rig=1: part boxes, bones to the parent pivot, pivots (root bigger). */
+.rig-debug__box {
+  fill: none;
+  stroke: var(--color-accent-teal);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.6;
+}
+.rig-debug__bone {
+  stroke: var(--color-accent-amber);
+  stroke-width: 2;
+}
+.rig-debug__pivot {
+  fill: var(--color-accent-amber);
+  stroke: var(--color-neutral-ink);
+  stroke-width: 1.5;
+}
+.rig-debug__root {
+  fill: var(--color-accent-blood);
+  stroke: var(--color-neutral-ink);
+  stroke-width: 1.5;
+}
+.rig-pose {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 100ms ease-out,
+    visibility 0s linear 100ms;
+}
+.rig-pose--active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 100ms ease-out;
+}
+.rig-part {
+  will-change: transform;
+}
 .char-caged {
   filter: brightness(0.55) saturate(0.55) contrast(0.9);
 }
 @media (prefers-reduced-motion: reduce) {
-  .char-breathe {
-    animation: none;
-  }
 }
 
 /* ── Dock variant crossfade (Setup ↔ round, 150 ms) ─────────────────────── */
@@ -492,7 +513,7 @@
   transition: opacity 600ms ease-in-out;
 }
 .env-parallax {
-  transition: transform 600ms ease-in-out;
+  transition: transform 600ms cubic-bezier(0.45, 0, 0.55, 1); /* soft in-out, motion.js */
 }
 /* Idle motion from the old bg_scene: sine drift and pulse. A negative delay sets the phase. */
 .env-drift-clouds,

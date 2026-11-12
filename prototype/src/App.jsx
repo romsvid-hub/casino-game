@@ -5,6 +5,7 @@ import Scene, { useBossShake } from './scene/Scene.jsx'
 import { prefersReducedMotion, useDirector } from './scene/director.js'
 // /kit is a dev / review page: loaded on demand so it stays out of the game bundle.
 const KitPage = lazy(() => import('./screens/KitPage.jsx'))
+const RigCheckPage = lazy(() => import('./screens/RigCheckPage.jsx'))
 import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
@@ -34,6 +35,13 @@ export default function App() {
     return (
       <Suspense fallback={null}>
         <KitPage />
+      </Suspense>
+    )
+
+  if (route === 'rig')
+    return (
+      <Suspense fallback={null}>
+        <RigCheckPage />
       </Suspense>
     )
 
