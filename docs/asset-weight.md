@@ -43,3 +43,14 @@ Largest: `lottie/bg_scene.json` 2.55 MB, `lottie/popup_maxwin.json` 0.38 MB, `lo
 
 - New: 5 Baba Yaga poses (WebP @1x/@2x), one gold and one red cage light, the red defeat light (half resolution).
 - Hut scene (hero + Baba Yaga + lights): **0.76 MB @1x / 2.0 MB @2x**. Above the ~1.5 MB budget at @2x; the hut background (block E) will add to it. Options if needed: q0.65 for @2x, or @1.5x instead of @2x.
+
+## Lobby 13.11 (2026-11-13)
+
+| Group | Before (main @ 01e3703) | After |
+| --- | --- | --- |
+| Lottie JSON | 3 files, 0.78 MB | 3 files, 0.78 MB |
+| Images | 379 files, 7.55 MB | 379 files, 7.55 MB |
+| Other public files | 0 files, 0.00 MB | 2 files, 0.05 MB |
+| Total public/ | 382 files, 8.34 MB | 384 files, 8.39 MB |
+
+- No new images. The only new files are the self-hosted Roboto fonts (latin 37 KB + cyrillic 20 KB, variable 400–700); Roboto no longer comes from Google Fonts.

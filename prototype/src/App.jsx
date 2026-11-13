@@ -83,6 +83,26 @@ function Loaded() {
 const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1'
 const SKIP_KEY = 'casino.skipAnimations'
 
+// Flags on <html> the CSS reads (components.css): `data-motion="reduced"` from the
+// Skip animations setting (the scene backgrounds go still, like the OS setting),
+// `data-hidden` while the tab is hidden (background motion pauses), `data-still`
+// with ?still=1 (screenshots: the lobby at t = 0 of its loops).
+const STILL = new URLSearchParams(window.location.search).get('still') === '1'
+function useMotionFlags(skipAnimations) {
+  useEffect(() => {
+    const html = document.documentElement
+    if (skipAnimations) html.dataset.motion = 'reduced'
+    else delete html.dataset.motion
+  }, [skipAnimations])
+  useEffect(() => {
+    const html = document.documentElement
+    if (STILL) html.dataset.still = ''
+    const onVis = () => (document.hidden ? (html.dataset.hidden = '') : delete html.dataset.hidden)
+    document.addEventListener('visibilitychange', onVis)
+    return () => document.removeEventListener('visibilitychange', onVis)
+  }, [])
+}
+
 // "Skip animations" (Menu): remembered per browser, defaults to the OS
 // reduce-motion setting. Storage can be unavailable (private mode), so guard it.
 function useSkipAnimations() {
@@ -117,6 +137,7 @@ function Game() {
   const inLobby = state.phase === STATES.SETUP
   // ?go=<scenario>: open at one exact moment (review links, game/scenario.js).
   useEffect(() => runScenario(GO, actions), [])
+  useMotionFlags(skipAnimations)
   const scene = useDirector(state, actions, derived, { enabled: autoBeats, reduceMotion: skipAnimations })
   const shaking = useBossShake(state, scene)
   const resultStage = useResultStage(state.phase)
@@ -150,6 +171,7 @@ function Game() {
             visible={inLobby}
             difficulty={state.difficulty}
             intro={intro}
+            still={skipAnimations || STILL}
             onIntroDone={() => {
               markIntroSeen()
               setIntro(false)

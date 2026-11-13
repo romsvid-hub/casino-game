@@ -1,0 +1,75 @@
+{
+  "generated": "2026-11-13T15:23:26.983Z",
+  "checks": [
+    {
+      "name": "Layout: balance HUD 980:9470",
+      "ok": true,
+      "detail": "got 40,24,317,84, want 40,24,,84"
+    },
+    {
+      "name": "Layout: rules card 992:6990",
+      "ok": true,
+      "detail": "got 548,24,824,892, want 548,24,824,"
+    },
+    {
+      "name": "Layout: card logo (= splash logo 885:10855)",
+      "ok": true,
+      "detail": "got 701,74,519,292, want 701,74,519,292"
+    },
+    {
+      "name": "Layout: knight 885:10934",
+      "ok": true,
+      "detail": "got 277,590,307,307, want 277,590,307,307"
+    },
+    {
+      "name": "Rules card has no [ or ]",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "\"Max multiplier\" changes with the difficulty",
+      "ok": true,
+      "detail": "medium: Max multiplier ×19.00 · high: Max multiplier ×234.60 · easy: Max multiplier ×4.60"
+    },
+    {
+      "name": "No page errors (still lobby)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "The pitchfork shakes",
+      "ok": true,
+      "detail": "10 distinct arm transforms"
+    },
+    {
+      "name": "The bubble box stays fixed while the arm moves",
+      "ok": true,
+      "detail": "1606,310,287,190"
+    },
+    {
+      "name": "The sky (clouds) drifts in the lobby",
+      "ok": true,
+      "detail": "5 distinct sky transforms in 2 s"
+    },
+    {
+      "name": "Reduced motion: the sky transform stays the same over 2 s",
+      "ok": true,
+      "detail": "none 1 none → none 1 none"
+    },
+    {
+      "name": "Reduced motion: no pitchfork shake",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Splash logo and card logo share one box (no jump)",
+      "ok": true,
+      "detail": "splash 701,74,519,292 · card 701,74,519,292"
+    },
+    {
+      "name": "First visit: the bubble appears after the crowd faces (≈ 7 s)",
+      "ok": true,
+      "detail": "visible at ≈ 7477 ms"
+    }
+  ]
+}
