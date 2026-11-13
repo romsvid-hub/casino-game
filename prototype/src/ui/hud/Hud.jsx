@@ -38,8 +38,8 @@ export default function Hud({ state, derived }) {
 
   return (
     <div className="pointer-events-none absolute inset-0">
-      {/* Lobby 885:10856 has no HUD: the panel and the dock are the whole screen. */}
-      {!inSetup && <HudBalance balance={state.balance} className="pointer-events-auto absolute top-[24px] left-[40px]" />}
+      {/* HUD/Balance 980:9470: in the lobby too since 13.11 (same component, same place). */}
+      <HudBalance balance={state.balance} className="pointer-events-auto absolute top-[24px] left-[40px]" />
 
       {!inSetup && <ProgressPath path={derived.path} className="absolute top-[24px] left-[560px]" />}
 

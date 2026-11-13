@@ -528,10 +528,10 @@
 /* Clouds float: a slow drift and a slower zoom, never in step (26 s and 22 s cycles).
    Kept slightly enlarged, so with drift and parallax no edge reaches the stage. */
 .env-drift-clouds {
-  scale: 1.065;
+  scale: var(--cloud-scale, 1.065);
   /* Clouds 818:5870 sit under the mountains and reach x1860 at rest; zooming from
      the left edge keeps their right edge past the stage while they drift. */
-  transform-origin: 0% 50%;
+  transform-origin: var(--cloud-origin, 0% 50%);
   animation-name: env-drift-clouds, env-zoom-clouds;
   animation-duration: 13s, 11s;
   animation-delay: -6.5s, -4s;
@@ -561,6 +561,19 @@
 .env-flicker-pool {
   animation: env-flicker 3s linear infinite;
 }
+/* Camera breath: one slow shared scale for the far layers (trees, buildings), all in
+   the same phase, about the stage centre (each layer sets its own transform-origin). */
+.env-breath {
+  animation: env-breath 20s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+}
+@keyframes env-breath {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.006;
+  }
+}
 .env-flicker-core {
   animation-duration: 2.3s;
 }
@@ -570,20 +583,22 @@
 .env-ember {
   animation: env-ember 4s linear infinite;
 }
+/* Amplitudes are CSS variables (forest values by default), so a scene whose art
+   has less spare width (the lobby sky) narrows them without a second system. */
 @keyframes env-drift-clouds {
   from {
-    translate: -18px 0;
+    translate: var(--cloud-drift-from, -18px) 0;
   }
   to {
-    translate: 18px 0;
+    translate: var(--cloud-drift-to, 18px) 0;
   }
 }
 @keyframes env-zoom-clouds {
   from {
-    scale: 1.05;
+    scale: var(--cloud-zoom-from, 1.05);
   }
   to {
-    scale: 1.08;
+    scale: var(--cloud-zoom-to, 1.08);
   }
 }
 /* Mist has no spare width on the right in Figma, so it drifts left of its place. */
@@ -605,15 +620,15 @@
 }
 @keyframes env-drift-fog {
   from {
-    translate: 40px 0;
+    translate: var(--fog-drift, 40px) 0;
   }
   to {
-    translate: -40px 0;
+    translate: calc(-1 * var(--fog-drift, 40px)) 0;
   }
 }
 @keyframes env-pulse-fog {
   from {
-    opacity: 0.7;
+    opacity: var(--fog-opacity-min, 0.7);
   }
   to {
     opacity: 1;
@@ -838,62 +853,39 @@
 
 /* Lobby ambient loop (12.11 splash brief): sky drifts, forest parallax, three fog
    bands drift sideways at different speeds and breathe ±10 % in opacity. */
-.lobby-amb-sky {
-  animation: lobby-drift-sky 20s ease-in-out infinite alternate;
+/* Living lobby background (13.11): the battle scenes' shared motion (env-drift-*,
+   env-breath) with amplitudes fitted to the lobby art. The sky carries the clouds
+   (no separate cloud layer): it has ~75 px spare on the right and 3 px on the left,
+   so it drifts left of its place and zooms from its centre. */
+.lobby-sky {
+  --cloud-scale: 1;
+  --cloud-origin: 50% 50%;
+  --cloud-drift-from: -30px;
+  --cloud-drift-to: 0px;
+  --cloud-zoom-from: 1;
+  --cloud-zoom-to: 1.02;
+  will-change: transform;
 }
-.lobby-amb-forest {
-  animation: lobby-drift-forest 20s ease-in-out infinite alternate;
+.lobby-fog {
+  will-change: transform, opacity;
 }
-.lobby-amb-fog--far {
-  animation: lobby-fog-far 30s ease-in-out infinite alternate, lobby-fog-breathe 7s ease-in-out infinite alternate;
+.lobby-fog--far {
+  animation-delay: -2s, -0.7s;
 }
-.lobby-amb-fog--mid {
-  animation: lobby-fog-mid 20s ease-in-out infinite alternate, lobby-fog-breathe 5.5s ease-in-out infinite alternate;
+.lobby-fog--mid {
+  animation-delay: -4.1s, -1.9s;
 }
-.lobby-amb-fog--near {
-  animation: lobby-fog-near 13s ease-in-out infinite alternate, lobby-fog-breathe 4.5s ease-in-out infinite alternate;
+.lobby-fog--near {
+  animation-delay: -0.9s, -2.6s;
 }
-@keyframes lobby-drift-sky {
-  to {
-    translate: -16px 0;
-  }
+/* Frozen background for screenshots (?still=1), a hidden tab, and the
+   reduced-motion / Skip animations setting. */
+html[data-still] .lobby *,
+html[data-motion='reduced'] :is(.env-drift-clouds, .env-drift-mist, .env-drift-fog, .env-breath, .env-flicker-core, .env-flicker-wide, .env-flicker-pool, .env-ember) {
+  animation: none;
 }
-@keyframes lobby-drift-forest {
-  to {
-    translate: -6px 0;
-  }
-}
-@keyframes lobby-fog-far {
-  from {
-    translate: -25px 0;
-  }
-  to {
-    translate: 25px 0;
-  }
-}
-@keyframes lobby-fog-mid {
-  from {
-    translate: 40px 0;
-  }
-  to {
-    translate: -40px 0;
-  }
-}
-@keyframes lobby-fog-near {
-  from {
-    translate: -60px 0;
-  }
-  to {
-    translate: 60px 0;
-  }
-}
-@keyframes lobby-fog-breathe {
-  from {
-    opacity: 0.9;
-  }
-  to {
-    opacity: 1;
-  }
+html[data-hidden] :is(.env-drift-clouds, .env-drift-mist, .env-drift-fog, .env-breath, .env-pulse-moon-core, .env-pulse-moon-wide, .env-flicker-core, .env-flicker-wide, .env-flicker-pool, .env-ember) {
+  animation-play-state: paused;
 }
 /* Window lights before the theft: own period and phase per light. */
 .intro-orb {
@@ -921,18 +913,6 @@
   mix-blend-mode: screen;
 }
 /* Lobby loops once settled: pitchfork swing, breathing of the two villagers. */
-.lobby--settled .lobby-pitchfork {
-  transform-origin: 35% 72%;
-  animation: lobby-pitchfork 2.4s ease-in-out infinite alternate;
-}
-@keyframes lobby-pitchfork {
-  from {
-    rotate: -3.5deg;
-  }
-  to {
-    rotate: 3.5deg;
-  }
-}
 .lobby--settled .lobby-breathe {
   transform-origin: 50% 88%;
   animation: lobby-breathe 3.2s ease-in-out infinite alternate;
@@ -960,11 +940,7 @@ body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
   filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent-amber) 45%, transparent));
 }
 @media (prefers-reduced-motion: reduce) {
-  .lobby-amb-sky,
-  .lobby-amb-forest,
-  .lobby-amb-fog,
   .intro-orb,
-  .lobby--settled .lobby-pitchfork,
   .lobby--settled .lobby-breathe {
     animation: none;
   }
@@ -1010,7 +986,8 @@ body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
   .env-flicker-core,
   .env-flicker-wide,
   .env-flicker-pool,
-  .env-ember {
+  .env-ember,
+  .env-breath {
     animation: none;
   }
 }
@@ -1180,4 +1157,44 @@ body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
   .land-crackle {
     display: none;
   }
+}
+
+/* Speech/Bubble 988:6924 (crowd): pops in from the tail tip after the crowd's faces.
+   Return visit: 0.3 s after the crowd has faded in. First visit: the intro timeline
+   plays it (introTimeline.js), so the settled rule is off right after the intro. */
+.speech-bubble p {
+  box-shadow: var(--fx-bubble-shadow);
+}
+.speech-bubble__tail-fill {
+  fill: var(--color-text-parchment);
+}
+.speech-bubble__tail-line {
+  fill: none;
+  stroke: var(--color-neutral-ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.lobby--settled.lobby--visible .speech-bubble--pop {
+  animation: bubble-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) 800ms both; /* EASE.overshoot */
+}
+.lobby--after-intro.lobby--settled.lobby--visible .lobby-crowd {
+  animation: none;
+}
+@keyframes bubble-pop {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lobby--settled.lobby--visible .speech-bubble--pop {
+    animation: fade-in 200ms linear 800ms both;
+  }
+}
+html[data-motion='reduced'] .lobby--settled.lobby--visible .speech-bubble--pop {
+  animation: fade-in 200ms linear 800ms both;
 }

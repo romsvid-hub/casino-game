@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-12T18:49:01.334Z",
+  "generated": "2026-11-13T14:17:15.513Z",
   "checks": [
     {
       "name": "First launch plays the splash",
@@ -38,13 +38,13 @@
     },
     {
       "name": "SKIP plays the splash ×4 (lobby in < 2.4 s)",
-      "ok": true,
-      "detail": "2107 ms"
+      "ok": false,
+      "detail": "2468 ms"
     },
     {
       "name": "A second press jumps straight to the lobby",
       "ok": true,
-      "detail": "18 ms"
+      "detail": "82 ms"
     },
     {
       "name": "?intro=1 forces the splash",
