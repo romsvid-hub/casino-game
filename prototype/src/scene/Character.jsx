@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import FX from './fx.json'
-import { bake, pivotOf, RIGS } from './rig.js'
+import { bakeCached, pivotOf, RIGS } from './rig.js'
 import {
   ATTACK_MS,
   attackMotion,
@@ -30,10 +30,6 @@ const POSES = {
   vovkulak: ['idle', 'attack', 'hit', 'dead', 'victory'],
   vovkulakBoss: ['idle', 'attack', 'hit', 'dead', 'victory'],
   babaYaga: ['idle', 'attack', 'hit', 'dead', 'victory'],
-}
-
-export function spriteUrls(set) {
-  return POSES[set].flatMap((p) => RIGS[`${set}.${p}`].parts.map((part) => part.src))
 }
 
 // ?rig=1 draws every part outline, its pivot and the line to its parent's pivot.
@@ -146,8 +142,8 @@ const CAGE_PART = { idle: 'arm R + cage', hit: 'arm R + cage', attack: 'leg R + 
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 // Plays a baked motion on a pose root: every part, plus the elements that follow a part.
-function play(root, rig, motion, duration, opts) {
-  const frames = bake(rig, motion, duration)
+function play(root, rig, motion, duration, opts, cacheKey) {
+  const frames = bakeCached(cacheKey, rig, motion, duration)
   const anims = []
   root.querySelectorAll('[data-part]').forEach((el) => anims.push(el.animate(frames[el.dataset.part], { duration, easing: 'linear', fill: 'both', ...opts })))
   root.querySelectorAll('[data-follow]').forEach((el) => {
@@ -169,30 +165,30 @@ function useRigMotion(roots, set, pose, move, released, landAt) {
     const idle = (name = key) => {
       const m = idleMotion(name)
       if (!m) return
-      const loop = play(root, rig, m, IDLE_LOOP_MS, { iterations: Infinity })
+      const loop = play(root, rig, m, IDLE_LOOP_MS, { iterations: Infinity }, `${key}|idle|${name}`)
       // A random start in the loop, so two characters never breathe in step.
       const start = Math.random() * IDLE_LOOP_MS
       loop.forEach((a) => (a.currentTime = start))
       anims.push(...loop)
     }
-    const once = (motion, ms, then) => {
-      anims.push(...play(root, rig, motion, ms, { iterations: 1 }))
+    const once = (motion, ms, id, then) => {
+      anims.push(...play(root, rig, motion, ms, { iterations: 1 }, `${key}|${id}|${ms}`))
       if (then) timer = setTimeout(then, ms)
     }
     const hero = set === 'hero'
     const root0 = rig.parts.find((p) => p.name !== 'shadow' && !p.parent)?.name
-    if (pose === 'walk') once(walkMotion(move?.ms ?? 1300), move?.ms ?? 1300)
+    if (pose === 'walk') once(walkMotion(move?.ms ?? 1300), move?.ms ?? 1300, 'walk')
     else if (pose === 'idle') {
       idle()
       // After the entrance leap: the landing squash over the idle (no fill, so the
       // idle takes over when it ends).
-      if (landAt != null) timer = setTimeout(() => anims.push(...play(root, rig, landMotion(rig), LAND_MS, { iterations: 1, fill: 'none' })), landAt)
+      if (landAt != null) timer = setTimeout(() => anims.push(...play(root, rig, landMotion(rig), LAND_MS, { iterations: 1, fill: 'none' }, `${key}|land`)), landAt)
     }
-    else if (pose === 'attack') once(attackMotion(key, hero ? 1 : -1), ATTACK_MS)
-    else if (pose === 'hit') once(hitMotion(key, hero ? -1 : 1), HIT_MS)
-    else if (pose === 'victory') once(victoryMotion(key), VICTORY_MS, () => idle())
-    else if (pose === 'dead') once(fallMotion(root0, -24), FALL_MS)
-    else if (pose === 'caged') once(fallMotion(root0, -60), FALL_MS)
+    else if (pose === 'attack') once(attackMotion(key, hero ? 1 : -1), ATTACK_MS, 'attack')
+    else if (pose === 'hit') once(hitMotion(key, hero ? -1 : 1), HIT_MS, 'hit')
+    else if (pose === 'victory') once(victoryMotion(key), VICTORY_MS, 'victory', () => idle())
+    else if (pose === 'dead') once(fallMotion(root0, -24), FALL_MS, 'fall')
+    else if (pose === 'caged') once(fallMotion(root0, -60), FALL_MS, 'fall')
     const onVis = () => anims.forEach((a) => (document.hidden ? a.pause() : a.play()))
     document.addEventListener('visibilitychange', onVis)
     return () => {
@@ -200,8 +196,8 @@ function useRigMotion(roots, set, pose, move, released, landAt) {
       document.removeEventListener('visibilitychange', onVis)
       anims.forEach((a) => a.cancel())
     }
-    // a pose (and a new walk) restarts its motion
-  }, [set, pose, move?.ms, released])
+    // a pose (and a new walk) restarts its motion; roots and landAt never change
+  }, [roots, set, pose, move?.ms, released, landAt])
 }
 
 // One character on the stage, anchored at its shadow centre (x, SHADOW_Y).
@@ -214,16 +210,18 @@ function useRigMotion(roots, set, pose, move, released, landAt) {
 export default function Character({ set, pose, x, move, flash, enter = false, leap = false, released = false, qa }) {
   const roots = useRef({})
   // Entrance leap (review 12.11): only on mount.
-  const leapIn = useRef(leap && !reduceMotion()).current
+  const [leapIn] = useState(() => leap && !reduceMotion())
+  // Where the enemy stands when it mounts: the leap lands there.
+  const [landX] = useState(x)
   useRigMotion(roots, set, pose, move, released, leapIn ? LEAP.ms : null)
   // Fade-in on mount is a CSS animation (rAF-based state would not run in a hidden tab).
-  const fadeIn = useRef(enter).current
+  const [fadeIn] = useState(enter)
   const travel = useRef(null)
   const air = useRef(null)
   const shadow = useRef(null)
   useEffect(() => {
     if (!leapIn) return
-    const dx = LEAP.from - x
+    const dx = LEAP.from - landX
     const h = LEAP.height[set] ?? 180
     const ms = LEAP.ms
     const opts = { duration: ms, fill: 'backwards' }
@@ -242,12 +240,13 @@ export default function Character({ set, pose, x, move, flash, enter = false, le
       [{ transform: 'scale(0.45)', opacity: 0.25 }, { transform: 'scale(0.6)', opacity: 0.35, offset: 0.5 }, { transform: 'scale(1)', opacity: 1 }],
       { ...opts, easing: EASE.softInOut },
     )
-    return () => [a, b, c].forEach((x) => x?.cancel())
-    // on mount only
-  }, [])
+    return () => [a, b, c].forEach((anim) => anim?.cancel())
+    // leapIn, set and landX are fixed for this mount: the leap plays once
+  }, [leapIn, set, landX])
+  // Only a new flash value plays the flash, on the pose shown at that moment.
+  const playFlash = useEffectEvent(() => roots.current[pose]?.animate(FLASH, { duration: 180, easing: 'ease-out' }))
   useEffect(() => {
-    if (flash) roots.current[pose]?.animate(FLASH, { duration: 180, easing: 'ease-out' })
-    // only a new flash value plays the flash
+    if (flash) playFlash()
   }, [flash])
 
   const current = SPRITES[`${set}.${pose}`]
@@ -383,7 +382,7 @@ export function DefeatRedLight({ x, set }) {
 // Victory over a vovkulak or the boss: the beaten enemy's light orb leaves its body
 // and flies to the win amount in the result banner (x960, y219), then fades into it.
 // The two axes ease differently, so the path curves; two faint copies trail it.
-export const ORB_TARGET = { x: 960, y: 219 }
+const ORB_TARGET = { x: 960, y: 219 }
 
 export function LightOrbFlight({ set, x }) {
   const start = FX.lightOrb.poses[set]?.hit

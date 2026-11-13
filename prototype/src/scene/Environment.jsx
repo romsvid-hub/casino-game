@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import env from './env.json'
+import { layerStyle } from './layerStyle.js'
 
 // Battle locations rebuilt from the Figma layers (src/scene/env.json):
 // forest 340:4055 (gates 1–5), open field 756:6539 (gate 6), hut 843:6410 (gate 7).
@@ -15,21 +16,6 @@ function parallaxVars(scene, gate) {
   const vars = {}
   for (const [key, step] of Object.entries(PARALLAX_STEP)) vars[`--plx-${key}`] = `${-step * levels}px`
   return vars
-}
-
-export function layerStyle(layer) {
-  const style = { left: layer.x, top: layer.y, width: layer.w, height: layer.h }
-  if (layer.blend) style.mixBlendMode = layer.blend
-  if (layer.opacity != null) style.opacity = layer.opacity
-  if (layer.bg) style.background = layer.bg
-  if (layer.blur) style.filter = `blur(${layer.blur}px)`
-  if (layer.rotate) style.transform = `rotate(${layer.rotate}deg)`
-  if (layer.plx) style.transform = `translateX(var(--plx-${layer.plx}))`
-  if (layer.fadeLeft) {
-    style.maskImage = `linear-gradient(to right, transparent, black ${layer.fadeLeft}px)`
-    style.WebkitMaskImage = style.maskImage
-  }
-  return style
 }
 
 // Idle motion, same drift and pulse as the old background (bg_scene, 12 s loop).
@@ -61,16 +47,12 @@ export function EnvLayer({ layer }) {
   return <img src={layer.src} alt="" aria-hidden draggable={false} className={className} style={style} />
 }
 
-export const envImageUrls = (scene) =>
-  [...env[scene].layers, ...env[scene].focus].filter((l) => l.kind === 'img').map((l) => l.src)
-
 // Every location already shown stays mounted, so returning from a boss location
 // to the forest on a new round crossfades without loading anything again.
 export default function Environment({ scene, gate, focus }) {
   const [mounted, setMounted] = useState([scene])
-  useEffect(() => {
-    setMounted((list) => (list.includes(scene) ? list : [...list, scene]))
-  }, [scene])
+  // A newly shown location joins the list during render (no extra effect pass).
+  if (!mounted.includes(scene)) setMounted([...mounted, scene])
 
   return SCENES.filter((name) => name === scene || mounted.includes(name)).map((name) => (
     <div

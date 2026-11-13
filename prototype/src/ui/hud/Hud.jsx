@@ -20,8 +20,14 @@ const COUNTER_MOUNTED = [...COUNTER_STATES, STATES.WIN_BANNER]
 function useBossIntro(phase, isBoss, passed) {
   const active = phase === STATES.ENTERING && isBoss
   const [shown, setShown] = useState(active)
-  useEffect(() => {
+  // A new entrance (or its end) resets the banner during render, not in an effect.
+  const key = `${active}-${passed}`
+  const [seen, setSeen] = useState(key)
+  if (seen !== key) {
+    setSeen(key)
     setShown(active)
+  }
+  useEffect(() => {
     if (!active) return
     const id = setTimeout(() => setShown(false), config.timings.bossIntro)
     return () => clearTimeout(id)
