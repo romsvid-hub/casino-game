@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-13T13:51:14.516Z",
+  "generated": "2026-11-13T15:23:26.983Z",
   "checks": [
     {
       "name": "Layout: balance HUD 980:9470",
@@ -39,7 +39,7 @@
     {
       "name": "The pitchfork shakes",
       "ok": true,
-      "detail": "8 distinct arm transforms"
+      "detail": "10 distinct arm transforms"
     },
     {
       "name": "The bubble box stays fixed while the arm moves",
@@ -69,7 +69,7 @@
     {
       "name": "First visit: the bubble appears after the crowd faces (≈ 7 s)",
       "ok": true,
-      "detail": "visible at ≈ 11040 ms"
+      "detail": "visible at ≈ 7477 ms"
     }
   ]
 }

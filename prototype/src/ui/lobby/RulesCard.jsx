@@ -9,7 +9,7 @@ import RulesStep from './RulesStep.jsx'
 // appears around it". `Story/Intro` is hidden (Show story = false): the story is
 // the crowd's speech bubble. Facts read game/config.js; the max multiplier follows
 // the difficulty selected in the dock.
-export const RULES = [
+const RULES = [
   ['Choose your bet', 'Pick a bet and a difficulty, then press PLAY.'],
   ['Beat the enemy', 'Each enemy shows a multiplier. Win and it grows.'],
   ['Take or fight', 'After every victory: TAKE the win, or FIGHT a stronger enemy.'],

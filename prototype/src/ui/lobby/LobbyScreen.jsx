@@ -60,12 +60,10 @@ function Villager({ who, body, arm, armRef, className = '', children, ...rest })
 
 // The far layers share one "camera breath" about the stage centre.
 const breathOrigin = (l) => `${960 - l.x}px ${540 - l.y}px`
-const reducedNow = () => {
-  const html = document.documentElement
-  return reduceMotion() || html.dataset.motion === 'reduced' || 'still' in html.dataset
-}
 
-export default function LobbyScreen({ visible, difficulty, intro = false, onIntroDone }) {
+
+// `still`: no idle motion (reduced motion, the Skip animations setting, ?still=1).
+export default function LobbyScreen({ visible, difficulty, intro = false, still = false, onIntroDone }) {
   const { logo, hero } = env.lobby
   const root = useRef(null)
   const anims = useRef([])
@@ -74,14 +72,12 @@ export default function LobbyScreen({ visible, difficulty, intro = false, onIntr
   // Right after the intro the crowd and the bubble are already on screen: their
   // return-visit entrances stay off until the lobby is left once.
   const [afterIntro, setAfterIntro] = useState(intro)
-  useEffect(() => {
-    if (!visible) setAfterIntro(false)
-  }, [visible])
+  if (!visible && afterIntro) setAfterIntro(false)
   // The pitchfork shake runs while the lobby is shown.
   useEffect(() => {
-    if (!visible || reducedNow()) return
+    if (!visible || still || reduceMotion()) return
     return startPitchfork(arm.current)
-  }, [visible])
+  }, [visible, still])
 
   // The intro waits behind the black cover until every image (and the fonts) is
   // decoded, then the timeline runs once. SKIP works while loading too.

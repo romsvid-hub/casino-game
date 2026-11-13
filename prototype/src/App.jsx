@@ -171,6 +171,7 @@ function Game() {
             visible={inLobby}
             difficulty={state.difficulty}
             intro={intro}
+            still={skipAnimations || STILL}
             onIntroDone={() => {
               markIntroSeen()
               setIntro(false)

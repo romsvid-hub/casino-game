@@ -13,7 +13,8 @@ import { chromium } from '@playwright/test'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const DOCS_QA = join(ROOT, '..', 'docs', 'qa')
 const APP_DIR = join(DOCS_QA, 'app')
-const PORT = 4174
+// QA_PORT_OFFSET lets two checkouts run the suites at the same time.
+const PORT = 4174 + Number(process.env.QA_PORT_OFFSET ?? 0)
 const BASE = `http://localhost:${PORT}/`
 
 // State → Figma frame (file LXMHPQWUYxLjZiYVTfbx5X), saved in docs/qa/figma/.

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-13T14:16:23.926Z",
+  "generated": "2026-11-13T15:08:38.843Z",
   "results": [
     {
       "browser": "chromium",
@@ -76,8 +76,8 @@
     {
       "browser": "chromium",
       "name": "Skip in RESOLVING jumps to the result",
-      "ok": false,
-      "detail": "DEFEAT → DEFEAT"
+      "ok": true,
+      "detail": "RESOLVING → DEFEAT"
     },
     {
       "browser": "chromium",
@@ -261,9 +261,21 @@
     },
     {
       "browser": "firefox",
-      "name": "Suite finished without crashing",
-      "ok": false,
-      "detail": "locator.click: Timeout 8000ms exceeded.\nCall log:\n  - waiting for locator('.cta').filter({ hasText: 'MENU' })\n    - locator resolved to <button type=\"button\" class=\"cta cta--take  absolute top-[24px] left-[491px] w-[411px]\">…</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - performing click action\n"
+      "name": "Lobby shows the rules; Menu opens from the round end; Skip animations toggles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "browser": "firefox",
+      "name": "/kit renders components with no broken images",
+      "ok": true,
+      "detail": "13 CTAs, 0 broken images"
+    },
+    {
+      "browser": "firefox",
+      "name": "Modals / kit: no errors",
+      "ok": true,
+      "detail": ""
     },
     {
       "browser": "webkit",
@@ -340,8 +352,8 @@
     {
       "browser": "webkit",
       "name": "Skip in RESOLVING jumps to the result",
-      "ok": false,
-      "detail": "DEFEAT → DEFEAT"
+      "ok": true,
+      "detail": "RESOLVING → DEFEAT"
     },
     {
       "browser": "webkit",

@@ -11,7 +11,8 @@ import { chromium } from '@playwright/test'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, '..', 'docs', 'qa', 'lobby')
-const PORT = 4179
+// QA_PORT_OFFSET lets two checkouts run the suites at the same time.
+const PORT = 4179 + Number(process.env.QA_PORT_OFFSET ?? 0)
 const BASE = `http://localhost:${PORT}/`
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const checks = []
@@ -139,7 +140,8 @@ async function run() {
     ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } })
     p = await ctx.newPage()
     await p.goto(`${BASE}?intro=1`)
-    await p.waitForSelector('[data-qa="lobby"][data-ready]', { timeout: 60000 })
+    // The splash logo exists only while the intro runs: measure it as soon as it is there.
+    await p.waitForSelector('[data-i="logo-big"]', { state: 'attached', timeout: 60000 })
     // Layout boxes without the running animations' transforms.
     const layout = (sel) =>
       p.evaluate((s) => {

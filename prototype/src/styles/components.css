@@ -960,16 +960,6 @@ body:has(.cta--wide:hover:not(:disabled)) .lobby-hero {
   visibility: visible;
   transition: none;
 }
-.lobby-rule {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-number-s);
-  line-height: var(--font-line-height-number-s);
-}
-.lobby-fact {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-number-m);
-  line-height: var(--font-line-height-number-m);
-}
 @media (prefers-reduced-motion: reduce) {
   .env-scene,
   .env-scene--active,
