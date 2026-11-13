@@ -10,7 +10,8 @@ import { useGame } from './game/useGame.js'
 import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
 import LobbyScreen from './ui/lobby/LobbyScreen.jsx'
-import { markIntroSeen, markRulesSeen, shouldPlayIntro, shouldShowRules } from './ui/lobby/introState.js'
+import { markIntroSeen, shouldPlayIntro } from './ui/lobby/introState.js'
+import { preloadBosses, preloadStart } from './preload.js'
 import { GO, runScenario } from './game/scenario.js'
 import HudMedallion from './ui/hud/HudMedallion.jsx'
 import Dock from './ui/dock/Dock.jsx'
@@ -48,7 +49,34 @@ export default function App() {
       </Suspense>
     )
 
-  return <Game />
+  return <Loaded />
+}
+
+// The start set (splash, lobby, forest, knight, vovkulak) is loaded and decoded
+// before the game mounts; the bosses follow in the background (src/preload.js).
+// A review link that opens at a boss gate waits for the bosses too.
+const AT_BOSS = /^g[67]-/.test(GO ?? '')
+function Loaded() {
+  const [progress, setProgress] = useState(0)
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const part = AT_BOSS ? 0.5 : 1
+    preloadStart((done, total) => setProgress((done / total) * part))
+      .then(() => {
+        const rest = preloadBosses(AT_BOSS ? (done, total) => setProgress(0.5 + (done / total) * 0.5) : undefined)
+        return AT_BOSS ? rest : null
+      })
+      .then(() => setReady(true))
+  }, [])
+  if (ready) return <Game />
+  return (
+    <div className="fixed inset-0 flex flex-col items-center justify-center gap-[16px] bg-neutral-ink" role="status" aria-label="Loading">
+      <span className="type-label-xs text-text-muted">LOADING</span>
+      <div className="h-[3px] w-[220px] overflow-hidden rounded-full bg-neutral-iron">
+        <div className="h-full bg-accent-amber transition-[width] duration-200 ease-out" style={{ width: `${Math.round(progress * 100)}%` }} />
+      </div>
+    </div>
+  )
 }
 
 // The debug panel is only rendered with ?debug=1 in the URL.
@@ -83,19 +111,12 @@ function Game() {
   const [autoBeats, setAutoBeats] = useState(true)
   const [skipAnimations, setSkipAnimations] = useSkipAnimations()
   const [modal, setModal] = useState(null) // null | 'rules' | 'menu'
-  // Splash → lobby intro (first launch in a session, or ?intro=1) and the rules card
-  // (first lobby entry; later behind "?").
+  // Splash → lobby intro (first launch in a session, or ?intro=1). The rules card is
+  // part of the lobby and always shows (review 12.11).
   const [intro, setIntro] = useState(shouldPlayIntro)
-  const [rulesOpen, setRulesOpen] = useState(shouldShowRules)
   const inLobby = state.phase === STATES.SETUP
   // ?go=<scenario>: open at one exact moment (review links, game/scenario.js).
   useEffect(() => runScenario(GO, actions), [])
-  useEffect(() => {
-    if (!inLobby && rulesOpen) {
-      markRulesSeen()
-      setRulesOpen(false)
-    }
-  }, [inLobby])
   const scene = useDirector(state, actions, derived, { enabled: autoBeats, reduceMotion: skipAnimations })
   const shaking = useBossShake(state, scene)
   const resultStage = useResultStage(state.phase)
@@ -129,19 +150,11 @@ function Game() {
             visible={inLobby}
             difficulty={state.difficulty}
             intro={intro}
-            showRules={rulesOpen}
             onIntroDone={() => {
               markIntroSeen()
               setIntro(false)
             }}
           />
-          {inLobby && !intro && (
-            <HudMedallion
-              icon="rules"
-              onClick={() => setRulesOpen((v) => !v)}
-              className="pointer-events-auto absolute top-[28px] left-[1810px]"
-            />
-          )}
           <Hud state={hudState} derived={derived} />
           <Dock
             state={state}

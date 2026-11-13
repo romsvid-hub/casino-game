@@ -31,3 +31,10 @@ export const MOVE = {
 }
 export const WALK_IN_FROM = -260
 export const ENEMY_IN_FROM = HOME.enemy + 260
+// Every enemy leaps in from beyond the right edge of the stage and lands on its
+// mark (review 12.11): arc height per enemy, the landing squash is a rig motion.
+export const LEAP = {
+  ms: 720,
+  from: 1920 + 300, // shadow centre at the start, off the stage
+  height: { vovkulak: 190, vovkulakBoss: 150, babaYaga: 210 },
+}

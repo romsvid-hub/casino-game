@@ -192,3 +192,23 @@ export function fallMotion(rootName, from = -24) {
     return { [rootName]: { ty: -5 * Math.max(0, damped(t - 200, { ms: 320, cycles: 0.5 })) } }
   }
 }
+
+// ── Landing after the entrance leap (review 12.11) ─────────────────────────────
+// The root sinks into the legs and springs back; every child part follows a
+// little later with its own sign, so the cut-out parts cushion the impact.
+export const LAND_MS = 520
+export function landMotion(rig) {
+  const root = rig.parts.find((p) => p.name !== 'shadow' && !p.parent)?.name
+  const kids = rig.parts.filter((p) => p.parent && p.name !== 'shadow').map((p) => p.name)
+  return (t) => {
+    // Compress fast (90 ms), then a damped spring back up.
+    const s = t < 90 ? ease.quickOut(t / 90) : damped(t - 90, { ms: LAND_MS - 90, cycles: 1 })
+    const out = { [root]: { ty: 14 * s, sy: 1 - 0.035 * s } }
+    kids.forEach((name, i) => {
+      const tt = t - 60 - (i % 3) * 25
+      const v = tt <= 0 ? 0 : tt < 80 ? ease.quickOut(tt / 80) : damped(tt - 80, { ms: LAND_MS - 220, cycles: 1.2 })
+      out[name] = { r: (phaseOf(name) > Math.PI ? 1 : -1) * 3.5 * v }
+    })
+    return out
+  }
+}

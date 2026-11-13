@@ -3,7 +3,7 @@ import { assets } from '../assets.js'
 import { config } from '../game/config.js'
 import { exchangeCount, fightScript, finalPoses } from '../game/fightScript.js'
 import { STATES } from '../game/machine.js'
-import { ENEMY_IN_FROM, ENEMY_SPRITES, HOME, MOVE, SCENE_OF, STEP, WALK_IN_FROM } from './stage.js'
+import { ENEMY_SPRITES, HOME, LEAP, MOVE, SCENE_OF, STEP, WALK_IN_FROM } from './stage.js'
 
 const L = assets.lottie
 
@@ -11,8 +11,10 @@ const L = assets.lottie
 const ENEMY_ENTER_DELAY = 700
 // Boss landing (FX Lottie fx_boss_land_shake + CSS shake of the stage at 0.9 s, 0.35 s long).
 export const BOSS_SHAKE = { at: 900, duration: 350 }
-// The boss slides in so it lands when the landing dust hits (0.9 s).
-const BOSS_SLIDE_DELAY = BOSS_SHAKE.at - MOVE.enemyIn.ms
+// The boss leaps in so it lands when the landing dust hits (0.9 s).
+const BOSS_SLIDE_DELAY = BOSS_SHAKE.at - LEAP.ms
+// The enemy is placed on its mark at once; Character plays the leap from off stage.
+const LEAP_IN = { pose: 'idle', x: HOME.enemy, leap: true }
 // Win banner: the beaten enemy lies, darkens and fades (char-down), then the next one enters.
 const WIN_BANNER_MS = Math.max(config.timings.resultBanner, 2000)
 
@@ -50,22 +52,21 @@ export function sceneFor(state, derived) {
 
     case STATES.ENTERING: {
       if (passed === 0) {
-        // Round start: the knight walks in from the left, then the first enemy slides in.
-        const done = Math.max(MOVE.walkIn.ms, ENEMY_ENTER_DELAY + MOVE.enemyIn.ms)
+        // Round start: the knight walks in from the left, then the first enemy leaps in.
+        const done = Math.max(MOVE.walkIn.ms, ENEMY_ENTER_DELAY + LEAP.ms + 300)
         return {
           ...base,
           hero: { pose: 'walk', x: WALK_IN_FROM },
           enemy: null,
           timeline: [
             { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.walkIn } },
-            { t: ENEMY_ENTER_DELAY, enemy: { pose: 'idle', x: ENEMY_IN_FROM, enter: true } },
-            { t: ENEMY_ENTER_DELAY + 30, enemy: { pose: 'idle', x: HOME.enemy, move: MOVE.enemyIn } },
+            { t: ENEMY_ENTER_DELAY, enemy: LEAP_IN },
             { t: MOVE.walkIn.ms + 30, hero: idleHero },
           ],
           beats: [{ at: done, action: 'enterDone' }],
         }
       }
-      // Next gate: the winner walks back home from his step, the next enemy slides in.
+      // Next gate: the winner walks back home from his step, the next enemy leaps in.
       // Bosses wait for the boss intro banner (HUD, config.timings.bossIntro) and land.
       const boss = derived.isBoss
       const wait = boss ? config.timings.bossIntro : 0
@@ -80,10 +81,9 @@ export function sceneFor(state, derived) {
         timeline: [
           { t: 30, hero: { pose: 'walk', x: HOME.hero, move: MOVE.home } },
           { t: MOVE.home.ms + 30, hero: idleHero },
-          { t: slideAt, enemy: { pose: 'idle', x: ENEMY_IN_FROM, enter: true } },
-          { t: slideAt + 30, enemy: { pose: 'idle', x: HOME.enemy, move: MOVE.enemyIn } },
+          { t: slideAt, enemy: LEAP_IN },
         ],
-        beats: [{ at: slideAt + 30 + MOVE.enemyIn.ms + 200, action: 'enterDone' }],
+        beats: [{ at: slideAt + LEAP.ms + 300, action: 'enterDone' }],
       }
     }
 

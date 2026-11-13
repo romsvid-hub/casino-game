@@ -217,6 +217,14 @@
      -224.5
     ]
    }
+  },
+  "hosts": {
+   "babaYaga": {
+    "idle": "leg R",
+    "hit": "arm L",
+    "attack": "jaw",
+    "victory": "arm L + broom"
+   }
   }
  }
 }

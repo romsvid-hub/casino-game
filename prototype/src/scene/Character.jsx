@@ -10,12 +10,16 @@ import {
   hitMotion,
   IDLE_LOOP_MS,
   idleMotion,
+  LAND_MS,
+  landMotion,
   VICTORY_MS,
   victoryMotion,
   walkMotion,
 } from './motions.js'
 import SPRITES from './sprites.json'
-import { SHADOW_Y } from './stage.js'
+import { partSrc } from '../preload.js'
+import { LEAP, SHADOW_Y } from './stage.js'
+import { EASE } from './motion.js'
 
 // Poses each character has. Every pose is a cut-out rig of Figma parts
 // (scene/rigs.json: part boxes in pose px, z order, parent, pivot at the joint);
@@ -68,14 +72,37 @@ function RigDebug({ rig }) {
 // One pose: its parts as flat images in Figma order. Each part's transform works in
 // pose px (transform-origin at the pose's top-left), so the rig engine can give it
 // a world matrix without nesting the DOM.
-function RigPose({ rig, rootRef, className, orb, light, released }) {
-  // The orb rides on the part it sits on (the top-most part under it).
+function RigPose({ rig, rootRef, className, orb, orbOn, light, released }) {
+  // The orb rides on the part it sits on: the one under it in Figma (`orbOn`, e.g.
+  // Baba Yaga's leg R), else the top-most part under it. It is drawn right above
+  // that part, so the parts over it in Figma stay over it.
   const orbPos = orb && [rig.ax + orb[0], rig.ay + orb[1]]
-  const orbHost =
-    orbPos &&
-    [...rig.parts]
-      .reverse()
-      .find((p) => p.name !== 'shadow' && orbPos[0] >= p.x && orbPos[0] <= p.x + p.w && orbPos[1] >= p.y && orbPos[1] <= p.y + p.h)?.name
+  const under = (p) => p.name !== 'shadow' && orbPos[0] >= p.x && orbPos[0] <= p.x + p.w && orbPos[1] >= p.y && orbPos[1] <= p.y + p.h
+  const orbHost = !orbPos
+    ? null
+    : rig.parts.some((p) => p.name === orbOn)
+      ? orbOn
+      : [...rig.parts].reverse().find(under)?.name
+  // FX/Light orb 947:6377: the light amulet each enemy wears.
+  const orbEl = orbPos && (
+    <img
+      key="light-orb"
+      src={FX.lightOrb.src}
+      alt=""
+      aria-hidden
+      data-qa="light-orb"
+      data-follow={orbHost}
+      className="absolute block max-w-none"
+      style={{
+        left: orbPos[0] - FX.lightOrb.w / 2,
+        top: orbPos[1] - FX.lightOrb.h / 2,
+        width: FX.lightOrb.w,
+        height: FX.lightOrb.h,
+        transformOrigin: `${-(orbPos[0] - FX.lightOrb.w / 2)}px ${-(orbPos[1] - FX.lightOrb.h / 2)}px`,
+      }}
+      draggable={false}
+    />
+  )
   return (
     <div ref={rootRef} className={`rig-root absolute inset-0 ${className}`}>
       {/* Baba Yaga's cage light sits behind her and follows the part that holds the cage. */}
@@ -95,37 +122,19 @@ function RigPose({ rig, rootRef, className, orb, light, released }) {
           </div>
         </div>
       )}
-      {rig.parts.map((p) => (
+      {rig.parts.map((p) => [
         <img
           key={p.name}
-          src={p.src}
-          srcSet={`${p.src} 1x, ${p.src2x} 2x`}
+          src={partSrc(p)}
           alt=""
           data-part={p.name}
           className="rig-part absolute block max-w-none"
           style={{ left: p.x, top: p.y, width: p.w, height: p.h, transformOrigin: `${-p.x}px ${-p.y}px` }}
           draggable={false}
-        />
-      ))}
-      {/* FX/Light orb 947:6377: the light amulet each enemy wears. */}
-      {orbPos && (
-        <img
-          src={FX.lightOrb.src}
-          alt=""
-          aria-hidden
-          data-qa="light-orb"
-          data-follow={orbHost}
-          className="absolute block max-w-none"
-          style={{
-            left: orbPos[0] - FX.lightOrb.w / 2,
-            top: orbPos[1] - FX.lightOrb.h / 2,
-            width: FX.lightOrb.w,
-            height: FX.lightOrb.h,
-            transformOrigin: `${-(orbPos[0] - FX.lightOrb.w / 2)}px ${-(orbPos[1] - FX.lightOrb.h / 2)}px`,
-          }}
-          draggable={false}
-        />
-      )}
+        />,
+        p.name === orbHost && orbEl,
+      ])}
+      {!rig.parts.some((p) => p.name === orbHost) && orbEl}
       {RIG_DEBUG && <RigDebug rig={rig} />}
     </div>
   )
@@ -149,7 +158,7 @@ function play(root, rig, motion, duration, opts) {
 }
 
 // Drives the active pose: walk, idle life, and the action motions (blocks B–D).
-function useRigMotion(roots, set, pose, move, released) {
+function useRigMotion(roots, set, pose, move, released, landAt) {
   useEffect(() => {
     const root = roots.current[pose]
     const key = `${set}.${pose}`
@@ -173,7 +182,12 @@ function useRigMotion(roots, set, pose, move, released) {
     const hero = set === 'hero'
     const root0 = rig.parts.find((p) => p.name !== 'shadow' && !p.parent)?.name
     if (pose === 'walk') once(walkMotion(move?.ms ?? 1300), move?.ms ?? 1300)
-    else if (pose === 'idle') idle()
+    else if (pose === 'idle') {
+      idle()
+      // After the entrance leap: the landing squash over the idle (no fill, so the
+      // idle takes over when it ends).
+      if (landAt != null) timer = setTimeout(() => anims.push(...play(root, rig, landMotion(rig), LAND_MS, { iterations: 1, fill: 'none' })), landAt)
+    }
     else if (pose === 'attack') once(attackMotion(key, hero ? 1 : -1), ATTACK_MS)
     else if (pose === 'hit') once(hitMotion(key, hero ? -1 : 1), HIT_MS)
     else if (pose === 'victory') once(victoryMotion(key), VICTORY_MS, () => idle())
@@ -197,11 +211,40 @@ function useRigMotion(roots, set, pose, move, released) {
 //   set    'hero' | 'vovkulak' | 'vovkulakBoss' | 'babaYaga'    pose   see POSES
 //   flash  a new value → hit flash on the pose
 //   enter  fade in on mount (next enemy)
-export default function Character({ set, pose, x, move, flash, enter = false, released = false, qa }) {
+export default function Character({ set, pose, x, move, flash, enter = false, leap = false, released = false, qa }) {
   const roots = useRef({})
-  useRigMotion(roots, set, pose, move, released)
+  // Entrance leap (review 12.11): only on mount.
+  const leapIn = useRef(leap && !reduceMotion()).current
+  useRigMotion(roots, set, pose, move, released, leapIn ? LEAP.ms : null)
   // Fade-in on mount is a CSS animation (rAF-based state would not run in a hidden tab).
   const fadeIn = useRef(enter).current
+  const travel = useRef(null)
+  const air = useRef(null)
+  const shadow = useRef(null)
+  useEffect(() => {
+    if (!leapIn) return
+    const dx = LEAP.from - x
+    const h = LEAP.height[set] ?? 180
+    const ms = LEAP.ms
+    const opts = { duration: ms, fill: 'backwards' }
+    // Across: fast off the edge, slowing into the landing.
+    const a = travel.current?.animate([{ transform: `translateX(${dx}px)` }, { transform: 'translateX(0)' }], { ...opts, easing: 'cubic-bezier(.25,.55,.45,1)' })
+    // Up and down: a parabola sampled into keyframes, leaning into the jump.
+    const frames = []
+    for (let i = 0; i <= 16; i++) {
+      const k = i / 16
+      const y = -h * 4 * k * (1 - k)
+      frames.push({ transform: `translateY(${y.toFixed(1)}px) rotate(${(-7 * Math.sin(Math.PI * k)).toFixed(2)}deg)`, offset: k })
+    }
+    const b = air.current?.animate(frames, { ...opts, easing: 'linear' })
+    // The shadow waits on the ground: small and faint while the body is high.
+    const c = shadow.current?.animate(
+      [{ transform: 'scale(0.45)', opacity: 0.25 }, { transform: 'scale(0.6)', opacity: 0.35, offset: 0.5 }, { transform: 'scale(1)', opacity: 1 }],
+      { ...opts, easing: EASE.softInOut },
+    )
+    return () => [a, b, c].forEach((x) => x?.cancel())
+    // on mount only
+  }, [])
   useEffect(() => {
     if (flash) roots.current[pose]?.animate(FLASH, { duration: 180, easing: 'ease-out' })
     // only a new flash value plays the flash
@@ -222,10 +265,12 @@ export default function Character({ set, pose, x, move, flash, enter = false, re
       data-x={x}
     >
       {/* Dead: the body darkens, then fades out with its shadow (ash FX comes later). */}
+      <div ref={travel}>
       <div className={down ? 'char-down' : ''}>
         {/* Shadow under the feet: multiply, density from Figma (0.55–0.75). Baba Yaga's
             shadows are parts of her rig (several feet / broom shadows per pose). */}
         {current.shadow && <div
+          ref={shadow}
           className="char-shadow absolute rounded-[50%] mix-blend-multiply"
           style={{
             left: -current.shadow.w / 2,
@@ -238,6 +283,7 @@ export default function Character({ set, pose, x, move, flash, enter = false, re
           }}
           aria-hidden
         />}
+        <div ref={air} className="absolute top-0 left-0" style={{ transformOrigin: `0 ${SHADOW_Y}px` }}>
         {POSES[set].map((p) => {
           const rig = RIGS[`${set}.${p}`]
           const active = p === pose
@@ -256,13 +302,33 @@ export default function Character({ set, pose, x, move, flash, enter = false, re
                 rootRef={(el) => (roots.current[p] = el)}
                 className={`${active && p === 'dead' ? 'char-dead' : ''} ${p === 'caged' ? 'char-caged' : ''}`}
                 orb={FX.lightOrb.poses[set]?.[p]}
+                orbOn={FX.lightOrb.hosts?.[set]?.[p]}
                 light={set === 'babaYaga' && FX.cageLight.poses[p] ? { offset: FX.cageLight.poses[p], part: CAGE_PART[p] } : null}
                 released={released}
               />
             </div>
           )
         })}
+        </div>
       </div>
+      </div>
+      {leapIn && set === 'babaYaga' && <LandCrackle />}
+    </div>
+  )
+}
+
+// Baba Yaga lands with a crackle of light at her feet (review 12.11, item 33):
+// a flash, then short jagged sparks that fly out and flicker.
+const CRACKLE = Array.from({ length: 12 }, (_, i) => ({ a: -170 + (i * 160) / 11 + ((i * 37) % 13) - 6, d: 70 + ((i * 53) % 60), w: 14 + ((i * 29) % 16) }))
+function LandCrackle() {
+  return (
+    <div className="land-crackle pointer-events-none absolute" style={{ left: 0, top: SHADOW_Y, '--at': `${LEAP.ms}ms` }} data-qa="land-crackle" aria-hidden>
+      <span className="land-crackle__flash absolute" />
+      {CRACKLE.map((s, i) => (
+        <span key={i} className="land-crackle__arm absolute" style={{ rotate: `${s.a}deg` }}>
+          <span className="land-crackle__spark absolute" style={{ '--d': `${s.d}px`, width: s.w, animationDelay: `calc(var(--at) + ${(i % 4) * 30}ms)` }} />
+        </span>
+      ))}
     </div>
   )
 }
