@@ -62,5 +62,15 @@ export function bake(rig, motion, duration, fps = 30) {
   return frames
 }
 
+// Motions are deterministic for a pose and its parameters, so each one is baked once
+// and reused: a character returning to idle no longer recomputes its 12 s loop
+// (6–19 ms of main-thread work, a dropped frame) on every exchange.
+const baked = new Map()
+export function bakeCached(cacheKey, rig, motion, duration) {
+  if (!cacheKey) return bake(rig, motion, duration)
+  if (!baked.has(cacheKey)) baked.set(cacheKey, bake(rig, motion, duration))
+  return baked.get(cacheKey)
+}
+
 // The rig of a sprite key ('hero.idle'), or null.
 export const rigOf = (set, pose) => RIGS[`${set}.${pose}`] ?? null
