@@ -1,29 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useEffectEvent, useState } from 'react'
 import { STATES } from '../game/machine.js'
 import Character, { CageLightRelease, DefeatRedLight, LightOrbFlight } from './Character.jsx'
 import ClipSlot from './ClipSlot.jsx'
-import { BOSS_SHAKE } from './director.js'
 import Environment, { HeroLight } from './Environment.jsx'
 
 const VICTORY_PHASES = [STATES.WIN_BANNER, STATES.MAX_WIN, STATES.CASHED_OUT]
-
-// Boss landing shake: on at 0.9 s for 0.35 s after the boss starts entering.
-export function useBossShake(state, scene) {
-  const [shaking, setShaking] = useState(false)
-  const active = state.phase === STATES.ENTERING && scene.shake
-  useEffect(() => {
-    if (!active) return
-    const at = scene.shakeAt ?? BOSS_SHAKE.at
-    const on = setTimeout(() => setShaking(true), at)
-    const off = setTimeout(() => setShaking(false), at + BOSS_SHAKE.duration)
-    return () => {
-      clearTimeout(on)
-      clearTimeout(off)
-      setShaking(false)
-    }
-  }, [active, state.passed])
-  return shaking
-}
 
 // Battle scene, bottom to top: location layers with their lights (Environment.jsx,
 // from Figma) → hero → enemy → FX. The characters are Figma sprites anchored at
@@ -43,8 +24,9 @@ function useStageFrame(scene) {
   const [frame, setFrame] = useState(initial)
   // New game state: start from its poses in the same render (no one-frame lag).
   if (frame.key !== scene.beatKey) setFrame(initial())
-  useEffect(() => {
-    const ids = (scene.timeline ?? []).map((step) =>
+  // The timeline belongs to one game state (beatKey); it is read when that state starts.
+  const play = useEffectEvent(() =>
+    (scene.timeline ?? []).map((step) =>
       setTimeout(
         () =>
           setFrame((f) => ({
@@ -58,9 +40,11 @@ function useStageFrame(scene) {
           })),
         step.t,
       ),
-    )
+    ),
+  )
+  useEffect(() => {
+    const ids = play()
     return () => ids.forEach(clearTimeout)
-    // the timeline belongs to one game state
   }, [scene.beatKey])
   return frame.key === scene.beatKey ? frame : initial()
 }

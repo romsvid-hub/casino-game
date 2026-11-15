@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { assets } from '../assets.js'
 import KitComponents from './KitComponents.jsx'
 
@@ -44,8 +43,7 @@ function readToken(name) {
 }
 
 function Swatch({ token }) {
-  const [value, setValue] = useState('')
-  useEffect(() => setValue(readToken(token)), [token])
+  const value = readToken(token)
 
   return (
     <div className="flex w-44 flex-col gap-2">

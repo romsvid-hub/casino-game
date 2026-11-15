@@ -425,6 +425,8 @@
 /* Idle: subtle 2 px breathing. */
 /* Dead: darken, then fade out with the shadow (the ash FX comes later). */
 .char-dead {
+  /* Its own compositor layer, so the darkening does not repaint the whole stage. */
+  will-change: filter;
   animation: char-dead 600ms ease-out both;
 }
 @keyframes char-dead {

@@ -1,7 +1,8 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useEffectEvent, useMemo, useState } from 'react'
 import Stage from './stage/Stage.jsx'
 import GuidesOverlay from './stage/GuidesOverlay.jsx'
-import Scene, { useBossShake } from './scene/Scene.jsx'
+import Scene from './scene/Scene.jsx'
+import { useBossShake } from './scene/useBossShake.js'
 import { prefersReducedMotion, useDirector } from './scene/director.js'
 // /kit is a dev / review page: loaded on demand so it stays out of the game bundle.
 const KitPage = lazy(() => import('./screens/KitPage.jsx'))
@@ -11,11 +12,12 @@ import DebugPanel from './ui/DebugPanel.jsx'
 import Hud from './ui/hud/Hud.jsx'
 import LobbyScreen from './ui/lobby/LobbyScreen.jsx'
 import { markIntroSeen, shouldPlayIntro } from './ui/lobby/introState.js'
-import { preloadBosses, preloadStart } from './preload.js'
+import { preloadBosses, preloadStart, warmMotions } from './preload.js'
 import { GO, runScenario } from './game/scenario.js'
 import HudMedallion from './ui/hud/HudMedallion.jsx'
 import Dock from './ui/dock/Dock.jsx'
-import ResultsLayer, { useResultStage } from './ui/results/ResultsLayer.jsx'
+import ResultsLayer from './ui/results/ResultsLayer.jsx'
+import { useResultStage } from './ui/results/useResultStage.js'
 import RulesModal from './ui/modals/RulesModal.jsx'
 import MenuModal from './ui/modals/MenuModal.jsx'
 import LowBalanceNotice from './ui/dock/LowBalanceNotice.jsx'
@@ -66,14 +68,20 @@ function Loaded() {
         const rest = preloadBosses(AT_BOSS ? (done, total) => setProgress(0.5 + (done / total) * 0.5) : undefined)
         return AT_BOSS ? rest : null
       })
-      .then(() => setReady(true))
+      .then(() => {
+        setReady(true)
+        warmMotions()
+      })
   }, [])
   if (ready) return <Game />
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center gap-[16px] bg-neutral-ink" role="status" aria-label="Loading">
       <span className="type-label-xs text-text-muted">LOADING</span>
       <div className="h-[3px] w-[220px] overflow-hidden rounded-full bg-neutral-iron">
-        <div className="h-full bg-accent-amber transition-[width] duration-200 ease-out" style={{ width: `${Math.round(progress * 100)}%` }} />
+        <div
+          className="h-full w-full origin-left bg-accent-amber transition-transform duration-200 ease-out"
+          style={{ transform: `scaleX(${progress.toFixed(3)})` }}
+        />
       </div>
     </div>
   )
@@ -116,7 +124,8 @@ function Game() {
   const [intro, setIntro] = useState(shouldPlayIntro)
   const inLobby = state.phase === STATES.SETUP
   // ?go=<scenario>: open at one exact moment (review links, game/scenario.js).
-  useEffect(() => runScenario(GO, actions), [])
+  const startScenario = useEffectEvent(() => runScenario(GO, actions))
+  useEffect(() => startScenario(), [])
   const scene = useDirector(state, actions, derived, { enabled: autoBeats, reduceMotion: skipAnimations })
   const shaking = useBossShake(state, scene)
   const resultStage = useResultStage(state.phase)

@@ -1,11 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 // Keeps keyboard focus inside a modal and focuses `initialRef` once on open.
 // Esc calls `onEscape` if given; otherwise it is swallowed (result popups must
 // be acknowledged with a button).
 export function useFocusTrap(containerRef, initialRef, onEscape) {
   const onEscapeRef = useRef(onEscape)
-  onEscapeRef.current = onEscape
+  useLayoutEffect(() => {
+    onEscapeRef.current = onEscape
+  })
 
   useEffect(() => {
     initialRef.current?.focus()

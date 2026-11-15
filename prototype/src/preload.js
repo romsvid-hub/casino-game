@@ -10,7 +10,9 @@
 import { assets } from './assets.js'
 import env from './scene/env.json'
 import FX from './scene/fx.json'
-import { preloadLottie } from './scene/LottieLayer.jsx'
+import { loadLottiePlayer, preloadLottie } from './scene/lottieCache.js'
+import { idleMotion, IDLE_LOOP_MS } from './scene/motions.js'
+import { bakeCached } from './scene/rig.js'
 import RIGS from './scene/rigs.json'
 import INTRO from './ui/lobby/intro.json'
 
@@ -93,8 +95,22 @@ export function preloadStart(onProgress) {
 export function preloadBosses(onProgress) {
   bosses ??= load(
     bossUrls(),
-    Object.values(assets.lottie).map((c) => preloadLottie(c.src).catch(() => {})),
+    [loadLottiePlayer().catch(() => {}), ...Object.values(assets.lottie).map((c) => preloadLottie(c.src).catch(() => {}))],
     onProgress,
   )
   return bosses
+}
+
+// Bakes every idle loop ahead in idle time (one per callback), so the first return
+// to idle in a fight does not cost a frame either. Keys match Character.jsx.
+export function warmMotions() {
+  const keys = Object.keys(RIGS).filter((k) => idleMotion(k))
+  const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 30))
+  const next = () => {
+    const key = keys.shift()
+    if (!key) return
+    bakeCached(`${key}|idle|${key}`, RIGS[key], idleMotion(key), IDLE_LOOP_MS)
+    idle(next)
+  }
+  idle(next)
 }

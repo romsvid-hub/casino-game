@@ -1,46 +1,5 @@
-import { useEffect, useRef } from 'react'
-import lottie from 'lottie-web'
-
-// In-memory cache of fetched Lottie JSON, keyed by URL (one request per file).
-const cache = new Map()
-
-// lottie-web mutates animationData, so every instance needs its own copy.
-// Copies are prepared ahead of time in idle callbacks (one spare per file), so
-// mounting a clip mid-fight does not pay for cloning a ~1 MB JSON (L11 perf).
-const spares = new Map()
-const idle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 50))
-function prepareSpare(src, data) {
-  if (spares.has(src)) return
-  idle(() => {
-    if (!spares.has(src)) spares.set(src, structuredClone(data))
-  })
-}
-function takeCopy(src, data) {
-  const spare = spares.get(src)
-  spares.delete(src)
-  prepareSpare(src, data)
-  return spare ?? structuredClone(data)
-}
-
-export function preloadLottie(src) {
-  if (!cache.has(src)) {
-    const request = fetch(src)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Lottie ${src}: HTTP ${res.status}`)
-        return res.json()
-      })
-      .then((data) => {
-        prepareSpare(src, data)
-        return data
-      })
-      .catch((err) => {
-        cache.delete(src)
-        throw err
-      })
-    cache.set(src, request)
-  }
-  return cache.get(src)
-}
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import { loadLottiePlayer, preloadLottie, takeCopy } from './lottieCache.js'
 
 // Resolves the frames to play: an explicit [start, end] segment or a named marker.
 function resolveSegment(data, segment, marker) {
@@ -76,16 +35,19 @@ export default function LottieLayer({
   const containerRef = useRef(null)
   const onCompleteRef = useRef(onComplete)
   const onReadyRef = useRef(onReady)
-  onCompleteRef.current = onComplete
-  onReadyRef.current = onReady
 
   const segmentKey = segment ? segment.join(':') : ''
   const sequenceKey = markerSequence ? markerSequence.join(':') : ''
   const keepLayerRef = useRef(keepLayer)
-  keepLayerRef.current = keepLayer
   // playDelay can change after mount (body lies → ash) without remounting.
   const playDelayRef = useRef(playDelay)
-  playDelayRef.current = playDelay
+  // Latest callbacks and options for the async load, updated after each render.
+  useLayoutEffect(() => {
+    onCompleteRef.current = onComplete
+    onReadyRef.current = onReady
+    keepLayerRef.current = keepLayer
+    playDelayRef.current = playDelay
+  })
   const animRef = useRef(null)
   const delayTimer = useRef(null)
   const schedulePlay = () => {
@@ -99,11 +61,13 @@ export default function LottieLayer({
     let cancelled = false
     const held = playDelayRef.current != null
 
-    preloadLottie(src)
-      .then((data) => {
+    Promise.all([preloadLottie(src), loadLottiePlayer()])
+      .then(([data, lottie]) => {
         if (cancelled || !containerRef.current) return
-        const [introMarker, loopMarker] = markerSequence ?? []
-        const frames = resolveSegment(data, segment, introMarker ?? marker)
+        // segment / markerSequence are compared by value through their keys.
+        const seg = segmentKey ? segmentKey.split(':').map(Number) : null
+        const [introMarker, loopMarker] = sequenceKey ? sequenceKey.split(':') : []
+        const frames = resolveSegment(data, seg, introMarker ?? marker)
         const loopFrames = loopMarker ? resolveSegment(data, null, loopMarker) : null
         // Timing shows up as "lottie mount …" in the Chrome performance panel.
         const mountStart = performance.now()
@@ -146,7 +110,6 @@ export default function LottieLayer({
       animRef.current = null
       anim?.destroy()
     }
-    // segment is compared by value through segmentKey
   }, [src, loop, autoplay, segmentKey, marker, sequenceKey])
 
   // A held clip whose playDelay becomes finite starts its countdown now.

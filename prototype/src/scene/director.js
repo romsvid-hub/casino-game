@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useEffectEvent, useState } from 'react'
 import { assets } from '../assets.js'
 import { config } from '../game/config.js'
 import { exchangeCount, fightScript, finalPoses } from '../game/fightScript.js'
@@ -159,17 +159,6 @@ function withMoves(steps) {
   })
 }
 
-// Lottie is now FX only (characters are sprites since C+B, locations are Figma layers
-// since E): the boss landing and the MAX WIN popup, loaded close to the bosses.
-export const CLIP_BATCHES = {
-  setup: [],
-  round: [],
-  boss: [L.bossLandShake, L.popupMaxWin],
-}
-// Start loading the boss batch this many gates before the first boss gate.
-export const BOSS_PRELOAD_GATES = 3
-export const FIRST_BOSS_GATE = config.enemyByGate.findIndex((kind) => kind !== 'vovkulak')
-
 export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
@@ -182,17 +171,25 @@ export function useDirector(state, actions, derived, { reduceMotion = prefersRed
   const scene = sceneFor(state, derived)
   const beatKey = `${state.phase}-${state.passed}-${state.outcome}`
 
+  // Beats depend only on the state that beatKey describes; they are read when it starts.
+  const schedule = useEffectEvent(() => {
+    if (reduceMotion && ANIMATED.includes(state.phase)) return [setTimeout(() => actions.skip(), 0)]
+    return scene.beats.map((b) => setTimeout(() => actions[b.action](), b.at))
+  })
   useEffect(() => {
     if (!enabled) return
-    if (reduceMotion && ANIMATED.includes(state.phase)) {
-      const id = setTimeout(() => actions.skip(), 0)
-      return () => clearTimeout(id)
-    }
-    const ids = scene.beats.map((b) => setTimeout(() => actions[b.action](), b.at))
+    const ids = schedule()
     return () => ids.forEach(clearTimeout)
-    // beats depend only on the state that beatKey describes
   }, [beatKey, reduceMotion, enabled])
 
-  // A new scene object only when the state changes (the timeline restarts then).
-  return useMemo(() => ({ ...scene, beatKey }), [beatKey, scene.kind])
+  // A new scene object only when the state changes (the timeline restarts then):
+  // kept in state and replaced during render when the key changes.
+  const key = `${beatKey}|${scene.kind}`
+  const [cached, setCached] = useState(() => ({ key, value: { ...scene, beatKey } }))
+  if (cached.key !== key) {
+    const next = { key, value: { ...scene, beatKey } }
+    setCached(next)
+    return next.value
+  }
+  return cached.value
 }

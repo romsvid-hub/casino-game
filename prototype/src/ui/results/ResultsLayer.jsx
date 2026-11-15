@@ -1,32 +1,9 @@
-import { useEffect, useState } from 'react'
-import { config } from '../../game/config.js'
-import { STATES } from '../../game/machine.js'
 import { formatMoney, formatMultiplier } from '../../game/money.js'
 import ResultBanner from './ResultBanner.jsx'
 import RoundEndModal from './RoundEndModal.jsx'
 
 const plus = (n) => `+${formatMoney(n)}`
 const minus = (n) => `−${formatMoney(Math.abs(n))}`
-
-// Which result UI is visible: a banner in the counter zone, then (for round
-// ends) the modal. Figma: VICTORY 474:2008 / 629:6879, DEFEAT banner 380:5864 →
-// modal 474:2089, CASHED OUT 474:2175, boss victory banner → MAX WIN 660:5112.
-export function useResultStage(phase) {
-  const [modalReady, setModalReady] = useState(false)
-  const bannerThenModal = phase === STATES.DEFEAT || phase === STATES.MAX_WIN
-
-  useEffect(() => {
-    setModalReady(false)
-    if (!bannerThenModal) return
-    const id = setTimeout(() => setModalReady(true), config.timings.resultBanner)
-    return () => clearTimeout(id)
-  }, [phase, bannerThenModal])
-
-  if (phase === STATES.WIN_BANNER) return 'banner'
-  if (phase === STATES.CASHED_OUT) return 'modal'
-  if (bannerThenModal) return modalReady ? 'modal' : 'banner'
-  return null
-}
 
 export default function ResultsLayer({ state, actions, stage }) {
   const result = state.lastResult
