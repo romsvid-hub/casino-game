@@ -41,6 +41,14 @@
 - [ ] Pivots I am unsure of (no overlap with the parent, set at the nearest edge): hero Idle `cape front`, hero Attack `head`, hero Hit `head` and `shield shards`, Vovkulak Attack `arm L`. Check with `?rig=1`; Figma `pivot / <part>` markers override them. — *Roman*
 - [ ] Walk back home after a win: Figma has no mirrored walk pose, so the knight steps back while facing right. Mirror him, or keep it? — *Roman*
 
+### Lobby 13.11
+- [ ] Figma was unreachable while this was built (the Figma MCP server returned errors for every call), so these come from the brief, not from the file, and need a check against `Лобі` 885:10856: the crowd's new position (moved 60 px left so the 287 px bubble fits), the bubble's place and tail (it sits above the pitchfork, tail down-left to the right villager's head), the pitchfork pivot (50 %, 64 % of the cropped arm image ≈ the hand), the rules steps' titles and one-line copy, the number badge style, the Body M Strong weight (600). — *Roman*
+- [ ] Speech bubble copy is placeholder English; UA copy is needed. — *Roman*
+- [ ] Should the bubble hide when the rules card is closed, or when PLAY is pressed? (The card is always shown now, per the 12.11 review; the 13.11 brief describes first entry + "?".) — *Roman*
+- [ ] RTP, bet range and max multiplier are still placeholders. Figma shows bet 1.00–10.00; config has maxBet 20 (the lobby shows 1.00 – 20.00 from config). — *client*
+- [ ] Lobby layers for endless clouds: the lobby has no separate cloud layers (the clouds are baked into the sky, 1998 px wide with ~75 px spare), and no moon or light layer. So the clouds ping-pong 30 px instead of an endless drift, and there is no near/far cloud parallax or moon pulse. Separate cloud / moon layers would allow both. — *Roman*
+- [ ] The rules card with gap 48 is 892 px tall (24 → 916) and its bottom meets the dock (top 896). Check the card height / gaps in Figma. — *Roman*
+
 ### Splash and lobby (12.11)
 - [ ] Knight's hover emotion: PLAY hover only lifts the knight 3 px into a warm light. A `Hero — емоція 1` layer would go in the same slot. — *Roman*
 - [ ] Should the crowd's emotion sequence repeat later in the lobby, or stay once per intro? — *Roman*

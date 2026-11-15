@@ -30,6 +30,8 @@ jobs:
       # Chromium, Firefox, WebKit: window sizes, keyboard, skip, click spam, refresh.
       - run: npm run qa:smoke
       - run: npm run qa:intro
+      # Lobby 13.11: layout, facts from config, bubble vs pitchfork, reduced motion.
+      - run: npm run qa:lobby
       - name: Upload QA report
         if: always()
         uses: actions/upload-artifact@v4

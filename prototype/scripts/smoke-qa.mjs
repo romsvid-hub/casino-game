@@ -9,7 +9,8 @@ import { fileURLToPath } from 'node:url'
 import { chromium, firefox, webkit } from '@playwright/test'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const PORT = 4177
+// QA_PORT_OFFSET lets two checkouts run the suites at the same time.
+const PORT = 4177 + Number(process.env.QA_PORT_OFFSET ?? 0)
 const BASE = `http://localhost:${PORT}/`
 const SIZES = [
   [1280, 720],

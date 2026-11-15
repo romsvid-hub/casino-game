@@ -62,7 +62,9 @@ function yagaFrames(dur) {
   return frames
 }
 
-export function playIntro(root, dock, { orbs, reduced }) {
+export function playIntro(root, chrome, { orbs, reduced }) {
+  // `chrome`: the dock and the balance HUD, outside the lobby root; they fade in with the lobby.
+  const outside = (Array.isArray(chrome) ? chrome : [chrome]).filter(Boolean)
   const q = (sel) => root.querySelector(`[data-i="${sel}"]`)
   const qa = (sel) => [...root.querySelectorAll(`[data-i="${sel}"]`)]
   const anims = []
@@ -131,17 +133,20 @@ export function playIntro(root, dock, { orbs, reduced }) {
   lobbyIn(T.toLobby)
   return anims
 
-  // Splash → lobby (800 ms): the big logo moves into the rules card, the card,
-  // knight and crowd come in, SKIP gives way to PLAY, then the crowd's faces.
+  // Splash → lobby (800 ms): the big logo stays where the card's logo is and the
+  // card fades and rises in behind it (13.11); knight, crowd, balance and dock come
+  // in, SKIP gives way to PLAY, then the crowd's faces and the speech bubble.
   function lobbyIn(at) {
-    // The big logo already sits where the card's logo is: it hands over when the card has landed.
     add(q('logo-move'), [{ opacity: 1 }, { opacity: 1, offset: 0.99 }, { opacity: 0 }], { duration: T.lobbyIn, delay: at, easing: 'linear' })
-    add(q('card'), [{ opacity: 0 }, { opacity: 1 }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
+    add(q('card'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('hero'), [{ opacity: 0, transform: 'translateX(-24px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('crowd'), [{ opacity: 0, transform: 'translate(24px, 12px)' }, { opacity: 1, transform: 'translate(0, 0)' }], { duration: T.lobbyIn, delay: at, easing: EASE.quickOut })
     add(q('skip'), [{ opacity: 1 }, { opacity: 0 }], { duration: T.lobbyIn / 2, delay: at, easing: EASE.softInOut })
-    add(dock, [{ opacity: 0 }, { opacity: 1 }], { duration: T.lobbyIn, delay: at, easing: EASE.softInOut })
-    if (reduced) return
+    outside.forEach((el) => add(el, [{ opacity: 0 }, { opacity: 1 }], { duration: T.lobbyIn, delay: at, easing: EASE.softInOut }))
+    if (reduced) {
+      add(q('bubble'), [{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: at + T.lobbyIn, easing: 'linear' })
+      return
+    }
     // All three villagers in sync: body → emotion 1 → emotion 2 (hold) → emotion 1 → body.
     const e = at + T.lobbyIn
     const step = 300, x = 120
@@ -159,5 +164,7 @@ export function playIntro(root, dock, { orbs, reduced }) {
     ]
     qa('emotion-1').forEach((el) => add(el, e1, { duration: total, delay: e, easing: 'linear' }))
     qa('emotion-2').forEach((el) => add(el, e2, { duration: total, delay: e, easing: 'linear' }))
+    // The right villager speaks once the faces settle (≈ 7.0 s): a pop from the tail tip.
+    add(q('bubble'), [{ opacity: 0, transform: 'scale(0.85)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 220, delay: e + total - 200, easing: EASE.overshoot })
   }
 }

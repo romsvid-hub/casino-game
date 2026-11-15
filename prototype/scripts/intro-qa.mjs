@@ -9,7 +9,8 @@ import { chromium } from '@playwright/test'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, '..', 'docs', 'qa', 'intro')
-const PORT = 4178
+// QA_PORT_OFFSET lets two checkouts run the suites at the same time.
+const PORT = 4178 + Number(process.env.QA_PORT_OFFSET ?? 0)
 const BASE = `http://localhost:${PORT}/`
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const checks = []

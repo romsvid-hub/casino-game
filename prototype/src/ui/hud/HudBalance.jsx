@@ -11,6 +11,7 @@ export default function HudBalance({ balance, className = '' }) {
   return (
     <div
       className={`flex h-[84px] ${className}`}
+      data-qa="hud-balance"
       style={{ filter: 'drop-shadow(var(--fx-balance-shadow))' }}
       aria-label={`Balance ${formatMoney(balance)}`}
     >
