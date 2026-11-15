@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import LottieLayer from './LottieLayer.jsx'
 
 const CROSSFADE_MS = 70
@@ -15,35 +15,44 @@ export default function ClipSlot({ cue, className = '' }) {
   const [layers, setLayers] = useState([]) // [{ id, cue, shown }]
   const headKey = useRef(null) // key of the cue currently at the top of the slot
   const pending = useRef(null)
+  const drop = useRef(null)
 
   const push = (c) => {
     headKey.current = c.key
     setLayers((ls) => [...ls, { id: ++nextId, cue: c, shown: false }])
   }
 
-  useEffect(() => {
+  // Cue objects are rebuilt every render; the key (and playDelay) identify the cue.
+  // Every change is applied from a timer (0 ms unless the cue has a delay), so the
+  // slot never sets state synchronously inside the effect.
+  const onCue = useEffectEvent(() => {
     clearTimeout(pending.current)
-    if (!cue) {
-      headKey.current = null
-      setLayers((ls) => ls.map((l) => ({ ...l, shown: false })))
-      pending.current = setTimeout(() => setLayers([]), CROSSFADE_MS + 20)
-      return
+    const apply = () => {
+      if (!cue) {
+        headKey.current = null
+        setLayers((ls) => ls.map((l) => ({ ...l, shown: false })))
+        pending.current = setTimeout(() => setLayers([]), CROSSFADE_MS + 20)
+      } else if (cue.key === headKey.current) {
+        // Same clip, new options (e.g. a held body now told when to turn to ash).
+        setLayers((ls) => ls.map((l) => (l.cue.key === cue.key ? { ...l, cue: { ...l.cue, playDelay: cue.playDelay } } : l)))
+      } else push(cue)
     }
-    if (cue.key === headKey.current) {
-      // Same clip, new options (e.g. a held body now told when to turn to ash).
-      setLayers((ls) => ls.map((l) => (l.cue.key === cue.key ? { ...l, cue: { ...l.cue, playDelay: cue.playDelay } } : l)))
-      return
-    }
-    if (cue.delay) pending.current = setTimeout(() => push(cue), cue.delay)
-    else push(cue)
-    // cue objects are rebuilt every render; the key identifies the cue
-  }, [cue?.key, cue?.playDelay])
+    pending.current = setTimeout(apply, cue?.delay ?? 0)
+  })
+  useEffect(() => onCue(), [cue?.key, cue?.playDelay])
 
-  useEffect(() => () => clearTimeout(pending.current), [])
+  useEffect(
+    () => () => {
+      clearTimeout(pending.current)
+      clearTimeout(drop.current)
+    },
+    [],
+  )
 
   const onReady = (id) => {
     setLayers((ls) => ls.map((l) => (l.id === id ? { ...l, shown: true } : l)))
-    setTimeout(() => setLayers((ls) => ls.filter((l) => l.id >= id)), CROSSFADE_MS + 20)
+    clearTimeout(drop.current)
+    drop.current = setTimeout(() => setLayers((ls) => ls.filter((l) => l.id >= id)), CROSSFADE_MS + 20)
   }
 
   const onComplete = (layer) => {

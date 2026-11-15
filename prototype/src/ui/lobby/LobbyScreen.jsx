@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { layerStyle } from '../../scene/Environment.jsx'
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
+import { layerStyle } from '../../scene/layerStyle.js'
 import env from '../../scene/env.json'
 import CtaButton from '../CtaButton.jsx'
 import INTRO from './intro.json'
@@ -78,6 +78,7 @@ export default function LobbyScreen({ visible, difficulty, intro = false, still 
     if (!visible || still || reduceMotion()) return
     return startPitchfork(arm.current)
   }, [visible, still])
+  const introDone = useEffectEvent(() => onIntroDone?.())
 
   // The intro waits behind the black cover until every image (and the fonts) is
   // decoded, then the timeline runs once. SKIP works while loading too.
@@ -105,7 +106,7 @@ export default function LobbyScreen({ visible, difficulty, intro = false, still 
       const finish = () => {
         if (done) return
         done = true
-        onIntroDone?.()
+        introDone()
       }
       Promise.all(list.map((a) => a.finished)).then(finish, finish)
     })
